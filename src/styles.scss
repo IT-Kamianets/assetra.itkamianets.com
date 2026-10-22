@@ -27,3 +27,27 @@ body {
 		box-shadow: var(--focus-ring);
 	}
 }
+
+/* Soft cream halo with a warm terracotta edge so the logo mark stands out on photos and the olive topbar. */
+.logo-glow {
+	filter: drop-shadow(0 0 4px rgba(247, 245, 239, 0.95)) drop-shadow(0 0 12px rgba(247, 245, 239, 0.6))
+		drop-shadow(0 0 22px rgba(185, 138, 105, 0.45));
+	transition: filter var(--motion) var(--easing), transform var(--motion) var(--easing);
+}
+
+a:hover .logo-glow,
+a:focus-visible .logo-glow {
+	filter: drop-shadow(0 0 5px rgba(247, 245, 239, 1)) drop-shadow(0 0 16px rgba(247, 245, 239, 0.75))
+		drop-shadow(0 0 30px rgba(185, 138, 105, 0.6));
+	transform: scale(1.05);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.logo-glow {
+		transition: none;
+	}
+
+	a:hover .logo-glow {
+		transform: none;
+	}
+}

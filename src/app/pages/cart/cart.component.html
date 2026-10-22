@@ -1,0 +1,107 @@
+<div class="mx-auto max-w-[var(--container)] px-4 py-8 sm:px-6 lg:py-10">
+	<app-breadcrumbs [items]="breadcrumbs" />
+
+	<header class="mt-6 flex flex-wrap items-end justify-between gap-4">
+		<div>
+			<h1 class="text-3xl font-semibold tracking-[-0.02em] text-[var(--c-text-strong)] sm:text-4xl">Кошик</h1>
+			@if (cart.count()) {
+				<p class="mt-2 text-[var(--c-text-muted)]" aria-live="polite">{{ countLabel() }}</p>
+			}
+		</div>
+		@if (cart.count()) {
+			<button
+				class="theme-focus inline-flex items-center gap-1.5 rounded text-sm font-medium text-[var(--c-text-muted)] hover:text-[#a23b2a]"
+				type="button"
+				(click)="cart.clear()"
+			>
+				<span class="material-symbols-outlined text-[18px]" aria-hidden="true">delete_sweep</span>
+				Очистити кошик
+			</button>
+		}
+	</header>
+
+	@if (cart.count()) {
+		<div class="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
+			<ul class="divide-y divide-[var(--c-border)] rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)]">
+				@for (row of rows(); track row.product.slug) {
+					<li class="flex gap-4 p-4 sm:items-center sm:p-5">
+						<a class="theme-focus shrink-0 overflow-hidden rounded-[var(--radius-card)]" [routerLink]="['/product', row.product.slug]" tabindex="-1">
+							<img class="h-24 w-24 object-cover sm:h-28 sm:w-28" [src]="row.thumb" [alt]="row.product.title" width="112" height="112" loading="lazy" />
+						</a>
+						<div class="min-w-0 flex-1">
+							<p class="text-xs font-medium uppercase tracking-[0.14em] text-[var(--c-text-muted)]">{{ row.category }}</p>
+							<a
+								class="theme-focus mt-1 block rounded font-semibold text-[var(--c-text-strong)] hover:text-[var(--c-primary)]"
+								[routerLink]="['/product', row.product.slug]"
+							>
+								{{ row.product.title }}
+							</a>
+							@if (row.seller) {
+								<a class="theme-focus mt-0.5 block w-fit rounded text-sm text-[var(--c-text-muted)] hover:text-[var(--c-primary)]" [routerLink]="['/seller', row.seller.slug]">
+									від {{ row.seller.name }}
+								</a>
+							}
+							<p class="mt-1 text-xs text-[var(--c-text-muted)]">{{ row.product.formats.join(' · ') }}</p>
+						</div>
+						<div class="flex shrink-0 flex-col items-end gap-3">
+							<span class="font-semibold text-[var(--c-text-strong)]">{{ row.price }}</span>
+							<button
+								class="theme-interactive theme-focus inline-flex h-9 w-9 items-center justify-center rounded-full text-[var(--c-text-muted)] hover:bg-[var(--c-bg-tertiary)] hover:text-[#a23b2a]"
+								type="button"
+								[attr.aria-label]="'Видалити з кошика: ' + row.product.title"
+								(click)="cart.remove(row.product.slug)"
+							>
+								<span class="material-symbols-outlined text-[20px]" aria-hidden="true">delete</span>
+							</button>
+						</div>
+					</li>
+				}
+			</ul>
+
+			<aside class="rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-6 lg:sticky lg:top-24">
+				<h2 class="text-lg font-semibold text-[var(--c-text-strong)]">Підсумок</h2>
+				<dl class="mt-4 space-y-3 text-sm">
+					<div class="flex justify-between gap-4">
+						<dt>Моделей</dt>
+						<dd class="font-medium text-[var(--c-text-strong)]">{{ cart.count() }}</dd>
+					</div>
+					@if (freeCount()) {
+						<div class="flex justify-between gap-4">
+							<dt>З них безкоштовних</dt>
+							<dd class="font-medium text-[var(--c-text-strong)]">{{ freeCount() }}</dd>
+						</div>
+					}
+					<div class="flex justify-between gap-4 border-t border-[var(--c-border)] pt-3 text-base">
+						<dt class="font-semibold text-[var(--c-text-strong)]">Разом</dt>
+						<dd class="font-semibold text-[var(--c-text-strong)]">{{ total() }}</dd>
+					</div>
+				</dl>
+				<a
+					class="theme-interactive theme-focus mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-6 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)]"
+					routerLink="/order"
+					[queryParams]="{ from: 'cart' }"
+				>
+					Оформити замовлення
+					<span class="material-symbols-outlined text-[20px]" aria-hidden="true">arrow_forward</span>
+				</a>
+				<a class="theme-focus mt-3 block rounded text-center text-sm font-medium text-[var(--c-primary)] hover:underline" routerLink="/catalog">
+					Продовжити покупки
+				</a>
+			</aside>
+		</div>
+	} @else {
+		<div class="mt-8 flex flex-col items-center rounded-[calc(var(--radius-card)*1.6)] border border-dashed border-[var(--c-border)] px-6 py-16 text-center">
+			<span class="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--c-bg-tertiary)] text-[var(--c-primary)]" aria-hidden="true">
+				<span class="material-symbols-outlined text-[32px]">shopping_bag</span>
+			</span>
+			<p class="mt-5 text-xl font-semibold text-[var(--c-text-strong)]">Кошик порожній</p>
+			<p class="mt-2 max-w-md">Додавайте моделі з каталогу кнопкою з сумкою, і вони з'являться тут.</p>
+			<a
+				class="theme-interactive theme-focus mt-6 inline-flex min-h-12 items-center rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-6 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)]"
+				routerLink="/catalog"
+			>
+				Перейти до каталогу
+			</a>
+		</div>
+	}
+</div>

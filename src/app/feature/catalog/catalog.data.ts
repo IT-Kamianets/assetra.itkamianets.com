@@ -1,31 +1,34 @@
 import categoriesData from '../../../data/category/categories.json';
 import productsData from '../../../data/product/products.json';
-import { companyProfile } from '../company/company.data';
-import { Category, Product, ProductRoom, ProductStyle } from './catalog.interface';
+import sellersData from '../../../data/seller/sellers.json';
+import { Category, PolygonTier, Product, ProductPurpose, Seller } from './catalog.interface';
 
 export const categories = categoriesData as Category[];
 export const products = productsData as Product[];
+export const sellers = sellersData as Seller[];
 
-export const STYLE_LABELS: Record<ProductStyle, string> = {
-	modern: 'Сучасний',
-	scandinavian: 'Скандинавський',
-	loft: 'Лофт',
-	minimal: 'Мінімалізм',
-	classic: 'Класика',
-	japandi: 'Japandi',
+export const PURPOSE_LABELS: Record<ProductPurpose, string> = {
+	games: 'Ігри',
+	viz: 'Візуалізація',
+	arvr: 'AR / VR',
+	animation: 'Анімація',
 };
 
-export const ROOM_LABELS: Record<ProductRoom, string> = {
-	living: 'Вітальня',
-	bedroom: 'Спальня',
-	kitchen: 'Кухня та їдальня',
-	office: 'Кабінет',
-	horeca: 'HoReCa',
+export const POLYGON_TIER_LABELS: Record<PolygonTier, string> = {
+	low: 'Low-poly (до 10 тис.)',
+	mid: 'Mid-poly (10–100 тис.)',
+	high: 'High-poly (понад 100 тис.)',
 };
 
-export const SOFTWARE_OPTIONS = ['3ds Max', 'Corona', 'V-Ray', 'SketchUp', 'Blender'];
+/** Formats, most common first, so the filter list reads naturally. */
+const FORMAT_ORDER = ['FBX', 'OBJ', 'GLB', 'BLEND', 'MAX', 'USDZ', 'MA', 'SKP'];
+export const FORMAT_OPTIONS = [...new Set(products.flatMap((product) => product.formats))].sort(
+	(a, b) => (FORMAT_ORDER.indexOf(a) + 1 || 99) - (FORMAT_ORDER.indexOf(b) + 1 || 99),
+);
 
-export const MATERIAL_OPTIONS = [...new Set(products.flatMap((product) => product.materials))];
+export function polygonTier(polygons: number): PolygonTier {
+	return polygons < 10_000 ? 'low' : polygons <= 100_000 ? 'mid' : 'high';
+}
 
 export function getCategory(slug: string | null | undefined): Category | undefined {
 	return categories.find((category) => category.slug === slug);
@@ -33,6 +36,23 @@ export function getCategory(slug: string | null | undefined): Category | undefin
 
 export function getProduct(slug: string | null | undefined): Product | undefined {
 	return products.find((product) => product.slug === slug);
+}
+
+export function getSeller(slug: string | null | undefined): Seller | undefined {
+	return sellers.find((seller) => seller.slug === slug);
+}
+
+export function productsBySeller(slug: string): Product[] {
+	return products.filter((product) => product.seller === slug);
+}
+
+export function sellerInitials(seller: Seller): string {
+	return seller.name
+		.split(/[\s&]+/)
+		.filter(Boolean)
+		.slice(0, 2)
+		.map((word) => word[0]!.toUpperCase())
+		.join('');
 }
 
 export function matchesSearch(product: Product, query: string): boolean {
@@ -43,8 +63,9 @@ export function matchesSearch(product: Product, query: string): boolean {
 	}
 
 	const category = getCategory(product.category)?.title ?? '';
+	const seller = getSeller(product.seller)?.name ?? '';
 
-	return [product.title, product.short, product.collection ?? '', category, ...product.materials]
+	return [product.title, product.short, product.collection ?? '', category, seller, ...product.tags, ...product.formats]
 		.join(' ')
 		.toLowerCase()
 		.includes(search);
@@ -70,16 +91,23 @@ export function getRelatedProducts(product: Product, limit = 4): Product[] {
 	return [...sameCollection, ...sameCategory].slice(0, limit);
 }
 
-/** Pexels serves resized variants through query params; keep the source URL clean in JSON. */
+/** Product renders are local assets; remote Pexels images get a resized variant via query params. */
 export function imageUrl(url: string, width: number): string {
-	return url.includes('images.pexels.com')
-		? `${url}?auto=compress&cs=tinysrgb&w=${width}`
-		: url;
+	return url.includes('images.pexels.com') ? `${url}?auto=compress&cs=tinysrgb&w=${width}` : url;
 }
 
-/** Orders go by email until a checkout exists; set `email` in company.json to receive them. */
-export function orderHref(subject: string): string {
-	return `mailto:${companyProfile.email}?subject=${encodeURIComponent(subject)}`;
+/** Ukrainian plural: 1 модель, 3 моделі, 5 моделей. */
+export function formatModelCount(count: number): string {
+	const mod10 = count % 10;
+	const mod100 = count % 100;
+	const word =
+		mod10 === 1 && mod100 !== 11
+			? 'модель'
+			: mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)
+				? 'моделі'
+				: 'моделей';
+
+	return `${count} ${word}`;
 }
 
 export function formatPrice(price: number): string {
@@ -90,8 +118,13 @@ export function formatPolygons(polygons: number): string {
 	return polygons.toLocaleString('uk-UA');
 }
 
-export function formatDimensions(product: Product): string {
-	const { w, d, h } = product.dimensions;
-
-	return `${w} × ${d} × ${h} см`;
+/** Short card line, e.g. "4 600 полігонів · Rigged · Animated". */
+export function formatModelSummary(product: Product): string {
+	return [
+		`${formatPolygons(product.polygons)} полігонів`,
+		product.rigged ? 'Rigged' : '',
+		product.animated ? 'Animated' : '',
+	]
+		.filter(Boolean)
+		.join(' · ');
 }

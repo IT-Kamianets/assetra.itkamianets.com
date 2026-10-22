@@ -1,757 +1,633 @@
 [
 	{
-		"slug": "sofa-oslo",
-		"title": "Диван Oslo",
-		"category": "sofas",
-		"price": 590,
-		"short": "Тримісний диван у скандинавському стилі з м'якими подушками та дубовими ніжками.",
-		"description": "Модель повторює реальні пропорції тримісного дивана: глибока посадка, знімні подушки сидіння та спинки, дубові ніжки з фаскою. Складки тканини змодельовані вручну, без шуму від симуляції, тож диван виглядає природно навіть на крупних планах. В архіві три кольорові варіанти оббивки та сцена з налаштованим студійним світлом.",
+		"slug": "cesium-man",
+		"title": "Персонаж CesiumMan",
+		"category": "characters",
+		"seller": "polyforge",
+		"price": 0,
+		"short": "Безкоштовний персонаж з ригом і анімацією ходьби для тестування пайплайну.",
+		"description": "Легкий людиноподібний персонаж зі скелетом і зацикленою анімацією ходьби. Ідеальний для перевірки імпорту в рушій, прототипів і навчальних проєктів.",
 		"images": [
-			"https://images.pexels.com/photos/11112731/pexels-photo-11112731.jpeg",
-			"https://images.pexels.com/photos/17264276/pexels-photo-17264276.jpeg"
+			"models/cesium-man-1.jpg",
+			"models/cesium-man-2.jpg"
 		],
-		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/GlamVelvetSofa/glTF-Binary/GlamVelvetSofa.glb",
-		"style": "scandinavian",
-		"rooms": [
-			"living"
+		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/CesiumMan/glTF-Binary/CesiumMan.glb",
+		"purpose": [
+			"games",
+			"animation"
 		],
-		"materials": [
-			"Тканина",
-			"Дерево"
-		],
-		"colors": [
-			"Бежевий",
-			"Сірий",
-			"Оливковий"
-		],
-		"dimensions": {
-			"w": 220,
-			"d": 95,
-			"h": 82
-		},
-		"polygons": 148000,
-		"textures": "PBR, 4K",
+		"polygons": 4600,
+		"textures": "PBR, 1K",
+		"rigged": true,
+		"animated": true,
 		"software": [
-			"3ds Max",
-			"SketchUp",
-			"Blender"
+			"Blender",
+			"Unity",
+			"Unreal Engine"
 		],
 		"renderers": [
-			"Corona",
-			"V-Ray"
+			"Eevee",
+			"Cycles"
 		],
 		"formats": [
-			"MAX",
+			"GLB",
 			"FBX",
-			"OBJ",
-			"SKP",
 			"BLEND"
 		],
-		"archiveSize": "112 MB",
-		"collection": "Oslo",
-		"isHit": true
-	},
-	{
-		"slug": "sofa-brick-leather",
-		"title": "Шкіряний диван Brick",
-		"category": "sofas",
-		"price": 690,
-		"short": "Диван у стилі лофт з фактурною шкірою та стьобаною спинкою.",
-		"description": "Шкіра з потертостями на підлокітниках і швах, стьобана спинка, металевий каркас. Карти нормалей і шорсткості запечені з високополігональної моделі. Добре працює в лофтових вітальнях, кабінетах і лаунж-зонах ресторанів.",
-		"images": [
-			"https://images.pexels.com/photos/17264274/pexels-photo-17264274.jpeg",
-			"https://images.pexels.com/photos/17264276/pexels-photo-17264276.jpeg"
+		"tags": [
+			"персонаж",
+			"людина",
+			"ходьба",
+			"low-poly"
 		],
-		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SheenWoodLeatherSofa/glTF-Binary/SheenWoodLeatherSofa.glb",
-		"style": "loft",
-		"rooms": [
-			"living",
-			"office"
-		],
-		"materials": [
-			"Шкіра",
-			"Метал"
-		],
-		"colors": [
-			"Коньячний",
-			"Чорний"
-		],
-		"dimensions": {
-			"w": 240,
-			"d": 98,
-			"h": 78
-		},
-		"polygons": 196000,
-		"textures": "PBR, 4K",
-		"software": [
-			"3ds Max",
-			"Blender"
-		],
-		"renderers": [
-			"Corona",
-			"V-Ray"
-		],
-		"formats": [
-			"MAX",
-			"FBX",
-			"OBJ",
-			"BLEND"
-		],
-		"archiveSize": "164 MB",
+		"archiveSize": "3 MB",
 		"isNew": true
 	},
 	{
-		"slug": "sofa-cloud-modular",
-		"title": "Модульний диван Cloud",
-		"category": "sofas",
-		"price": 750,
-		"short": "Модульна система з п'яти секцій: збирайте прямий, кутовий або П-подібний диван.",
-		"description": "Кожен модуль є окремим об'єктом зі своїм півотом, тому конфігурацію легко зібрати під план приміщення. Шенілова тканина з мікроскладками, плед і декоративні подушки входять у комплект.",
+		"slug": "brainstem-robot",
+		"title": "Робот BrainStem",
+		"category": "characters",
+		"seller": "polyforge",
+		"price": 890,
+		"short": "Анімований робот зі складним скелетом і набором рухів.",
+		"description": "Деталізований робот із повним ригом: 30+ кісток, анімація танцю та стійки. Металеві поверхні з картами зносу. Підходить для ігор, кліпів і моушн-дизайну.",
 		"images": [
-			"https://images.pexels.com/photos/27355165/pexels-photo-27355165.jpeg"
+			"models/brainstem-robot-1.jpg",
+			"models/brainstem-robot-2.jpg"
 		],
-		"style": "modern",
-		"rooms": [
-			"living"
+		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/BrainStem/glTF-Binary/BrainStem.glb",
+		"purpose": [
+			"games",
+			"animation"
 		],
-		"materials": [
-			"Тканина"
-		],
-		"colors": [
-			"Пісочний",
-			"Теракотовий"
-		],
-		"dimensions": {
-			"w": 310,
-			"d": 180,
-			"h": 75
-		},
-		"polygons": 210000,
-		"textures": "PBR, 4K",
+		"polygons": 61000,
+		"textures": "PBR, 2K",
+		"rigged": true,
+		"animated": true,
 		"software": [
-			"3ds Max",
-			"SketchUp",
-			"Blender"
+			"Blender",
+			"Unity",
+			"Unreal Engine",
+			"Maya"
 		],
 		"renderers": [
-			"Corona",
-			"V-Ray"
+			"Cycles",
+			"Arnold"
 		],
 		"formats": [
-			"MAX",
+			"GLB",
 			"FBX",
-			"OBJ",
-			"SKP"
+			"MA",
+			"BLEND"
 		],
-		"archiveSize": "138 MB"
+		"tags": [
+			"робот",
+			"sci-fi",
+			"меха",
+			"анімація"
+		],
+		"archiveSize": "38 MB",
+		"collection": "Mecha",
+		"isHit": true
 	},
 	{
-		"slug": "armchair-nord",
-		"title": "Крісло Nord",
-		"category": "armchairs",
-		"price": 390,
-		"short": "Лаконічне крісло з глибокою посадкою для вітальні або спальні.",
-		"description": "Мінімалістичне крісло з м'якою букле-оббивкою та прихованим дерев'яним каркасом. Пасує до дивана Oslo з тієї ж колекції. Легка геометрія дозволяє розставляти кілька крісел у сцені без втрати швидкості.",
+		"slug": "lowpoly-fox",
+		"title": "Low-poly лисиця",
+		"category": "characters",
+		"seller": "polyforge",
+		"price": 190,
+		"short": "Стилізована лисиця на 576 полігонів з анімаціями ходьби та бігу.",
+		"description": "Мінімалістична low-poly лисиця з трьома анімаціями: стійка, ходьба, біг. Мінімальне навантаження для мобільних ігор і AR-сцен.",
 		"images": [
-			"https://images.pexels.com/photos/12269762/pexels-photo-12269762.jpeg",
-			"https://images.pexels.com/photos/20573189/pexels-photo-20573189.jpeg"
+			"models/lowpoly-fox-1.jpg",
+			"models/lowpoly-fox-2.jpg"
 		],
-		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SheenChair/glTF-Binary/SheenChair.glb",
-		"style": "minimal",
-		"rooms": [
-			"living",
-			"bedroom"
+		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/Fox/glTF-Binary/Fox.glb",
+		"purpose": [
+			"games",
+			"animation",
+			"arvr"
 		],
-		"materials": [
-			"Тканина",
-			"Дерево"
+		"polygons": 576,
+		"textures": "Колір вершин",
+		"rigged": true,
+		"animated": true,
+		"software": [
+			"Blender",
+			"Unity",
+			"Unreal Engine"
 		],
-		"colors": [
-			"Графітовий",
-			"Світло-сірий"
+		"renderers": [
+			"Eevee"
 		],
-		"dimensions": {
-			"w": 78,
-			"d": 82,
-			"h": 76
-		},
-		"polygons": 64000,
-		"textures": "PBR, 2K",
+		"formats": [
+			"GLB",
+			"FBX",
+			"BLEND"
+		],
+		"tags": [
+			"тварина",
+			"лисиця",
+			"low-poly",
+			"мобільні ігри"
+		],
+		"archiveSize": "1 MB",
+		"isHit": true
+	},
+	{
+		"slug": "concept-car",
+		"title": "Концепт-кар Volt",
+		"category": "vehicles",
+		"seller": "wheelhouse",
+		"price": 1490,
+		"short": "Спортивний концепт-кар з глянцевим лакокрасочним покриттям і детальним салоном.",
+		"description": "Високополігональна модель для рекламних рендерів: багатошаровий автомобільний лак, скло з заломленням, детальний салон. Колеса й двері окремими об'єктами для анімації.",
+		"images": [
+			"models/concept-car-1.jpg",
+			"models/concept-car-2.jpg"
+		],
+		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/CarConcept/glTF-Binary/CarConcept.glb",
+		"purpose": [
+			"viz",
+			"games",
+			"arvr"
+		],
+		"polygons": 420000,
+		"textures": "PBR, 4K",
+		"rigged": false,
+		"animated": false,
 		"software": [
 			"3ds Max",
-			"SketchUp",
 			"Blender"
 		],
 		"renderers": [
 			"Corona",
-			"V-Ray"
+			"V-Ray",
+			"Cycles"
 		],
 		"formats": [
 			"MAX",
 			"FBX",
 			"OBJ",
-			"SKP",
-			"BLEND",
 			"GLB"
+		],
+		"tags": [
+			"авто",
+			"спорткар",
+			"концепт",
+			"реклама"
+		],
+		"archiveSize": "96 MB",
+		"collection": "Volt",
+		"isHit": true
+	},
+	{
+		"slug": "toy-car",
+		"title": "Іграшкова машинка",
+		"category": "vehicles",
+		"seller": "wheelhouse",
+		"price": 290,
+		"short": "Ретро-машинка на оксамитовій драпіровці зі шовковим блиском тканини.",
+		"description": "Предметна сцена: металева іграшкова машинка на тканині з ефектом sheen. Демонструє складні матеріали й готова до каталожного рендеру.",
+		"images": [
+			"models/toy-car-1.jpg",
+			"models/toy-car-2.jpg"
+		],
+		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/ToyCar/glTF-Binary/ToyCar.glb",
+		"purpose": [
+			"viz",
+			"arvr"
+		],
+		"polygons": 32000,
+		"textures": "PBR, 2K",
+		"rigged": false,
+		"animated": false,
+		"software": [
+			"Blender",
+			"3ds Max"
+		],
+		"renderers": [
+			"Cycles",
+			"Corona"
+		],
+		"formats": [
+			"GLB",
+			"FBX",
+			"OBJ"
+		],
+		"tags": [
+			"іграшка",
+			"ретро",
+			"авто",
+			"тканина"
+		],
+		"archiveSize": "18 MB",
+		"isNew": true
+	},
+	{
+		"slug": "boombox",
+		"title": "Бумбокс 90-х",
+		"category": "electronics",
+		"seller": "wheelhouse",
+		"price": 240,
+		"short": "Ретро-магнітола з підсвіченим дисплеєм і детальними динаміками.",
+		"description": "Low-poly бумбокс із запеченими деталями та емісивним дисплеєм. Чудово виглядає в ігрових інтер'єрах і ретро-сценах.",
+		"images": [
+			"models/boombox-1.jpg",
+			"models/boombox-2.jpg"
+		],
+		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/BoomBox/glTF-Binary/BoomBox.glb",
+		"purpose": [
+			"viz",
+			"games",
+			"arvr"
+		],
+		"polygons": 9000,
+		"textures": "PBR, 2K",
+		"rigged": false,
+		"animated": false,
+		"software": [
+			"Blender",
+			"3ds Max",
+			"Maya"
+		],
+		"renderers": [
+			"Cycles",
+			"V-Ray"
+		],
+		"formats": [
+			"GLB",
+			"FBX",
+			"OBJ",
+			"BLEND"
+		],
+		"tags": [
+			"ретро",
+			"музика",
+			"електроніка"
+		],
+		"archiveSize": "22 MB"
+	},
+	{
+		"slug": "antique-camera",
+		"title": "Антикварна фотокамера",
+		"category": "electronics",
+		"seller": "wheelhouse",
+		"price": 390,
+		"short": "Вінтажна складна камера на дерев'яному штативі.",
+		"description": "Камера початку XX століття: міхи зі шкіри, латунь, дерев'яний штатив. Фотограмметричні текстури 4K для крупних планів.",
+		"images": [
+			"models/antique-camera-1.jpg",
+			"models/antique-camera-2.jpg"
+		],
+		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/AntiqueCamera/glTF-Binary/AntiqueCamera.glb",
+		"purpose": [
+			"viz",
+			"games"
+		],
+		"polygons": 48000,
+		"textures": "PBR, 4K",
+		"rigged": false,
+		"animated": false,
+		"software": [
+			"3ds Max",
+			"Blender"
+		],
+		"renderers": [
+			"Corona",
+			"Cycles"
+		],
+		"formats": [
+			"MAX",
+			"GLB",
+			"FBX"
+		],
+		"tags": [
+			"фото",
+			"вінтаж",
+			"штатив",
+			"дерево"
+		],
+		"archiveSize": "64 MB"
+	},
+	{
+		"slug": "chronograph-watch",
+		"title": "Годинник Chronograph",
+		"category": "electronics",
+		"seller": "wheelhouse",
+		"price": 590,
+		"short": "Спортивний годинник у золотому корпусі з рифленим ремінцем.",
+		"description": "Детальна модель для предметної зйомки: гравіювання на безелі, циферблат із мітками, анізотропний метал. Стрілки окремими об'єктами.",
+		"images": [
+			"models/chronograph-watch-2.jpg",
+			"models/chronograph-watch-1.jpg"
+		],
+		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/ChronographWatch/glTF-Binary/ChronographWatch.glb",
+		"purpose": [
+			"viz",
+			"arvr"
+		],
+		"polygons": 150000,
+		"textures": "PBR, 4K",
+		"rigged": false,
+		"animated": false,
+		"software": [
+			"3ds Max",
+			"Blender"
+		],
+		"renderers": [
+			"Corona",
+			"V-Ray",
+			"Cycles"
+		],
+		"formats": [
+			"MAX",
+			"FBX",
+			"OBJ",
+			"GLB"
+		],
+		"tags": [
+			"годинник",
+			"аксесуар",
+			"метал",
+			"e-commerce"
 		],
 		"archiveSize": "48 MB",
-		"collection": "Oslo",
-		"isHit": true
-	},
-	{
-		"slug": "armchair-sage",
-		"title": "Крісло Sage",
-		"category": "armchairs",
-		"price": 0,
-		"short": "Безкоштовна модель акцентного крісла в шавлієвому кольорі.",
-		"description": "Округле крісло на тонких металевих ніжках. Безкоштовна модель, щоб оцінити якість топології та матеріалів Assetra перед покупкою.",
-		"images": [
-			"https://images.pexels.com/photos/35632442/pexels-photo-35632442.jpeg"
-		],
-		"style": "modern",
-		"rooms": [
-			"living"
-		],
-		"materials": [
-			"Тканина",
-			"Метал"
-		],
-		"colors": [
-			"Шавлієвий"
-		],
-		"dimensions": {
-			"w": 72,
-			"d": 76,
-			"h": 80
-		},
-		"polygons": 52000,
-		"textures": "PBR, 2K",
-		"software": [
-			"3ds Max",
-			"Blender"
-		],
-		"renderers": [
-			"Corona"
-		],
-		"formats": [
-			"MAX",
-			"FBX",
-			"OBJ",
-			"BLEND"
-		],
-		"archiveSize": "36 MB",
 		"isNew": true
 	},
 	{
-		"slug": "chair-oak",
-		"title": "Стілець Oak",
-		"category": "chairs",
-		"price": 290,
-		"short": "Обідній стілець з масиву дуба з м'яким сидінням.",
-		"description": "Стілець з масиву дуба з тонким м'яким сидінням. Текстура дерева без видимих повторів, напрямок волокон відповідає реальному виробу. Входить в обідню колекцію Terra разом зі столом.",
+		"slug": "sunglasses",
+		"title": "Сонцезахисні окуляри Aviator",
+		"category": "fashion",
+		"seller": "oak-and-form",
+		"price": 150,
+		"short": "Окуляри-авіатори з райдужними лінзами, оптимізовані для AR-приміряння.",
+		"description": "Легка модель для віртуальної приміряльні: правильний масштаб, півот на переніссі, лінзи з тонкоплівковою інтерференцією.",
 		"images": [
-			"https://images.pexels.com/photos/13718035/pexels-photo-13718035.png",
-			"https://images.pexels.com/photos/35589991/pexels-photo-35589991.jpeg"
+			"models/sunglasses-1.jpg",
+			"models/sunglasses-2.jpg"
 		],
-		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/ChairDamaskPurplegold/glTF-Binary/ChairDamaskPurplegold.glb",
-		"style": "japandi",
-		"rooms": [
-			"kitchen",
-			"horeca"
+		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SunglassesKhronos/glTF-Binary/SunglassesKhronos.glb",
+		"purpose": [
+			"arvr",
+			"viz"
 		],
-		"materials": [
-			"Дерево",
-			"Тканина"
-		],
-		"colors": [
-			"Натуральний дуб",
-			"Горіх"
-		],
-		"dimensions": {
-			"w": 48,
-			"d": 52,
-			"h": 80
-		},
-		"polygons": 38000,
-		"textures": "PBR, 4K",
-		"software": [
-			"3ds Max",
-			"SketchUp",
-			"Blender"
-		],
-		"renderers": [
-			"Corona",
-			"V-Ray"
-		],
-		"formats": [
-			"MAX",
-			"FBX",
-			"OBJ",
-			"SKP",
-			"GLB"
-		],
-		"archiveSize": "42 MB",
-		"collection": "Terra",
-		"isHit": true
-	},
-	{
-		"slug": "chair-linen",
-		"title": "Стілець Linen",
-		"category": "chairs",
-		"price": 250,
-		"short": "Легкий стілець з лляними подушками в стилі japandi.",
-		"description": "Світлий дерев'яний каркас і знімні лляні подушки. Підходить для кухонь, їдалень і невеликих кав'ярень.",
-		"images": [
-			"https://images.pexels.com/photos/35589991/pexels-photo-35589991.jpeg"
-		],
-		"style": "japandi",
-		"rooms": [
-			"kitchen",
-			"living"
-		],
-		"materials": [
-			"Дерево",
-			"Тканина"
-		],
-		"colors": [
-			"Молочний"
-		],
-		"dimensions": {
-			"w": 50,
-			"d": 54,
-			"h": 78
-		},
-		"polygons": 34000,
-		"textures": "PBR, 2K",
-		"software": [
-			"3ds Max",
-			"SketchUp"
-		],
-		"renderers": [
-			"Corona",
-			"V-Ray"
-		],
-		"formats": [
-			"MAX",
-			"FBX",
-			"SKP"
-		],
-		"archiveSize": "31 MB"
-	},
-	{
-		"slug": "table-terra",
-		"title": "Обідній стіл Terra",
-		"category": "tables",
-		"price": 450,
-		"short": "Обідній стіл з дубовою стільницею на кам'яній опорі.",
-		"description": "Стільниця з масиву дуба і масивна опора з травертину. Два варіанти довжини, 180 і 200 см, в одному файлі. Разом зі стільцями Oak утворює повну обідню групу.",
-		"images": [
-			"https://images.pexels.com/photos/32473240/pexels-photo-32473240.png",
-			"https://images.pexels.com/photos/37817349/pexels-photo-37817349.jpeg"
-		],
-		"style": "modern",
-		"rooms": [
-			"kitchen",
-			"horeca"
-		],
-		"materials": [
-			"Дерево",
-			"Камінь"
-		],
-		"colors": [
-			"Дуб",
-			"Травертин"
-		],
-		"dimensions": {
-			"w": 200,
-			"d": 95,
-			"h": 75
-		},
-		"polygons": 22000,
-		"textures": "PBR, 4K",
-		"software": [
-			"3ds Max",
-			"SketchUp",
-			"Blender"
-		],
-		"renderers": [
-			"Corona",
-			"V-Ray"
-		],
-		"formats": [
-			"MAX",
-			"FBX",
-			"OBJ",
-			"SKP",
-			"BLEND"
-		],
-		"archiveSize": "58 MB",
-		"collection": "Terra",
-		"isHit": true
-	},
-	{
-		"slug": "dining-set-verde",
-		"title": "Обідня група Verde",
-		"category": "tables",
-		"price": 820,
-		"short": "Стіл і шість оксамитових стільців: готова група для їдальні.",
-		"description": "Повна обідня група: горіховий стіл і шість стільців з оксамитом смарагдового кольору. Сервірування в комплекті окремим шаром, його можна приховати.",
-		"images": [
-			"https://images.pexels.com/photos/32178055/pexels-photo-32178055.png",
-			"https://images.pexels.com/photos/37817349/pexels-photo-37817349.jpeg"
-		],
-		"style": "modern",
-		"rooms": [
-			"kitchen"
-		],
-		"materials": [
-			"Дерево",
-			"Тканина",
-			"Метал"
-		],
-		"colors": [
-			"Смарагдовий",
-			"Горіх"
-		],
-		"dimensions": {
-			"w": 180,
-			"d": 90,
-			"h": 75
-		},
-		"polygons": 186000,
-		"textures": "PBR, 4K",
-		"software": [
-			"3ds Max",
-			"Blender"
-		],
-		"renderers": [
-			"Corona",
-			"V-Ray"
-		],
-		"formats": [
-			"MAX",
-			"FBX",
-			"OBJ",
-			"BLEND"
-		],
-		"archiveSize": "176 MB",
-		"isNew": true
-	},
-	{
-		"slug": "bed-dune",
-		"title": "Ліжко Dune",
-		"category": "beds",
-		"price": 640,
-		"short": "Ліжко-подіум з постільною білизною, подушками та пледом.",
-		"description": "Низьке ліжко-подіум з м'яким узголів'ям. Постільна білизна змодельована в Marvelous Designer і доопрацьована вручну. Приліжкові тумби в комплекті.",
-		"images": [
-			"https://images.pexels.com/photos/33314768/pexels-photo-33314768.png",
-			"https://images.pexels.com/photos/35229095/pexels-photo-35229095.jpeg"
-		],
-		"style": "minimal",
-		"rooms": [
-			"bedroom"
-		],
-		"materials": [
-			"Тканина",
-			"Дерево"
-		],
-		"colors": [
-			"Пісочний",
-			"Білий"
-		],
-		"dimensions": {
-			"w": 200,
-			"d": 220,
-			"h": 95
-		},
-		"polygons": 240000,
-		"textures": "PBR, 4K",
-		"software": [
-			"3ds Max",
-			"SketchUp",
-			"Blender"
-		],
-		"renderers": [
-			"Corona",
-			"V-Ray"
-		],
-		"formats": [
-			"MAX",
-			"FBX",
-			"OBJ",
-			"SKP",
-			"BLEND"
-		],
-		"archiveSize": "198 MB",
-		"isHit": true
-	},
-	{
-		"slug": "bed-amber",
-		"title": "Ліжко Amber",
-		"category": "beds",
-		"price": 590,
-		"short": "Дерев'яне ліжко з теплим текстилем для затишної спальні.",
-		"description": "Каркас з горіха, лляний текстиль у теплих відтінках. Сцена з вечірнім світлом входить в архів, тож модель одразу готова до рендеру.",
-		"images": [
-			"https://images.pexels.com/photos/30823765/pexels-photo-30823765.jpeg",
-			"https://images.pexels.com/photos/35229095/pexels-photo-35229095.jpeg"
-		],
-		"style": "japandi",
-		"rooms": [
-			"bedroom"
-		],
-		"materials": [
-			"Дерево",
-			"Тканина"
-		],
-		"colors": [
-			"Горіх",
-			"Теплий білий"
-		],
-		"dimensions": {
-			"w": 180,
-			"d": 210,
-			"h": 90
-		},
-		"polygons": 205000,
-		"textures": "PBR, 4K",
-		"software": [
-			"3ds Max",
-			"Blender"
-		],
-		"renderers": [
-			"Corona"
-		],
-		"formats": [
-			"MAX",
-			"FBX",
-			"OBJ",
-			"BLEND"
-		],
-		"archiveSize": "154 MB"
-	},
-	{
-		"slug": "sideboard-rattan",
-		"title": "Комод Rattan",
-		"category": "storage",
-		"price": 420,
-		"short": "Комод з рейковими фасадами та ящиками з ротангу.",
-		"description": "Рейкові дверцята і висувні ящики з плетінням з ротангу. Плетіння зроблене геометрією, а не картою прозорості, тому коректно виглядає на близьких ракурсах.",
-		"images": [
-			"https://images.pexels.com/photos/11112749/pexels-photo-11112749.jpeg"
-		],
-		"style": "scandinavian",
-		"rooms": [
-			"living",
-			"bedroom"
-		],
-		"materials": [
-			"Дерево",
-			"Ротанг"
-		],
-		"colors": [
-			"Світлий дуб"
-		],
-		"dimensions": {
-			"w": 160,
-			"d": 45,
-			"h": 78
-		},
-		"polygons": 96000,
-		"textures": "PBR, 4K",
-		"software": [
-			"3ds Max",
-			"SketchUp",
-			"Blender"
-		],
-		"renderers": [
-			"Corona",
-			"V-Ray"
-		],
-		"formats": [
-			"MAX",
-			"FBX",
-			"OBJ",
-			"SKP"
-		],
-		"archiveSize": "72 MB",
-		"isNew": true
-	},
-	{
-		"slug": "chest-vessel",
-		"title": "Комод Vessel",
-		"category": "storage",
-		"price": 380,
-		"short": "Комод з вигнутим корпусом і латунною фурнітурою.",
-		"description": "Класичний комод з вигнутим корпусом, ручки з латуні. Підійде для класичних і неокласичних інтер'єрів.",
-		"images": [
-			"https://images.pexels.com/photos/11112736/pexels-photo-11112736.jpeg"
-		],
-		"style": "classic",
-		"rooms": [
-			"bedroom",
-			"living"
-		],
-		"materials": [
-			"Дерево",
-			"Метал"
-		],
-		"colors": [
-			"Горіх"
-		],
-		"dimensions": {
-			"w": 120,
-			"d": 48,
-			"h": 82
-		},
-		"polygons": 88000,
-		"textures": "PBR, 2K",
-		"software": [
-			"3ds Max",
-			"SketchUp"
-		],
-		"renderers": [
-			"V-Ray"
-		],
-		"formats": [
-			"MAX",
-			"FBX",
-			"SKP"
-		],
-		"archiveSize": "54 MB"
-	},
-	{
-		"slug": "pendant-halo",
-		"title": "Підвісний світильник Halo",
-		"category": "lighting",
-		"price": 190,
-		"short": "Підвісний світильник з опаловими кулями на латунному каркасі.",
-		"description": "Каркас з латуні та опалові плафони. Джерела світла вже налаштовані для Corona і V-Ray, а висоту підвісу легко змінити.",
-		"images": [
-			"https://images.pexels.com/photos/16769172/pexels-photo-16769172.jpeg"
-		],
-		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/AnisotropyBarnLamp/glTF-Binary/AnisotropyBarnLamp.glb",
-		"style": "modern",
-		"rooms": [
-			"living",
-			"kitchen",
-			"horeca"
-		],
-		"materials": [
-			"Метал",
-			"Скло"
-		],
-		"colors": [
-			"Латунь",
-			"Опал"
-		],
-		"dimensions": {
-			"w": 45,
-			"d": 45,
-			"h": 120
-		},
-		"polygons": 18000,
-		"textures": "PBR, 2K",
-		"software": [
-			"3ds Max",
-			"SketchUp",
-			"Blender"
-		],
-		"renderers": [
-			"Corona",
-			"V-Ray"
-		],
-		"formats": [
-			"MAX",
-			"FBX",
-			"OBJ",
-			"SKP",
-			"GLB"
-		],
-		"archiveSize": "22 MB",
-		"isHit": true
-	},
-	{
-		"slug": "lamp-arc",
-		"title": "Настільна лампа Arc",
-		"category": "lighting",
-		"price": 0,
-		"short": "Безкоштовна настільна лампа з тканинним абажуром.",
-		"description": "Мінімалістична лампа з тканинним абажуром і налаштованим теплим джерелом світла. Безкоштовна модель.",
-		"images": [
-			"https://images.pexels.com/photos/20557088/pexels-photo-20557088.jpeg",
-			"https://images.pexels.com/photos/20573189/pexels-photo-20573189.jpeg"
-		],
-		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/IridescenceLamp/glTF-Binary/IridescenceLamp.glb",
-		"style": "minimal",
-		"rooms": [
-			"living",
-			"office",
-			"bedroom"
-		],
-		"materials": [
-			"Метал",
-			"Тканина"
-		],
-		"colors": [
-			"Білий",
-			"Чорний"
-		],
-		"dimensions": {
-			"w": 30,
-			"d": 30,
-			"h": 52
-		},
 		"polygons": 12000,
 		"textures": "PBR, 2K",
+		"rigged": false,
+		"animated": false,
 		"software": [
-			"3ds Max",
-			"Blender"
+			"Blender",
+			"3ds Max"
 		],
 		"renderers": [
+			"Cycles",
 			"Corona"
 		],
 		"formats": [
-			"MAX",
+			"GLB",
+			"USDZ",
+			"FBX"
+		],
+		"tags": [
+			"окуляри",
+			"AR-приміряння",
+			"аксесуар"
+		],
+		"archiveSize": "2 MB"
+	},
+	{
+		"slug": "corset",
+		"title": "Вінтажний корсет",
+		"category": "fashion",
+		"seller": "oak-and-form",
+		"price": 490,
+		"short": "Вікторіанський корсет на манекені з фотограмметричною тканиною.",
+		"description": "Сканована модель корсета з детальною фактурою парчі, люверсами й шнурівкою. Для історичних сцен, ігор і модних візуалізацій.",
+		"images": [
+			"models/corset-1.jpg",
+			"models/corset-2.jpg"
+		],
+		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/Corset/glTF-Binary/Corset.glb",
+		"purpose": [
+			"viz",
+			"games"
+		],
+		"polygons": 75000,
+		"textures": "PBR, 4K",
+		"rigged": false,
+		"animated": false,
+		"software": [
+			"Marvelous Designer",
+			"Blender"
+		],
+		"renderers": [
+			"Cycles",
+			"Arnold"
+		],
+		"formats": [
+			"GLB",
 			"FBX",
-			"OBJ",
-			"BLEND",
-			"GLB"
+			"OBJ"
+		],
+		"tags": [
+			"одяг",
+			"тканина",
+			"вікторіанський стиль"
+		],
+		"archiveSize": "52 MB"
+	},
+	{
+		"slug": "scifi-helmet",
+		"title": "Sci-Fi шолом пілота",
+		"category": "props",
+		"seller": "polyforge",
+		"price": 450,
+		"short": "Пошкоджений шолом пілота з емісивним HUD і картами зносу.",
+		"description": "Класичний game-ready пропс: подряпини й сколи запечені з high-poly, емісивні елементи візора. Ідеальний для sci-fi рівнів.",
+		"images": [
+			"models/scifi-helmet-1.jpg",
+			"models/scifi-helmet-2.jpg"
+		],
+		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/DamagedHelmet/glTF-Binary/DamagedHelmet.glb",
+		"purpose": [
+			"games",
+			"viz"
+		],
+		"polygons": 46000,
+		"textures": "PBR, 2K",
+		"rigged": false,
+		"animated": false,
+		"software": [
+			"Blender",
+			"Unity",
+			"Unreal Engine",
+			"Substance Painter"
+		],
+		"renderers": [
+			"Eevee",
+			"Cycles"
+		],
+		"formats": [
+			"GLB",
+			"FBX",
+			"BLEND"
+		],
+		"tags": [
+			"sci-fi",
+			"шолом",
+			"пошкодження",
+			"game-ready"
 		],
 		"archiveSize": "14 MB",
+		"collection": "Mecha",
+		"isHit": true
+	},
+	{
+		"slug": "oil-lantern",
+		"title": "Вуличний ліхтар",
+		"category": "props",
+		"seller": "polyforge",
+		"price": 120,
+		"short": "Дерев'яний стовп із підвісним масляним ліхтарем.",
+		"description": "Пропс для фентезійних і середньовічних рівнів: оптимізована сітка, PBR-текстури та готове емісивне скло.",
+		"images": [
+			"models/oil-lantern-1.jpg",
+			"models/oil-lantern-2.jpg"
+		],
+		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/Lantern/glTF-Binary/Lantern.glb",
+		"purpose": [
+			"games"
+		],
+		"polygons": 7000,
+		"textures": "PBR, 2K",
+		"rigged": false,
+		"animated": false,
+		"software": [
+			"Blender",
+			"Unity",
+			"Unreal Engine"
+		],
+		"renderers": [
+			"Eevee"
+		],
+		"formats": [
+			"GLB",
+			"FBX"
+		],
+		"tags": [
+			"ліхтар",
+			"середньовіччя",
+			"дерево",
+			"метал"
+		],
+		"archiveSize": "9 MB"
+	},
+	{
+		"slug": "pot-of-coals",
+		"title": "Казан із жаринами",
+		"category": "props",
+		"seller": "polyforge",
+		"price": 0,
+		"short": "Безкоштовний казан з розжареним вугіллям та ефектом свічення.",
+		"description": "Мідний казан із жаринами, що світяться завдяки емісивній карті. Безкоштовна модель для знайомства з якістю PolyForge.",
+		"images": [
+			"models/pot-of-coals-1.jpg",
+			"models/pot-of-coals-2.jpg"
+		],
+		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/PotOfCoals/glTF-Binary/PotOfCoals.glb",
+		"purpose": [
+			"games",
+			"viz"
+		],
+		"polygons": 18000,
+		"textures": "PBR, 2K",
+		"rigged": false,
+		"animated": false,
+		"software": [
+			"Blender",
+			"Unity",
+			"Unreal Engine"
+		],
+		"renderers": [
+			"Eevee",
+			"Cycles"
+		],
+		"formats": [
+			"GLB",
+			"FBX"
+		],
+		"tags": [
+			"вогонь",
+			"емісія",
+			"метал"
+		],
+		"archiveSize": "5 MB",
 		"isNew": true
 	},
 	{
-		"slug": "decor-bust-set",
-		"title": "Набір скульптур Bust",
-		"category": "decor",
-		"price": 150,
-		"short": "Три абстрактні скульптури для стелажів і консолей.",
-		"description": "Набір з трьох абстрактних бюстів з різною фактурою: матова кераміка, полірований камінь і теракота.",
+		"slug": "water-bottle",
+		"title": "Металева пляшка",
+		"category": "props",
+		"seller": "oak-and-form",
+		"price": 90,
+		"short": "Термопляшка з анодованим металом для мокапів і реклами.",
+		"description": "Проста й легка модель для пакувальних мокапів: UV розкладка під заміну етикетки, PBR-метал.",
 		"images": [
-			"https://images.pexels.com/photos/32541183/pexels-photo-32541183.jpeg"
+			"models/water-bottle-1.jpg",
+			"models/water-bottle-2.jpg"
 		],
-		"style": "modern",
-		"rooms": [
-			"living",
-			"office"
+		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/WaterBottle/glTF-Binary/WaterBottle.glb",
+		"purpose": [
+			"viz",
+			"arvr"
 		],
-		"materials": [
-			"Камінь",
-			"Кераміка"
-		],
-		"colors": [
-			"Білий",
-			"Теракотовий"
-		],
-		"dimensions": {
-			"w": 40,
-			"d": 18,
-			"h": 32
-		},
-		"polygons": 60000,
+		"polygons": 3000,
 		"textures": "PBR, 2K",
+		"rigged": false,
+		"animated": false,
+		"software": [
+			"Blender",
+			"3ds Max",
+			"Maya"
+		],
+		"renderers": [
+			"Cycles",
+			"Corona"
+		],
+		"formats": [
+			"GLB",
+			"FBX",
+			"OBJ"
+		],
+		"tags": [
+			"пляшка",
+			"упаковка",
+			"мокап"
+		],
+		"archiveSize": "8 MB"
+	},
+	{
+		"slug": "velvet-sofa",
+		"title": "Оксамитовий диван Glam",
+		"category": "interior",
+		"seller": "oak-and-form",
+		"price": 590,
+		"short": "Вигнутий оксамитовий диван на тонких металевих ніжках.",
+		"description": "Модель з реальними габаритами 240 см, оксамит із ефектом sheen та стьобка. Для візуалізації вітальні й лаунж-зон.",
+		"images": [
+			"models/velvet-sofa-1.jpg",
+			"models/velvet-sofa-2.jpg"
+		],
+		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/GlamVelvetSofa/glTF-Binary/GlamVelvetSofa.glb",
+		"purpose": [
+			"viz",
+			"arvr"
+		],
+		"polygons": 148000,
+		"textures": "PBR, 4K",
+		"rigged": false,
+		"animated": false,
 		"software": [
 			"3ds Max",
 			"SketchUp",
@@ -765,100 +641,303 @@
 			"MAX",
 			"FBX",
 			"OBJ",
-			"SKP",
-			"BLEND"
+			"SKP"
+		],
+		"tags": [
+			"диван",
+			"оксамит",
+			"вітальня"
+		],
+		"archiveSize": "112 MB",
+		"isHit": true
+	},
+	{
+		"slug": "sheen-chair",
+		"title": "Крісло Sheen",
+		"category": "interior",
+		"seller": "oak-and-form",
+		"price": 290,
+		"short": "Крісло в стилі mid-century зі стьобаною подушкою.",
+		"description": "Дерев'яний каркас і стьобана оббивка з шовковистим блиском. Кольорові варіанти тканини в архіві.",
+		"images": [
+			"models/sheen-chair-1.jpg",
+			"models/sheen-chair-2.jpg"
+		],
+		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SheenChair/glTF-Binary/SheenChair.glb",
+		"purpose": [
+			"viz",
+			"arvr"
+		],
+		"polygons": 40000,
+		"textures": "PBR, 2K",
+		"rigged": false,
+		"animated": false,
+		"software": [
+			"3ds Max",
+			"Blender"
+		],
+		"renderers": [
+			"Corona",
+			"V-Ray"
+		],
+		"formats": [
+			"MAX",
+			"FBX",
+			"GLB"
+		],
+		"tags": [
+			"крісло",
+			"тканина",
+			"mid-century"
+		],
+		"archiveSize": "16 MB"
+	},
+	{
+		"slug": "damask-chair",
+		"title": "Крісло Damask",
+		"category": "interior",
+		"seller": "oak-and-form",
+		"price": 320,
+		"short": "Класичне крісло з дамаською тканиною в пурпурово-золотих тонах.",
+		"description": "Візерунок дамаск без розтягувань, тканина з sheen-ефектом. Для класичних і неокласичних інтер'єрів.",
+		"images": [
+			"models/damask-chair-1.jpg",
+			"models/damask-chair-2.jpg"
+		],
+		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/ChairDamaskPurplegold/glTF-Binary/ChairDamaskPurplegold.glb",
+		"purpose": [
+			"viz"
+		],
+		"polygons": 36000,
+		"textures": "PBR, 2K",
+		"rigged": false,
+		"animated": false,
+		"software": [
+			"3ds Max",
+			"Blender"
+		],
+		"renderers": [
+			"Corona",
+			"V-Ray"
+		],
+		"formats": [
+			"MAX",
+			"FBX",
+			"GLB"
+		],
+		"tags": [
+			"крісло",
+			"дамаск",
+			"класика"
+		],
+		"archiveSize": "12 MB",
+		"isNew": true
+	},
+	{
+		"slug": "barn-lamp",
+		"title": "Настінний світильник Barn",
+		"category": "interior",
+		"seller": "oak-and-form",
+		"price": 180,
+		"short": "Мідний настінний світильник з анізотропним шліфованим металом.",
+		"description": "Лофтовий світильник із реалістичною анізотропією міді та налаштованим джерелом світла.",
+		"images": [
+			"models/barn-lamp-1.jpg",
+			"models/barn-lamp-2.jpg"
+		],
+		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/AnisotropyBarnLamp/glTF-Binary/AnisotropyBarnLamp.glb",
+		"purpose": [
+			"viz",
+			"games"
+		],
+		"polygons": 22000,
+		"textures": "PBR, 2K",
+		"rigged": false,
+		"animated": false,
+		"software": [
+			"3ds Max",
+			"Blender"
+		],
+		"renderers": [
+			"Corona",
+			"V-Ray",
+			"Cycles"
+		],
+		"formats": [
+			"MAX",
+			"FBX",
+			"GLB"
+		],
+		"tags": [
+			"світильник",
+			"мідь",
+			"лофт"
 		],
 		"archiveSize": "26 MB"
 	},
 	{
-		"slug": "decor-vases-indigo",
-		"title": "Набір ваз Indigo",
-		"category": "decor",
-		"price": 120,
-		"short": "Три керамічні вази з ручним розписом.",
-		"description": "Вази з глазур'ю та ручним розписом у кобальтових тонах. Розпис запечено в текстури 4K без розтягувань.",
-		"images": [
-			"https://images.pexels.com/photos/18633243/pexels-photo-18633243.jpeg"
-		],
-		"style": "classic",
-		"rooms": [
-			"living",
-			"kitchen"
-		],
-		"materials": [
-			"Кераміка"
-		],
-		"colors": [
-			"Кобальтовий"
-		],
-		"dimensions": {
-			"w": 50,
-			"d": 18,
-			"h": 36
-		},
-		"polygons": 24000,
-		"textures": "PBR, 4K",
-		"software": [
-			"3ds Max",
-			"SketchUp"
-		],
-		"renderers": [
-			"Corona",
-			"V-Ray"
-		],
-		"formats": [
-			"MAX",
-			"FBX",
-			"SKP"
-		],
-		"archiveSize": "34 MB"
-	},
-	{
-		"slug": "decor-succulents",
-		"title": "Рослини в кашпо",
-		"category": "decor",
+		"slug": "iridescent-lamp",
+		"title": "Настільна лампа Iris",
+		"category": "interior",
+		"seller": "oak-and-form",
 		"price": 0,
-		"short": "Безкоштовний набір сукулентів і кактусів у керамічних кашпо.",
-		"description": "Опунція, пахіфітум і два кашпо з різною глазур'ю. Безкоштовний набір, щоб додати в сцену трохи живої зелені.",
+		"short": "Безкоштовна лампа з райдужною скляною кулею.",
+		"description": "Лампа з тканинним абажуром і скляною основою з тонкоплівковою інтерференцією. Безкоштовна модель.",
 		"images": [
-			"https://images.pexels.com/photos/5144485/pexels-photo-5144485.jpeg"
+			"models/iridescent-lamp-1.jpg",
+			"models/iridescent-lamp-2.jpg"
 		],
-		"style": "scandinavian",
-		"rooms": [
-			"living",
-			"office",
-			"horeca"
+		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/IridescenceLamp/glTF-Binary/IridescenceLamp.glb",
+		"purpose": [
+			"viz"
 		],
-		"materials": [
-			"Кераміка",
-			"Рослини"
-		],
-		"colors": [
-			"Зелений"
-		],
-		"dimensions": {
-			"w": 60,
-			"d": 20,
-			"h": 45
-		},
-		"polygons": 140000,
+		"polygons": 15000,
 		"textures": "PBR, 2K",
+		"rigged": false,
+		"animated": false,
 		"software": [
-			"3ds Max",
-			"SketchUp",
-			"Blender"
+			"Blender",
+			"3ds Max"
 		],
 		"renderers": [
-			"Corona",
-			"V-Ray"
+			"Cycles",
+			"Corona"
 		],
 		"formats": [
-			"MAX",
+			"GLB",
 			"FBX",
-			"OBJ",
-			"SKP",
 			"BLEND"
 		],
-		"archiveSize": "46 MB"
+		"tags": [
+			"лампа",
+			"скло",
+			"райдужний ефект"
+		],
+		"archiveSize": "14 MB"
+	},
+	{
+		"slug": "potted-plant",
+		"title": "Рослина в кашпо",
+		"category": "nature",
+		"seller": "greenleaf",
+		"price": 220,
+		"short": "Кімнатна рослина з реалістичним просвічуванням листя.",
+		"description": "Листя з дифузним пропусканням світла виглядає живим навіть у контровому освітленні. Теракотове кашпо в комплекті.",
+		"images": [
+			"models/potted-plant-1.jpg",
+			"models/potted-plant-2.jpg"
+		],
+		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/DiffuseTransmissionPlant/glTF-Binary/DiffuseTransmissionPlant.glb",
+		"purpose": [
+			"viz",
+			"games"
+		],
+		"polygons": 90000,
+		"textures": "PBR, 4K",
+		"rigged": false,
+		"animated": false,
+		"software": [
+			"Blender",
+			"3ds Max"
+		],
+		"renderers": [
+			"Cycles",
+			"Corona"
+		],
+		"formats": [
+			"GLB",
+			"FBX",
+			"OBJ"
+		],
+		"tags": [
+			"рослина",
+			"кашпо",
+			"листя"
+		],
+		"archiveSize": "24 MB",
+		"isHit": true
+	},
+	{
+		"slug": "vase-flowers",
+		"title": "Квіти у скляних вазах",
+		"category": "nature",
+		"seller": "greenleaf",
+		"price": 160,
+		"short": "Дві скляні вази з польовими квітами для наповнення сцени.",
+		"description": "Скло з товщиною та заломленням, квіти з окремими пелюстками. Невеликий декор, що оживляє інтер'єрні рендери.",
+		"images": [
+			"models/vase-flowers-1.jpg",
+			"models/vase-flowers-2.jpg"
+		],
+		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/GlassVaseFlowers/glTF-Binary/GlassVaseFlowers.glb",
+		"purpose": [
+			"viz"
+		],
+		"polygons": 60000,
+		"textures": "PBR, 2K",
+		"rigged": false,
+		"animated": false,
+		"software": [
+			"Blender",
+			"3ds Max"
+		],
+		"renderers": [
+			"Cycles",
+			"Corona"
+		],
+		"formats": [
+			"GLB",
+			"FBX"
+		],
+		"tags": [
+			"квіти",
+			"ваза",
+			"скло",
+			"декор"
+		],
+		"archiveSize": "8 MB"
+	},
+	{
+		"slug": "avocado",
+		"title": "Авокадо",
+		"category": "nature",
+		"seller": "greenleaf",
+		"price": 0,
+		"short": "Безкоштовна фотограмметрична модель половинки авокадо.",
+		"description": "Сканована половинка авокадо з реалістичною текстурою. Легка, підходить для кулінарних сцен і AR.",
+		"images": [
+			"models/avocado-1.jpg",
+			"models/avocado-2.jpg"
+		],
+		"model": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/Avocado/glTF-Binary/Avocado.glb",
+		"purpose": [
+			"viz",
+			"arvr"
+		],
+		"polygons": 700,
+		"textures": "PBR, 2K",
+		"rigged": false,
+		"animated": false,
+		"software": [
+			"Blender",
+			"3ds Max",
+			"Maya"
+		],
+		"renderers": [
+			"Cycles",
+			"Eevee"
+		],
+		"formats": [
+			"GLB",
+			"FBX",
+			"OBJ"
+		],
+		"tags": [
+			"їжа",
+			"фрукт",
+			"фотограмметрія"
+		],
+		"archiveSize": "8 MB",
+		"isNew": true
 	}
 ]

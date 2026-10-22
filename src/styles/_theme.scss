@@ -9,12 +9,12 @@
   --c-secondary: #c53d3d;
   --c-secondary-hover: #962a2a;
 
-  /* topbar (frosted translucent olive; the home hero swaps it for light glass below) */
-  --c-topbar-bg: rgba(72, 78, 60, 0.6);
+  /* topbar & footer: frosted translucent dark green (the home hero drops the topbar background) */
+  --c-topbar-bg: rgba(38, 44, 32, 0.74);
   --c-topbar-text: #f7f5ef;
-  --c-topbar-hover: rgba(247, 245, 239, 0.16);
+  --c-topbar-hover: rgba(247, 245, 239, 0.12);
   --c-accent: #b98a69;
-  --c-topbar-border: rgba(247, 245, 239, 0.28);
+  --c-topbar-border: rgba(247, 245, 239, 0.16);
 
   /* surfaces */
   --c-bg-primary: #f7f5ef;
@@ -76,7 +76,7 @@
 html[data-mode='dark'] {
   color-scheme: dark;
 
-  --c-topbar-bg: rgba(65, 70, 56, 0.55);
+  --c-topbar-bg: rgba(24, 28, 20, 0.72);
 
   /* surfaces */
   --c-bg-primary: #1e201b;
@@ -100,6 +100,17 @@ html[data-mode='dark'] {
 
   /* focus (keeps using primary) */
   --focus-ring: 0 0 0 3px rgba(154, 162, 134, 0.45);
+}
+
+/* ========= home page keeps the lighter olive topbar (below the hero) and footer ========= */
+html.route-home {
+  --c-topbar-bg: rgba(72, 78, 60, 0.6);
+  --c-topbar-hover: rgba(247, 245, 239, 0.16);
+  --c-topbar-border: rgba(247, 245, 239, 0.28);
+}
+
+html.route-home[data-mode='dark'] {
+  --c-topbar-bg: rgba(65, 70, 56, 0.55);
 }
 
 /* ========= home topbar: bare text links floating over the hero photo ========= */

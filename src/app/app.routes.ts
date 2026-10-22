@@ -1,6 +1,10 @@
 import { Routes } from '@angular/router';
 import { buildRouteMeta } from '@wawjs/ngx-default';
-import { categoryMetaResolver, productMetaResolver } from './feature/catalog/catalog.resolver';
+import {
+	categoryMetaResolver,
+	productMetaResolver,
+	sellerMetaResolver,
+} from './feature/catalog/catalog.resolver';
 import { companyProfile } from './feature/company/company.data';
 
 export const routes: Routes = [
@@ -19,9 +23,9 @@ export const routes: Routes = [
 		path: 'catalog',
 		data: {
 			meta: {
-				title: 'Каталог 3D-моделей меблів та декору',
+				title: 'Каталог 3D-моделей',
 				description:
-					"Каталог 3D-моделей меблів, світильників і декору для візуалізації інтер'єрів. Фільтри за стилем, приміщенням, матеріалом і програмою.",
+					'Каталог 3D-моделей для ігор, візуалізації, AR/VR та анімації. Фільтри за призначенням, полігональністю, ригом, анімацією та форматом.',
 			},
 		},
 		loadComponent: () =>
@@ -38,6 +42,40 @@ export const routes: Routes = [
 		resolve: { meta: productMetaResolver },
 		loadComponent: () =>
 			import('./pages/product/product.component').then((m) => m.ProductComponent),
+	},
+	{
+		path: 'cart',
+		data: { meta: { title: 'Кошик', robots: 'noindex, follow' } },
+		loadComponent: () => import('./pages/cart/cart.component').then((m) => m.CartComponent),
+	},
+	{
+		path: 'order',
+		data: {
+			meta: {
+				title: 'Замовлення 3D-моделі',
+				description:
+					'Оформіть замовлення моделей з кошика або замовте нову 3D-модель за референсами, кресленням чи описом у потрібному форматі.',
+			},
+		},
+		loadComponent: () => import('./pages/order/order.component').then((m) => m.OrderComponent),
+	},
+	{
+		path: 'sellers',
+		data: {
+			meta: {
+				title: 'Продавці 3D-моделей',
+				description:
+					'Студії та 3D-художники, які продають моделі персонажів, транспорту, техніки, ігрових предметів і меблів на Assetra.',
+			},
+		},
+		loadComponent: () =>
+			import('./pages/sellers/sellers.component').then((m) => m.SellersComponent),
+	},
+	{
+		path: 'seller/:slug',
+		resolve: { meta: sellerMetaResolver },
+		loadComponent: () =>
+			import('./pages/seller/seller.component').then((m) => m.SellerComponent),
 	},
 	{
 		path: '**',

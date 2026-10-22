@@ -1,6 +1,7 @@
-export type ProductStyle = 'modern' | 'scandinavian' | 'loft' | 'minimal' | 'classic' | 'japandi';
+/** What the model is made for: games, visualization, AR/VR or animation. */
+export type ProductPurpose = 'games' | 'viz' | 'arvr' | 'animation';
 
-export type ProductRoom = 'living' | 'bedroom' | 'kitchen' | 'office' | 'horeca';
+export type PolygonTier = 'low' | 'mid' | 'high';
 
 export type CatalogSort = 'popular' | 'new' | 'price-asc' | 'price-desc';
 
@@ -12,28 +13,33 @@ export interface Category {
 	image: string;
 }
 
-export interface ProductDimensions {
-	w: number;
-	d: number;
-	h: number;
+export interface Seller {
+	slug: string;
+	name: string;
+	city: string;
+	since: number;
+	/** Avatar background; sellers are shown with initials until they upload a photo. */
+	color: string;
+	bio: string;
+	specialties: string[];
 }
 
 export interface Product {
 	slug: string;
 	title: string;
 	category: string;
+	seller: string;
 	price: number;
 	short: string;
 	description: string;
 	images: string[];
 	model?: string;
-	style: ProductStyle;
-	rooms: ProductRoom[];
-	materials: string[];
-	colors: string[];
-	dimensions: ProductDimensions;
+	purpose: ProductPurpose[];
 	polygons: number;
 	textures: string;
+	rigged: boolean;
+	animated: boolean;
+	tags: string[];
 	software: string[];
 	renderers: string[];
 	formats: string[];

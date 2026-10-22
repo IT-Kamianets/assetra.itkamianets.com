@@ -7,6 +7,7 @@ import { LanguageService, TranslateDirective, TranslateService } from '@wawjs/ng
 import { ThemeService } from '@wawjs/ngx-ui';
 import type { Language } from '@wawjs/ngx-translate';
 import type { AppLanguage } from '../../../environments/environment.prod';
+import { CartService } from '../../feature/cart/cart.service';
 import { CompanyService } from '../../feature/company/company.service';
 import { ScrollService } from '../../services/scroll.service';
 import { TopbarSearchComponent } from './search/topbar-search.component';
@@ -30,11 +31,12 @@ export class TopbarComponent {
 	private readonly _companyService = inject(CompanyService);
 	private readonly _router = inject(Router);
 	private readonly _scrollService = inject(ScrollService);
+	protected readonly cart = inject(CartService);
 	private readonly _host = inject<ElementRef<HTMLElement>>(ElementRef);
 
 	protected readonly navLinks = [
 		{ label: 'Каталог', path: '/catalog', query: null, secondary: false },
-		{ label: 'Безкоштовні', path: '/catalog', query: { price: 'free' }, secondary: true },
+		{ label: 'Продавці', path: '/sellers', query: null, secondary: true },
 	];
 	protected readonly mode = computed(() => this._themeService.mode() ?? 'light');
 	protected readonly languageMenuOpen = signal(false);

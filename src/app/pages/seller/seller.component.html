@@ -1,0 +1,70 @@
+<div class="mx-auto max-w-[var(--container)] px-4 py-8 sm:px-6 lg:py-10">
+	<app-breadcrumbs [items]="breadcrumbs()" />
+
+	<header
+		class="mt-6 flex flex-col gap-6 rounded-[calc(var(--radius-card)*2)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-6 sm:flex-row sm:items-start sm:p-8"
+	>
+		<app-seller-avatar [seller]="seller()" [size]="88" />
+
+		<div class="min-w-0 flex-1">
+			<p class="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--c-primary)]">Продавець</p>
+			<h1 class="mt-1 text-3xl font-semibold tracking-[-0.02em] text-[var(--c-text-strong)] sm:text-4xl">
+				{{ seller().name }}
+			</h1>
+			<p class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-[var(--c-text-muted)]">
+				<span class="inline-flex items-center gap-1">
+					<span class="material-symbols-outlined text-[18px]" aria-hidden="true">location_on</span>
+					{{ seller().city }}
+				</span>
+				<span>На Assetra з {{ seller().since }} року</span>
+			</p>
+			<p class="mt-4 max-w-3xl leading-7">{{ seller().bio }}</p>
+
+			<ul class="mt-4 flex flex-wrap gap-2">
+				@for (tag of seller().specialties; track tag) {
+					<li class="rounded-full bg-[var(--c-bg-tertiary)] px-3 py-1 text-xs font-medium text-[var(--c-text-strong)]">
+						{{ tag }}
+					</li>
+				}
+			</ul>
+		</div>
+
+		<div class="flex shrink-0 flex-col gap-4 sm:items-end">
+			<dl class="flex gap-8 sm:text-right">
+				<div>
+					<dt class="text-sm text-[var(--c-text-muted)]">Моделей</dt>
+					<dd class="text-2xl font-semibold text-[var(--c-text-strong)]">{{ products().length }}</dd>
+				</div>
+				<div>
+					<dt class="text-sm text-[var(--c-text-muted)]">Безкоштовних</dt>
+					<dd class="text-2xl font-semibold text-[var(--c-text-strong)]">{{ freeCount() }}</dd>
+				</div>
+			</dl>
+			<a
+				class="theme-interactive theme-focus inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-5 font-semibold text-[var(--c-text-strong)] hover:border-[var(--c-primary)]"
+				routerLink="/order"
+			>
+				<span class="material-symbols-outlined text-[20px]" aria-hidden="true">design_services</span>
+				Замовити модель
+			</a>
+		</div>
+	</header>
+
+	<section class="mt-12">
+		<div class="flex flex-wrap items-end justify-between gap-4">
+			<h2 class="text-2xl font-semibold text-[var(--c-text-strong)]">Моделі продавця</h2>
+			<a
+				class="theme-focus rounded font-semibold text-[var(--c-primary)] hover:underline"
+				routerLink="/catalog"
+				[queryParams]="{ seller: seller().slug }"
+			>
+				Відкрити в каталозі з фільтрами
+			</a>
+		</div>
+		<ul class="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+			@for (product of products(); track product.slug) {
+				<li><app-product-card [product]="product" /></li>
+			}
+		</ul>
+	</section>
+</div>

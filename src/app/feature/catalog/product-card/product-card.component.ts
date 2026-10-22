@@ -1,6 +1,7 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { formatDimensions, formatPrice, getCategory, imageUrl } from '../catalog.data';
+import { CartService } from '../../cart/cart.service';
+import { formatModelSummary, formatPrice, getCategory, getSeller, imageUrl } from '../catalog.data';
 import { Product } from '../catalog.interface';
 
 @Component({
@@ -54,18 +55,33 @@ import { Product } from '../catalog.interface';
 				<h3 class="text-base font-semibold leading-snug text-[var(--c-text-strong)] group-hover:text-[var(--c-primary)]">
 					{{ product().title }}
 				</h3>
-				<p class="text-sm text-[var(--c-text-muted)]">{{ dimensions() }}</p>
+				<p class="truncate text-xs text-[var(--c-text-muted)]">від {{ sellerName() }}</p>
+				<p class="text-sm text-[var(--c-text-muted)]">{{ summary() }}</p>
 				<div class="mt-auto flex items-end justify-between gap-3 pt-2">
 					<span class="text-lg font-semibold text-[var(--c-text-strong)]">{{ price() }}</span>
 					<span class="text-right text-xs text-[var(--c-text-muted)]">{{ software() }}</span>
 				</div>
 			</div>
 		</a>
+
+		<button
+			class="theme-interactive theme-focus absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full shadow-[var(--shadow-sm)]"
+			[class]="inCart() ? 'bg-[var(--c-primary)] text-[var(--c-on-primary)]' : 'bg-[var(--c-bg-secondary)]/90 text-[var(--c-text-strong)] hover:bg-[var(--c-bg-secondary)]'"
+			type="button"
+			[attr.aria-pressed]="inCart()"
+			[attr.aria-label]="(inCart() ? 'Прибрати з кошика: ' : 'Додати в кошик: ') + product().title"
+			(click)="cart.toggle(product().slug)"
+		>
+			<span class="material-symbols-outlined text-[20px]" aria-hidden="true">{{ inCart() ? 'check' : 'add_shopping_cart' }}</span>
+		</button>
 	`,
-	host: { class: 'block h-full' },
+	host: { class: 'relative block h-full' },
 })
 export class ProductCardComponent {
 	readonly product = input.required<Product>();
+
+	protected readonly cart = inject(CartService);
+	protected readonly inCart = computed(() => this.cart.has(this.product().slug));
 
 	protected readonly mainImage = computed(() => imageUrl(this.product().images[0]!, 600));
 	protected readonly hoverImage = computed(() => {
@@ -74,7 +90,8 @@ export class ProductCardComponent {
 		return second ? imageUrl(second, 600) : '';
 	});
 	protected readonly categoryTitle = computed(() => getCategory(this.product().category)?.title ?? '');
-	protected readonly dimensions = computed(() => formatDimensions(this.product()));
+	protected readonly sellerName = computed(() => getSeller(this.product().seller)?.name ?? '');
+	protected readonly summary = computed(() => formatModelSummary(this.product()));
 	protected readonly price = computed(() => formatPrice(this.product().price));
-	protected readonly software = computed(() => this.product().renderers.join(' · '));
+	protected readonly software = computed(() => this.product().formats.slice(0, 3).join(' · '));
 }

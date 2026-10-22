@@ -117,12 +117,31 @@
 			<p class="mt-6 text-lg leading-8">{{ product().short }}</p>
 
 			<div class="mt-8 flex flex-wrap gap-3">
-				<a
+				<button
 					class="theme-interactive theme-focus inline-flex min-h-12 flex-1 items-center justify-center rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-6 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)] sm:flex-none"
-					[href]="orderLink()"
+					type="button"
+					(click)="orderNow()"
 				>
 					{{ product().price > 0 ? 'Замовити' : 'Отримати безкоштовно' }}
-				</a>
+				</button>
+				@if (inCart()) {
+					<a
+						class="theme-interactive theme-focus inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-[var(--radius-btn)] border border-[var(--c-primary)] bg-[var(--c-bg-tertiary)] px-6 font-semibold text-[var(--c-text-strong)] sm:flex-none"
+						routerLink="/cart"
+					>
+						<span class="material-symbols-outlined text-[20px] text-[var(--c-primary)]" aria-hidden="true">check_circle</span>
+						У кошику
+					</a>
+				} @else {
+					<button
+						class="theme-interactive theme-focus inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] px-6 font-semibold text-[var(--c-text-strong)] hover:border-[var(--c-primary)] sm:flex-none"
+						type="button"
+						(click)="cart.add(product().slug)"
+					>
+						<span class="material-symbols-outlined text-[20px]" aria-hidden="true">add_shopping_cart</span>
+						В кошик
+					</button>
+				}
 				@if (product().model && tab() !== '3d') {
 					<button
 						class="theme-interactive theme-focus inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] px-6 font-semibold text-[var(--c-text-strong)] hover:border-[var(--c-primary)] sm:flex-none"
@@ -135,14 +154,29 @@
 				}
 			</div>
 
+			@if (seller(); as owner) {
+				<a
+					class="theme-interactive theme-focus mt-8 flex items-center gap-4 rounded-[var(--radius-card)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-4 hover:border-[var(--c-primary)]"
+					[routerLink]="['/seller', owner.slug]"
+				>
+					<app-seller-avatar [seller]="owner" [size]="48" />
+					<span class="min-w-0 flex-1">
+						<span class="block text-xs font-medium uppercase tracking-[0.14em] text-[var(--c-text-muted)]">Продавець</span>
+						<span class="block truncate font-semibold text-[var(--c-text-strong)]">{{ owner.name }}</span>
+						<span class="block text-sm text-[var(--c-text-muted)]">{{ owner.city }} · {{ sellerCount() }}</span>
+					</span>
+					<span class="material-symbols-outlined text-[var(--c-text-muted)]" aria-hidden="true">chevron_right</span>
+				</a>
+			}
+
 			<dl class="mt-8 grid grid-cols-3 gap-4 border-t border-[var(--c-border)] pt-6 text-sm">
 				<div>
-					<dt class="text-[var(--c-text-muted)]">Габарити</dt>
+					<dt class="text-[var(--c-text-muted)]">Полігони</dt>
 					<dd class="mt-1 font-semibold text-[var(--c-text-strong)]">{{ specs()[0]!.value }}</dd>
 				</div>
 				<div>
-					<dt class="text-[var(--c-text-muted)]">Полігони</dt>
-					<dd class="mt-1 font-semibold text-[var(--c-text-strong)]">{{ specs()[1]!.value }}</dd>
+					<dt class="text-[var(--c-text-muted)]">Ріг / анімація</dt>
+					<dd class="mt-1 font-semibold text-[var(--c-text-strong)]">{{ rigLabel() }}</dd>
 				</div>
 				<div>
 					<dt class="text-[var(--c-text-muted)]">Текстури</dt>
@@ -172,9 +206,25 @@
 		</section>
 	</div>
 
+	@if (seller() && moreFromSeller().length) {
+		<section class="mt-16">
+			<div class="flex flex-wrap items-end justify-between gap-4">
+				<h2 class="text-2xl font-semibold text-[var(--c-text-strong)]">Інші моделі від {{ seller()!.name }}</h2>
+				<a class="theme-focus rounded font-semibold text-[var(--c-primary)] hover:underline" [routerLink]="['/seller', seller()!.slug]">
+					Усі моделі продавця
+				</a>
+			</div>
+			<ul class="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+				@for (item of moreFromSeller(); track item.slug) {
+					<li><app-product-card [product]="item" /></li>
+				}
+			</ul>
+		</section>
+	}
+
 	@if (related().length) {
 		<section class="mt-16">
-			<h2 class="text-2xl font-semibold text-[var(--c-text-strong)]">{{ relatedTitle() }}</h2>
+			<h2 class="text-2xl font-semibold text-[var(--c-text-strong)]">Схожі моделі</h2>
 			<ul class="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
 				@for (item of related(); track item.slug) {
 					<li><app-product-card [product]="item" /></li>

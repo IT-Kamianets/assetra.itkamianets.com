@@ -1,8 +1,8 @@
 {
   "_id": "",
   "name": "Assetra",
-  "title": "Assetra — 3D-моделі меблів та інтер'єру",
-  "description": "3D-моделі меблів, декору та освітлення для візуалізації інтер'єрів. Формати 3ds Max (Corona, V-Ray), SketchUp, Blender, FBX, OBJ.",
+  "title": "Assetra — маркетплейс 3D-моделей",
+  "description": "3D-моделі для ігор, візуалізації, AR/VR та анімації: персонажі, транспорт, техніка, ігрові предмети, меблі й декор. Перегляд у 3D, формати FBX, OBJ, GLB, BLEND, MAX.",
   "image": "/logo.png",
 	"siteUrl": "https://assetra.itkamianets.com"
 }

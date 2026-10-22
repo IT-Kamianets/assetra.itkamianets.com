@@ -1,34 +1,47 @@
-<!-- Hero: full-screen photo under the floating topbar, blurs as the page scrolls -->
+<!-- Hero: full-screen 3D stage under the floating topbar, blurs as the page scrolls -->
 <section class="relative -mt-[var(--topbar-space)] flex min-h-[100svh] items-end overflow-hidden bg-[#2f3328]">
-	<img
-		class="absolute inset-0 h-full w-full object-cover will-change-[filter,transform]"
-		src="hero-2048.jpg"
-		srcset="hero-1280.jpg 1280w, hero-2048.jpg 2048w"
-		sizes="100vw"
-		alt="Світла вітальня з оливковим модульним диваном, круглим журнальним столиком і світильником-абажуром"
-		width="2048"
-		height="1280"
-		fetchpriority="high"
+	<!-- Backdrop matches the studio render; blur and zoom apply to the whole 3D stage -->
+	<div
+		class="absolute inset-0 bg-[radial-gradient(ellipse_70%_80%_at_68%_55%,#5b6150_0%,#3a3e31_45%,#1e201b_100%)] will-change-[filter,transform]"
 		[style.filter]="'blur(' + heroBlur() + 'px)'"
 		[style.transform]="'scale(' + (1.03 + heroBlur() / 300) + ')'"
-	/>
+	>
+		<img
+			class="absolute inset-0 h-full w-full object-cover object-[72%_center] transition-opacity duration-700"
+			[class.opacity-0]="heroModelLoaded()"
+			src="hero-2048.jpg"
+			srcset="hero-1280.jpg 1280w, hero-2048.jpg 2048w"
+			sizes="100vw"
+			alt=""
+			width="2048"
+			height="1152"
+			fetchpriority="high"
+		/>
+		<app-hero-model
+			class="absolute inset-x-0 top-[12%] h-[52%] transition-opacity duration-700 lg:inset-x-auto lg:right-[-5%] lg:top-[5%] lg:h-[95%] lg:w-[66%]"
+			[class.opacity-0]="!heroModelLoaded()"
+			[src]="heroModel"
+			alt="3D-модель червоного спортивного концепт-кара, що обертається. Потягніть, щоб роздивитися."
+			(loaded)="heroModelLoaded.set(true)"
+		/>
+	</div>
 	<div
-		class="absolute inset-0 bg-[linear-gradient(90deg,rgba(30,32,27,0.72)_0%,rgba(30,32,27,0.38)_45%,rgba(30,32,27,0.05)_75%),linear-gradient(0deg,rgba(30,32,27,0.55)_0%,transparent_45%),linear-gradient(180deg,rgba(30,32,27,0.45)_0%,transparent_22%)]"
+		class="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(30,32,27,0.72)_0%,rgba(30,32,27,0.38)_45%,rgba(30,32,27,0.05)_75%),linear-gradient(0deg,rgba(30,32,27,0.55)_0%,transparent_45%),linear-gradient(180deg,rgba(30,32,27,0.45)_0%,transparent_22%)]"
 		aria-hidden="true"
 	></div>
-	<div class="absolute inset-0 bg-[#1e201b]" [style.opacity]="heroShade()" aria-hidden="true"></div>
+	<div class="pointer-events-none absolute inset-0 bg-[#1e201b]" [style.opacity]="heroShade()" aria-hidden="true"></div>
 
-	<div class="relative mx-auto w-full max-w-[var(--container)] px-4 pb-16 pt-32 text-[#f7f5ef] sm:px-6 sm:pb-20">
-		<div class="max-w-2xl">
+	<div class="pointer-events-none relative mx-auto w-full max-w-[var(--container)] px-4 pb-16 pt-32 text-[#f7f5ef] sm:px-6 sm:pb-20">
+		<div class="pointer-events-auto max-w-2xl">
 			<p class="text-sm font-semibold uppercase tracking-[0.2em] text-[#d9d5c7]">
-				3D-моделі для дизайнерів інтер'єру
+				Маркетплейс 3D-моделей
 			</p>
 			<h1 class="mt-4 text-4xl font-semibold leading-[1.08] tracking-[-0.03em] sm:text-5xl lg:text-6xl">
-				3D-моделі меблів та декору для візуалізації інтер'єрів
+				3D-моделі для ігор, візуалізації та AR
 			</h1>
 			<p class="mt-5 max-w-xl text-lg leading-8 text-[#f7f5ef]/90">
-				Дивани, крісла, столи, світильники й декор з реальними габаритами та готовими
-				матеріалами для 3ds Max, SketchUp і Blender.
+				Персонажі, транспорт, техніка, ігрові предмети, меблі й декор від незалежних авторів.
+				Кожну модель можна покрутити в 3D просто в браузері.
 			</p>
 
 			<div class="mt-8 flex flex-wrap gap-3">
@@ -113,23 +126,26 @@
 	</ul>
 </section>
 
-<!-- Rooms & styles -->
+<!-- Purposes & formats -->
 <section class="border-y border-[var(--c-border)] bg-[var(--c-bg-secondary)]">
-	<div class="mx-auto grid max-w-[var(--container)] gap-12 px-4 py-14 sm:px-6 lg:grid-cols-2">
+	<div class="mx-auto grid max-w-[var(--container)] gap-12 px-4 py-14 sm:px-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
 		<div>
-			<h2 class="text-2xl font-semibold text-[var(--c-text-strong)]">За приміщенням</h2>
+			<h2 class="text-2xl font-semibold text-[var(--c-text-strong)]">За призначенням</h2>
 			<ul class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
-				@for (room of rooms; track room.value) {
+				@for (purpose of purposes; track purpose.value) {
 					<li>
 						<a
 							class="theme-interactive theme-focus flex h-full flex-col gap-3 rounded-[var(--radius-card)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] p-4 hover:border-[var(--c-primary)]"
 							routerLink="/catalog"
-							[queryParams]="{ room: room.value }"
+							[queryParams]="{ purpose: purpose.value }"
 						>
 							<span class="material-symbols-outlined text-[28px] text-[var(--c-primary)]" aria-hidden="true">
-								{{ room.icon }}
+								{{ purpose.icon }}
 							</span>
-							<span class="font-medium text-[var(--c-text-strong)]">{{ room.label }}</span>
+							<span>
+								<span class="block font-medium text-[var(--c-text-strong)]">{{ purpose.label }}</span>
+								<span class="block text-sm text-[var(--c-text-muted)]">{{ purpose.count }}</span>
+							</span>
 						</a>
 					</li>
 				}
@@ -137,31 +153,24 @@
 		</div>
 
 		<div>
-			<h2 class="text-2xl font-semibold text-[var(--c-text-strong)]">За стилем</h2>
-			<ul class="mt-6 flex flex-wrap gap-3">
-				@for (style of styles; track style.value) {
+			<h2 class="text-2xl font-semibold text-[var(--c-text-strong)]">Формати</h2>
+			<p class="mt-2 text-sm text-[var(--c-text-muted)]">Кожна модель має кілька форматів, тож вона відкриється у вашій програмі чи рушії.</p>
+			<ul class="mt-6 flex flex-wrap gap-2">
+				@for (format of formats; track format) {
 					<li>
 						<a
-							class="theme-interactive theme-focus inline-flex min-h-11 items-center rounded-full border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-5 font-medium text-[var(--c-text-strong)] hover:border-[var(--c-primary)] hover:text-[var(--c-primary)]"
+							class="theme-interactive theme-focus inline-flex min-h-10 items-center rounded-[var(--radius)] bg-[var(--c-bg-tertiary)] px-4 text-sm font-semibold text-[var(--c-text-strong)] hover:bg-[var(--c-primary)] hover:text-[var(--c-on-primary)]"
 							routerLink="/catalog"
-							[queryParams]="{ style: style.value }"
+							[queryParams]="{ format: format }"
 						>
-							{{ style.label }}
+							{{ format }}
 						</a>
 					</li>
 				}
 			</ul>
 
-			<h2 class="mt-12 text-2xl font-semibold text-[var(--c-text-strong)]">Формати та рушії</h2>
-			<ul class="mt-6 flex flex-wrap gap-2">
-				@for (format of formats; track format) {
-					<li
-						class="rounded-[var(--radius)] bg-[var(--c-bg-tertiary)] px-3 py-2 text-sm font-semibold text-[var(--c-text-strong)]"
-					>
-						{{ format }}
-					</li>
-				}
-			</ul>
+			<h2 class="mt-10 text-2xl font-semibold text-[var(--c-text-strong)]">Працює з</h2>
+			<p class="mt-3 leading-7">Blender, 3ds Max, Maya, Cinema 4D, Unity, Unreal Engine, Godot та SketchUp.</p>
 		</div>
 	</div>
 </section>
@@ -212,10 +221,10 @@
 			@for (benefit of benefits; track benefit.title) {
 				<li>
 					<span
-						class="material-symbols-outlined flex h-12 w-12 items-center justify-center rounded-full bg-[var(--c-bg-tertiary)] text-[var(--c-primary)]"
+						class="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--c-bg-tertiary)] text-[var(--c-primary)]"
 						aria-hidden="true"
 					>
-						{{ benefit.icon }}
+						<span class="material-symbols-outlined text-[24px]">{{ benefit.icon }}</span>
 					</span>
 					<h3 class="mt-4 font-semibold text-[var(--c-text-strong)]">{{ benefit.title }}</h3>
 					<p class="mt-2 text-sm leading-6">{{ benefit.text }}</p>
@@ -231,14 +240,14 @@
 		class="flex flex-col items-start gap-6 rounded-[calc(var(--radius-card)*2)] bg-[var(--c-primary)] p-8 text-[var(--c-on-primary)] sm:p-12 lg:flex-row lg:items-center lg:justify-between"
 	>
 		<div class="max-w-2xl">
-			<h2 class="text-2xl font-semibold sm:text-3xl">Потрібна модель за вашим кресленням чи фото?</h2>
+			<h2 class="text-2xl font-semibold sm:text-3xl">Не знайшли потрібну модель?</h2>
 			<p class="mt-3 opacity-80">
-				Змоделюємо меблі під ваш проєкт: з точними розмірами, матеріалами й форматом для вашої програми.
+				Наші автори змоделюють її під ваш проєкт: за референсами, кресленням чи описом, у потрібному форматі й полігональності.
 			</p>
 		</div>
 		<a
 			class="theme-interactive theme-focus inline-flex min-h-12 shrink-0 items-center rounded-[var(--radius-btn)] bg-[var(--c-on-primary)] px-6 font-semibold text-[var(--c-primary)] hover:opacity-90"
-			[href]="customOrderHref"
+			routerLink="/order"
 		>
 			Замовити модель
 		</a>

@@ -9,12 +9,16 @@ const outputDirs = [path.join(rootDir, 'dist/app/browser')];
 const company = await readJson('src/data/company/company.json');
 const categories = await readJson('src/data/category/categories.json');
 const products = await readJson('src/data/product/products.json');
+const sellers = await readJson('src/data/seller/sellers.json');
 
 const staticRoutes = [
 	'/',
 	'/catalog',
 	...categories.map(({ slug }) => `/catalog/${slug}`),
 	...products.map(({ slug }) => `/product/${slug}`),
+	'/order',
+	'/sellers',
+	...sellers.map(({ slug }) => `/seller/${slug}`),
 ];
 const siteUrl = trimTrailingSlash(company.siteUrl || 'https://example.com');
 const pageSeo = company.pageSeo ?? {};

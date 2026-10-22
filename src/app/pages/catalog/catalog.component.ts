@@ -4,18 +4,20 @@ import { ActivatedRoute, Params, Router, RouterLink } from '@angular/router';
 import { BreadcrumbsComponent } from '../../feature/catalog/breadcrumbs/breadcrumbs.component';
 import {
 	categories,
+	FORMAT_OPTIONS,
 	getCategory,
-	MATERIAL_OPTIONS,
 	matchesSearch,
+	POLYGON_TIER_LABELS,
+	polygonTier,
 	products,
-	ROOM_LABELS,
-	SOFTWARE_OPTIONS,
-	STYLE_LABELS,
+	PURPOSE_LABELS,
+	sellers,
 } from '../../feature/catalog/catalog.data';
 import { Breadcrumb, CatalogSort, Product } from '../../feature/catalog/catalog.interface';
 import { ProductCardComponent } from '../../feature/catalog/product-card/product-card.component';
 
-type MultiFilterKey = 'style' | 'room' | 'soft' | 'material';
+type MultiFilterKey = 'seller' | 'purpose' | 'poly' | 'feature' | 'format';
+type Feature = 'rigged' | 'animated' | 'pbr';
 type PriceFilter = '' | 'free' | 'paid';
 
 interface FilterOption {
@@ -44,28 +46,48 @@ const PRICE_OPTIONS: { value: PriceFilter; label: string }[] = [
 	{ value: 'paid', label: 'Платні' },
 ];
 
+const PRICE_BOUNDS = {
+	min: Math.min(...products.map((product) => product.price)),
+	max: Math.max(...products.map((product) => product.price)),
+};
+
 const FILTER_GROUPS: FilterGroup[] = [
 	{
-		key: 'style',
-		title: 'Стиль',
-		options: Object.entries(STYLE_LABELS).map(([value, label]) => ({ value, label })),
+		key: 'seller',
+		title: 'Продавець',
+		options: sellers.map(({ slug, name }) => ({ value: slug, label: name })),
 	},
 	{
-		key: 'room',
-		title: 'Приміщення',
-		options: Object.entries(ROOM_LABELS).map(([value, label]) => ({ value, label })),
+		key: 'purpose',
+		title: 'Призначення',
+		options: Object.entries(PURPOSE_LABELS).map(([value, label]) => ({ value, label })),
 	},
 	{
-		key: 'soft',
-		title: 'Програма та рушій',
-		options: SOFTWARE_OPTIONS.map((value) => ({ value, label: value })),
+		key: 'poly',
+		title: 'Полігональність',
+		options: Object.entries(POLYGON_TIER_LABELS).map(([value, label]) => ({ value, label })),
 	},
 	{
-		key: 'material',
-		title: 'Матеріал',
-		options: MATERIAL_OPTIONS.map((value) => ({ value, label: value })),
+		key: 'feature',
+		title: 'Особливості',
+		options: [
+			{ value: 'rigged', label: 'З ригом' },
+			{ value: 'animated', label: 'З анімацією' },
+			{ value: 'pbr', label: 'PBR-текстури' },
+		],
+	},
+	{
+		key: 'format',
+		title: 'Формат',
+		options: FORMAT_OPTIONS.map((value) => ({ value, label: value })),
 	},
 ];
+
+const FEATURE_CHECKS: Record<Feature, (product: Product) => boolean> = {
+	rigged: (product) => product.rigged,
+	animated: (product) => product.animated,
+	pbr: (product) => product.textures.startsWith('PBR'),
+};
 
 /** Serves both `/catalog` and `/catalog/:category`. Filter state lives in query params. */
 @Component({
@@ -87,6 +109,7 @@ export class CatalogComponent {
 	protected readonly filterGroups = FILTER_GROUPS;
 	protected readonly sortOptions = SORT_OPTIONS;
 	protected readonly priceOptions = PRICE_OPTIONS;
+	protected readonly priceBounds = PRICE_BOUNDS;
 
 	protected readonly category = computed(() => getCategory(this._params().get('category')));
 
@@ -95,13 +118,21 @@ export class CatalogComponent {
 		const list = (key: string) => query.get(key)?.split(',').filter(Boolean) ?? [];
 		const sort = query.get('sort') as CatalogSort | null;
 		const price = query.get('price');
+		const amount = (key: string) => {
+			const value = Number(query.get(key) ?? NaN);
+
+			return query.has(key) && Number.isFinite(value) && value >= 0 ? value : null;
+		};
 
 		return {
 			q: query.get('q') ?? '',
-			style: list('style'),
-			room: list('room'),
-			soft: list('soft'),
-			material: list('material'),
+			seller: list('seller'),
+			purpose: list('purpose'),
+			poly: list('poly'),
+			feature: list('feature'),
+			format: list('format'),
+			min: amount('min'),
+			max: amount('max'),
 			price: (price === 'free' || price === 'paid' ? price : '') as PriceFilter,
 			sort: SORT_OPTIONS.some((option) => option.value === sort) ? sort! : 'popular',
 		};
@@ -111,11 +142,13 @@ export class CatalogComponent {
 		const filters = this.filters();
 
 		return (
-			filters.style.length +
-			filters.room.length +
-			filters.soft.length +
-			filters.material.length +
+			filters.seller.length +
+			filters.purpose.length +
+			filters.poly.length +
+			filters.feature.length +
+			filters.format.length +
 			(filters.price ? 1 : 0) +
+			(filters.min !== null || filters.max !== null ? 1 : 0) +
 			(filters.q ? 1 : 0)
 		);
 	});
@@ -128,14 +161,15 @@ export class CatalogComponent {
 			(product) =>
 				(!category || product.category === category.slug) &&
 				matchesSearch(product, filters.q) &&
-				(!filters.style.length || filters.style.includes(product.style)) &&
-				(!filters.room.length || product.rooms.some((room) => filters.room.includes(room))) &&
-				(!filters.soft.length ||
-					[...product.software, ...product.renderers].some((soft) => filters.soft.includes(soft))) &&
-				(!filters.material.length ||
-					product.materials.some((material) => filters.material.includes(material))) &&
+				(!filters.seller.length || filters.seller.includes(product.seller)) &&
+				(!filters.purpose.length || product.purpose.some((purpose) => filters.purpose.includes(purpose))) &&
+				(!filters.poly.length || filters.poly.includes(polygonTier(product.polygons))) &&
+				filters.feature.every((feature) => FEATURE_CHECKS[feature as Feature]?.(product) ?? true) &&
+				(!filters.format.length || product.formats.some((format) => filters.format.includes(format))) &&
 				(filters.price !== 'free' || product.price === 0) &&
-				(filters.price !== 'paid' || product.price > 0),
+				(filters.price !== 'paid' || product.price > 0) &&
+				(filters.min === null || product.price >= filters.min) &&
+				(filters.max === null || product.price <= filters.max),
 		);
 
 		return _sortProducts(matches, filters.sort);
@@ -153,7 +187,7 @@ export class CatalogComponent {
 	protected readonly intro = computed(
 		() =>
 			this.category()?.intro ??
-			"Меблі, світильники та декор для візуалізації інтер'єрів з реальними габаритами й готовими матеріалами.",
+			'Персонажі, транспорт, техніка, ігрові предмети, меблі та декор від незалежних авторів. Переглядайте кожну модель у 3D просто в браузері.',
 	);
 	protected readonly breadcrumbs = computed<Breadcrumb[]>(() => {
 		const items: Breadcrumb[] = [
@@ -180,6 +214,12 @@ export class CatalogComponent {
 
 	protected setPrice(price: PriceFilter) {
 		this._update({ price: price || null });
+	}
+
+	protected setPriceRange(key: 'min' | 'max', value: string) {
+		const amount = Number(value);
+
+		this._update({ [key]: value.trim() && Number.isFinite(amount) ? String(Math.max(0, Math.round(amount))) : null });
 	}
 
 	protected setSort(sort: string) {

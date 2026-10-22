@@ -22,6 +22,7 @@ export class FooterComponent {
 	protected readonly pageLinks: FooterPageLink[] = [
 		{ label: 'Головна', path: '/' },
 		{ label: 'Каталог', path: '/catalog' },
+		{ label: 'Продавці', path: '/sellers' },
 		...categories.map((category) => ({
 			label: category.title,
 			path: `/catalog/${category.slug}`,

@@ -4,11 +4,11 @@
 	>
 		<a
 			[translate]="{ ariaLabel: 'Go to homepage' }"
-			class="inline-flex items-center gap-3"
+			class="group inline-flex items-center gap-3"
 			routerLink="/"
 		>
 			<img
-				class="h-10 w-10 rounded-full"
+				class="logo-glow h-11 w-11 object-contain"
 				[translate]="{ alt: 'Project logo' }"
 				ngSrc="logo.png"
 				width="40"
@@ -42,6 +42,22 @@
 
 		<div class="flex items-center gap-2">
 			<app-topbar-search />
+
+			<a
+				class="theme-interactive theme-focus relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--c-topbar-border)] text-[var(--c-topbar-text)] hover:bg-[var(--c-topbar-hover)]"
+				routerLink="/cart"
+				[attr.aria-label]="'Кошик, моделей: ' + cart.count()"
+			>
+				<span class="material-symbols-outlined text-[22px]" aria-hidden="true">shopping_bag</span>
+				@if (cart.count()) {
+					<span
+						class="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--c-accent)] px-1 text-[11px] font-semibold leading-none text-[#2f3328]"
+						aria-hidden="true"
+					>
+						{{ cart.count() }}
+					</span>
+				}
+			</a>
 
 			<div class="relative">
 				<button

@@ -1,0 +1,48 @@
+<div class="mx-auto max-w-[var(--container)] px-4 py-8 sm:px-6 lg:py-10">
+	<app-breadcrumbs [items]="breadcrumbs" />
+
+	<header class="mt-6 max-w-3xl">
+		<h1 class="text-3xl font-semibold tracking-[-0.02em] text-[var(--c-text-strong)] sm:text-4xl">Продавці</h1>
+		<p class="mt-3 text-lg leading-8">
+			Студії та 3D-художники, які створюють персонажів, транспорт, техніку, ігрові предмети, меблі й декор.
+		</p>
+	</header>
+
+	<ul class="mt-10 grid gap-6 md:grid-cols-2">
+		@for (item of sellers; track item.seller.slug) {
+			<li>
+				<a
+					class="theme-focus group flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] transition-shadow duration-200 hover:shadow-[var(--shadow-md)]"
+					[routerLink]="['/seller', item.seller.slug]"
+				>
+					<div class="grid grid-cols-3 gap-1 bg-[var(--c-bg-tertiary)]">
+						@for (preview of item.previews; track preview) {
+							<img class="aspect-square w-full object-cover" [src]="preview" alt="" width="300" height="300" loading="lazy" />
+						}
+					</div>
+					<div class="flex flex-1 flex-col gap-3 p-5">
+						<div class="flex items-center gap-3">
+							<app-seller-avatar [seller]="item.seller" [size]="48" />
+							<div class="min-w-0">
+								<h2 class="text-lg font-semibold text-[var(--c-text-strong)] group-hover:text-[var(--c-primary)]">
+									{{ item.seller.name }}
+								</h2>
+								<p class="text-sm text-[var(--c-text-muted)]">
+									{{ item.seller.city }} · на Assetra з {{ item.seller.since }} · {{ item.count }}
+								</p>
+							</div>
+						</div>
+						<p class="line-clamp-2 text-sm leading-6">{{ item.seller.bio }}</p>
+						<ul class="mt-auto flex flex-wrap gap-2">
+							@for (tag of item.seller.specialties; track tag) {
+								<li class="rounded-full bg-[var(--c-bg-tertiary)] px-3 py-1 text-xs font-medium text-[var(--c-text-strong)]">
+									{{ tag }}
+								</li>
+							}
+						</ul>
+					</div>
+				</a>
+			</li>
+		}
+	</ul>
+</div>
