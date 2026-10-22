@@ -1,17 +1,27 @@
 import { NgOptimizedImage } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Component, computed, ElementRef, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { filter, map } from 'rxjs';
 import { LanguageService, TranslateDirective, TranslateService } from '@wawjs/ngx-translate';
 import { ThemeService } from '@wawjs/ngx-ui';
 import type { Language } from '@wawjs/ngx-translate';
 import type { AppLanguage } from '../../../environments/environment.prod';
 import { CompanyService } from '../../feature/company/company.service';
+import { ScrollService } from '../../services/scroll.service';
+import { TopbarSearchComponent } from './search/topbar-search.component';
 
 @Component({
 	selector: 'app-topbar',
-	imports: [NgOptimizedImage, RouterLink, TranslateDirective],
+	imports: [NgOptimizedImage, RouterLink, RouterLinkActive, TranslateDirective, TopbarSearchComponent],
 	templateUrl: './topbar.component.html',
 	styleUrl: './topbar.component.scss',
+	host: {
+		'[class.is-hidden]': 'hidden()',
+		'[class.is-glass]': 'overHero()',
+		'(document:click)': 'onDocumentClick($event)',
+		'(keydown.escape)': 'languageMenuOpen.set(false)',
+	},
 })
 export class TopbarComponent {
 	private readonly _translateService = inject(TranslateService);
@@ -19,9 +29,35 @@ export class TopbarComponent {
 	private readonly _languageService = inject(LanguageService);
 	private readonly _companyService = inject(CompanyService);
 	private readonly _router = inject(Router);
+	private readonly _scrollService = inject(ScrollService);
+	private readonly _host = inject<ElementRef<HTMLElement>>(ElementRef);
 
+	protected readonly navLinks = [
+		{ label: 'Каталог', path: '/catalog', query: null, secondary: false },
+		{ label: 'Безкоштовні', path: '/catalog', query: { price: 'free' }, secondary: true },
+	];
 	protected readonly mode = computed(() => this._themeService.mode() ?? 'light');
 	protected readonly languageMenuOpen = signal(false);
+	private readonly _isHome = toSignal(
+		this._router.events.pipe(
+			filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+			map((event) => _isHomeUrl(event.urlAfterRedirects)),
+		),
+		{ initialValue: _isHomeUrl(this._router.url) },
+	);
+	/** Frosted glass only while the topbar floats over the home hero photo; olive pill elsewhere. */
+	protected readonly overHero = computed(() => {
+		const viewport = this._scrollService.viewportHeight();
+
+		return this._isHome() && (viewport === 0 || this._scrollService.y() < viewport - 80);
+	});
+	/** Hide while scrolling down past the hero, reveal on any scroll up. */
+	protected readonly hidden = computed(
+		() =>
+			this._scrollService.direction() === 'down' &&
+			this._scrollService.y() > 120 &&
+			!this.languageMenuOpen(),
+	);
 	protected readonly languages = computed(() =>
 		this._languageService.languages().map((language) => _toAppLanguage(language)),
 	);
@@ -43,10 +79,6 @@ export class TopbarComponent {
 		this.activeLanguage();
 		return this._translateService.translate('Open language menu')();
 	});
-	protected readonly languageCycleLabel = computed(() => {
-		this.activeLanguage();
-		return `${this._translateService.translate('Switch language to')()} ${this.getNextLanguage().nativeName}`;
-	});
 
 	constructor() {
 		this._themeService.init();
@@ -57,11 +89,10 @@ export class TopbarComponent {
 		this._themeService.setMode(nextMode);
 	}
 
-	protected async nextLanguage() {
-		const nextLanguage = this.getNextLanguage();
-		await this._translateService.setLanguage(nextLanguage.code);
-		await this._router.navigateByUrl(this._router.url);
-		this.languageMenuOpen.set(false);
+	protected onDocumentClick(event: MouseEvent) {
+		if (this.languageMenuOpen() && !this._host.nativeElement.contains(event.target as Node)) {
+			this.languageMenuOpen.set(false);
+		}
 	}
 
 	protected toggleLanguageMenu() {
@@ -74,13 +105,10 @@ export class TopbarComponent {
 		this.languageMenuOpen.set(false);
 	}
 
-	protected getNextLanguage() {
-		const languages = this.languages();
-		const currentCode = this.currentLanguage().code;
-		const currentIndex = languages.findIndex((language) => language.code === currentCode);
+}
 
-		return languages[(currentIndex + 1) % languages.length] ?? languages[0]!;
-	}
+function _isHomeUrl(url: string): boolean {
+	return url.split(/[?#]/)[0] === '/';
 }
 
 function _toAppLanguage(language: Language | undefined): AppLanguage {

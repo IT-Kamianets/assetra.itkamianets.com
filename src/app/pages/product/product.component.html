@@ -1,0 +1,185 @@
+<div class="mx-auto max-w-[var(--container)] px-4 py-8 sm:px-6 lg:py-10">
+	<app-breadcrumbs [items]="breadcrumbs()" />
+
+	<div class="mt-6 grid gap-10 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
+		<!-- Viewer -->
+		<section aria-label="Перегляд моделі">
+			@if (product().model) {
+				<div class="mb-3 inline-flex rounded-full border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-1" role="tablist">
+					<button
+						class="theme-interactive theme-focus min-h-10 rounded-full px-5 text-sm font-semibold"
+						[class]="tab() === 'renders' ? 'bg-[var(--c-primary)] text-[var(--c-on-primary)]' : 'text-[var(--c-text-strong)]'"
+						type="button"
+						role="tab"
+						[attr.aria-selected]="tab() === 'renders'"
+						(click)="tab.set('renders')"
+					>
+						Рендери
+					</button>
+					<button
+						class="theme-interactive theme-focus inline-flex min-h-10 items-center gap-1.5 rounded-full px-5 text-sm font-semibold"
+						[class]="tab() === '3d' ? 'bg-[var(--c-primary)] text-[var(--c-on-primary)]' : 'text-[var(--c-text-strong)]'"
+						type="button"
+						role="tab"
+						[attr.aria-selected]="tab() === '3d'"
+						(click)="tab.set('3d')"
+					>
+						<span class="material-symbols-outlined text-[18px]" aria-hidden="true">view_in_ar</span>
+						3D
+					</button>
+				</div>
+			}
+
+			@let currentTab = tab();
+			@switch (currentTab) {
+				@case ('renders') {
+					<div class="overflow-hidden rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-tertiary)]">
+						<img
+							class="aspect-square w-full object-cover"
+							[src]="images()[activeImage()]!.full"
+							[alt]="product().title + ', рендер ' + (activeImage() + 1)"
+							width="1200"
+							height="1200"
+							fetchpriority="high"
+						/>
+					</div>
+
+					@if (images().length > 1) {
+						<ul class="mt-3 flex gap-3">
+							@for (image of images(); track image.thumb; let index = $index) {
+								<li>
+									<button
+										class="theme-focus block overflow-hidden rounded-[var(--radius)] border-2"
+										[class]="index === activeImage() ? 'border-[var(--c-primary)]' : 'border-transparent opacity-70 hover:opacity-100'"
+										type="button"
+										[attr.aria-label]="'Показати рендер ' + (index + 1)"
+										[attr.aria-pressed]="index === activeImage()"
+										(click)="activeImage.set(index)"
+									>
+										<img class="h-20 w-20 object-cover" [src]="image.thumb" alt="" width="80" height="80" loading="lazy" />
+									</button>
+								</li>
+							}
+						</ul>
+					}
+				}
+				@case ('3d') {
+					<div
+						class="relative aspect-square overflow-hidden rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)]"
+						[class]="darkStage() ? 'bg-[#1e201b]' : 'bg-[var(--c-bg-secondary)]'"
+					>
+						<app-model-viewer [src]="product().model!" [alt]="'3D-модель: ' + product().title" />
+
+						<button
+							class="theme-focus absolute right-3 top-3 inline-flex h-10 items-center gap-2 rounded-full border border-[var(--c-border)] bg-[var(--c-bg-secondary)] px-4 text-sm font-medium text-[var(--c-text-strong)]"
+							type="button"
+							(click)="darkStage.update((dark) => !dark)"
+						>
+							<span class="material-symbols-outlined text-[18px]" aria-hidden="true">contrast</span>
+							{{ darkStage() ? 'Світле тло' : 'Темне тло' }}
+						</button>
+					</div>
+					<p class="mt-3 text-sm text-[var(--c-text-muted)]">
+						Обертайте модель мишею або пальцем, коліщатком чи жестом наближайте.
+					</p>
+				}
+				@default never;
+			}
+		</section>
+
+		<!-- Summary -->
+		<section class="lg:sticky lg:top-6 lg:self-start" aria-label="Про модель">
+			@if (category(); as current) {
+				<a
+					class="theme-focus rounded text-sm font-semibold uppercase tracking-[0.14em] text-[var(--c-primary)] hover:underline"
+					[routerLink]="['/catalog', current.slug]"
+				>
+					{{ current.title }}
+				</a>
+			}
+			<h1 class="mt-2 text-3xl font-semibold tracking-[-0.02em] text-[var(--c-text-strong)] sm:text-4xl">
+				{{ product().title }}
+			</h1>
+			@if (product().collection) {
+				<p class="mt-2 text-[var(--c-text-muted)]">Колекція {{ product().collection }}</p>
+			}
+
+			<p class="mt-6 text-3xl font-semibold text-[var(--c-text-strong)]">{{ price() }}</p>
+
+			<ul class="mt-5 flex flex-wrap gap-2">
+				@for (tag of product().software.concat(product().renderers); track tag) {
+					<li class="rounded-[var(--radius)] bg-[var(--c-bg-tertiary)] px-3 py-1.5 text-sm font-semibold text-[var(--c-text-strong)]">
+						{{ tag }}
+					</li>
+				}
+			</ul>
+
+			<p class="mt-6 text-lg leading-8">{{ product().short }}</p>
+
+			<div class="mt-8 flex flex-wrap gap-3">
+				<a
+					class="theme-interactive theme-focus inline-flex min-h-12 flex-1 items-center justify-center rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-6 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)] sm:flex-none"
+					[href]="orderLink()"
+				>
+					{{ product().price > 0 ? 'Замовити' : 'Отримати безкоштовно' }}
+				</a>
+				@if (product().model && tab() !== '3d') {
+					<button
+						class="theme-interactive theme-focus inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] px-6 font-semibold text-[var(--c-text-strong)] hover:border-[var(--c-primary)] sm:flex-none"
+						type="button"
+						(click)="show3d()"
+					>
+						<span class="material-symbols-outlined text-[20px]" aria-hidden="true">view_in_ar</span>
+						Переглянути в 3D
+					</button>
+				}
+			</div>
+
+			<dl class="mt-8 grid grid-cols-3 gap-4 border-t border-[var(--c-border)] pt-6 text-sm">
+				<div>
+					<dt class="text-[var(--c-text-muted)]">Габарити</dt>
+					<dd class="mt-1 font-semibold text-[var(--c-text-strong)]">{{ specs()[0]!.value }}</dd>
+				</div>
+				<div>
+					<dt class="text-[var(--c-text-muted)]">Полігони</dt>
+					<dd class="mt-1 font-semibold text-[var(--c-text-strong)]">{{ specs()[1]!.value }}</dd>
+				</div>
+				<div>
+					<dt class="text-[var(--c-text-muted)]">Текстури</dt>
+					<dd class="mt-1 font-semibold text-[var(--c-text-strong)]">{{ product().textures }}</dd>
+				</div>
+			</dl>
+		</section>
+	</div>
+
+	<!-- Details -->
+	<div class="mt-16 grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+		<section>
+			<h2 class="text-2xl font-semibold text-[var(--c-text-strong)]">Опис</h2>
+			<p class="mt-4 leading-8">{{ product().description }}</p>
+		</section>
+
+		<section>
+			<h2 class="text-2xl font-semibold text-[var(--c-text-strong)]">Характеристики</h2>
+			<dl class="mt-4 divide-y divide-[var(--c-border)] rounded-[var(--radius-card)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)]">
+				@for (spec of specs(); track spec.label) {
+					<div class="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] gap-4 px-4 py-3 text-sm">
+						<dt class="text-[var(--c-text-muted)]">{{ spec.label }}</dt>
+						<dd class="font-medium text-[var(--c-text-strong)]">{{ spec.value }}</dd>
+					</div>
+				}
+			</dl>
+		</section>
+	</div>
+
+	@if (related().length) {
+		<section class="mt-16">
+			<h2 class="text-2xl font-semibold text-[var(--c-text-strong)]">{{ relatedTitle() }}</h2>
+			<ul class="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+				@for (item of related(); track item.slug) {
+					<li><app-product-card [product]="item" /></li>
+				}
+			</ul>
+		</section>
+	}
+</div>

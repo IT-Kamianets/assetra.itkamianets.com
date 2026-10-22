@@ -1,0 +1,79 @@
+<button
+	class="theme-interactive theme-focus inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--c-topbar-border)] text-[var(--c-topbar-text)] hover:bg-[var(--c-topbar-hover)] md:hidden"
+	type="button"
+	aria-label="Пошук моделей"
+	[attr.aria-expanded]="mobileOpen()"
+	(click)="mobileOpen() ? close() : openMobile()"
+>
+	<span class="material-symbols-outlined text-[22px]" aria-hidden="true">search</span>
+</button>
+
+<form
+	class="fixed inset-x-3 top-[5.25rem] z-50 rounded-3xl border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-3 shadow-[var(--shadow-md)] md:static md:block md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none"
+	[class.hidden]="!mobileOpen()"
+	role="search"
+	(submit)="submit($event)"
+>
+	<label class="relative block">
+		<span class="sr-only">Пошук моделей</span>
+		<span
+			class="material-symbols-outlined pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-[var(--c-text-muted)] md:text-[#414638]"
+			aria-hidden="true"
+		>
+			search
+		</span>
+		<input
+			#input
+			class="theme-focus h-11 w-full rounded-full border border-[var(--c-border)] bg-[var(--c-bg-primary)] pl-10 pr-4 text-sm text-[var(--c-text-strong)] placeholder:text-[var(--c-text-muted)] md:h-10 md:w-56 md:border-transparent md:bg-[#d9d5c7] md:text-[#2f3328] md:placeholder:text-[#5f6453] lg:w-72 [&::-webkit-search-cancel-button]:appearance-none"
+			type="search"
+			placeholder="Пошук моделей…"
+			autocomplete="off"
+			[value]="query()"
+			(input)="query.set($any($event.target).value)"
+			(focus)="focused.set(true)"
+		/>
+	</label>
+
+	@if (showResults()) {
+		<div
+			class="mt-2 overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--c-bg-secondary)] md:absolute md:right-0 md:top-full md:w-96 md:shadow-[var(--shadow-md)]"
+		>
+			@if (suggestions().length) {
+				<ul aria-label="Знайдені моделі">
+					@for (item of suggestions(); track item.slug) {
+						<li>
+							<a
+								class="theme-focus flex items-center gap-3 px-3 py-2 hover:bg-[var(--c-bg-tertiary)]"
+								[routerLink]="['/product', item.slug]"
+								(click)="pick()"
+							>
+								<img
+									class="h-12 w-12 shrink-0 rounded-[var(--radius)] object-cover"
+									[src]="item.thumb"
+									alt=""
+									width="48"
+									height="48"
+									loading="lazy"
+								/>
+								<span class="min-w-0 flex-1">
+									<span class="block truncate text-sm font-semibold text-[var(--c-text-strong)]">{{ item.title }}</span>
+									<span class="block text-xs text-[var(--c-text-muted)]">{{ item.category }}</span>
+								</span>
+								<span class="shrink-0 text-sm font-semibold text-[var(--c-text-strong)]">{{ item.price }}</span>
+							</a>
+						</li>
+					}
+				</ul>
+				<button
+					class="theme-focus flex w-full items-center justify-between border-t border-[var(--c-border)] px-3 py-3 text-sm font-semibold text-[var(--c-primary)] hover:bg-[var(--c-bg-tertiary)]"
+					type="submit"
+				>
+					Усі результати ({{ matches().length }})
+					<span class="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_forward</span>
+				</button>
+			} @else {
+				<p class="px-4 py-5 text-sm text-[var(--c-text-muted)]">Нічого не знайдено за запитом «{{ query().trim() }}».</p>
+			}
+		</div>
+	}
+</form>

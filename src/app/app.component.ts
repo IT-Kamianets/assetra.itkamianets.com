@@ -5,18 +5,20 @@ import { CanonicalService } from '@wawjs/ngx-default';
 import { LanguageService } from '@wawjs/ngx-translate';
 import { environment } from '../environments/environment';
 import { FooterComponent } from './layouts/footer/footer.component';
+import { ScrollTopComponent } from './layouts/scroll-top/scroll-top.component';
 import { TopbarComponent } from './layouts/topbar/topbar.component';
 
 @Component({
 	selector: 'app-root',
-	imports: [RouterOutlet, TopbarComponent, FooterComponent],
+	imports: [RouterOutlet, TopbarComponent, FooterComponent, ScrollTopComponent],
 	template: `
 		<div class="flex min-h-screen flex-col">
 			<app-topbar />
-			<main class="flex-1">
+			<main class="flex-1 pt-[var(--topbar-space)]">
 				<router-outlet />
 			</main>
 			<app-footer />
+			<app-scroll-top />
 		</div>
 	`,
 })

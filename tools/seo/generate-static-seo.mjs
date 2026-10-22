@@ -6,9 +6,16 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '../..');
 const outputDirs = [path.join(rootDir, 'dist/app/browser')];
 
-const staticRoutes = ['/'];
-
 const company = await readJson('src/data/company/company.json');
+const categories = await readJson('src/data/category/categories.json');
+const products = await readJson('src/data/product/products.json');
+
+const staticRoutes = [
+	'/',
+	'/catalog',
+	...categories.map(({ slug }) => `/catalog/${slug}`),
+	...products.map(({ slug }) => `/product/${slug}`),
+];
 const siteUrl = trimTrailingSlash(company.siteUrl || 'https://example.com');
 const pageSeo = company.pageSeo ?? {};
 

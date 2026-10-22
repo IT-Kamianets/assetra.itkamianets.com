@@ -1,8 +1,6 @@
-<header
-	class="relative z-50 border-b border-[var(--c-border)] bg-[var(--c-bg-secondary)]/95 backdrop-blur supports-[backdrop-filter]:bg-[var(--c-bg-secondary)]/80"
->
+<header class="px-3 pt-3 sm:px-6 sm:pt-4">
 	<div
-		class="mx-auto flex min-h-16 w-full max-w-[var(--container)] items-center justify-between overflow-visible px-4 py-3 sm:px-6"
+		class="mx-auto flex min-h-14 w-full max-w-[var(--container)] items-center justify-between overflow-visible rounded-full border border-[var(--c-topbar-border)] bg-[var(--c-topbar-bg)] py-2 pl-3 pr-2 text-[var(--c-topbar-text)] shadow-[0_8px_32px_rgba(30,32,27,0.12)] transition-[background-color,border-color,color,box-shadow] duration-300 backdrop-blur-2xl backdrop-saturate-[1.8] sm:pl-5"
 	>
 		<a
 			[translate]="{ ariaLabel: 'Go to homepage' }"
@@ -10,77 +8,93 @@
 			routerLink="/"
 		>
 			<img
-				class="h-10 w-auto"
+				class="h-10 w-10 rounded-full"
 				[translate]="{ alt: 'Project logo' }"
 				ngSrc="logo.png"
-				width="132"
+				width="40"
 				height="40"
 				priority
 			/>
 			@if (company().name) {
-				<span class="hidden text-sm font-semibold tracking-[0.16em] text-[var(--c-text-strong)] sm:inline">
+				<span class="hidden text-sm font-semibold tracking-[0.16em] text-[var(--c-topbar-text)] sm:inline">
 					{{ company().name }}
 				</span>
 			}
 		</a>
 
-		<div class="flex items-center gap-2">
-			<div
-				class="relative flex items-center gap-1 rounded-full border border-[var(--c-border)] bg-[var(--c-bg-primary)] p-1 shadow-[var(--shadow-sm)]"
-			>
-				<button
-					class="theme-interactive theme-focus inline-flex h-9 items-center gap-2 rounded-full px-3 text-sm font-medium text-[var(--c-text)] hover:bg-[var(--c-bg-tertiary)]"
-					[attr.aria-label]="languageCycleLabel()"
-					(click)="nextLanguage()"
-					type="button"
-				>
-					<img
-						class="h-5 w-7 rounded-[4px] border border-black/10 object-cover"
-						[alt]="currentLanguage().nativeName"
-						[ngSrc]="currentLanguage().flagSrc"
-						width="28"
-						height="20"
-					/>
-				</button>
+		<nav class="mr-auto ml-4 sm:ml-8" aria-label="Основна навігація">
+			<ul class="flex items-center gap-1">
+				@for (link of navLinks; track link.label) {
+					<li [class.hidden]="link.secondary" [class.md:block]="link.secondary">
+						<a
+							class="theme-interactive theme-focus inline-flex min-h-10 items-center rounded-full px-3 text-sm font-medium text-[var(--c-topbar-text)] hover:bg-[var(--c-topbar-hover)]"
+							routerLinkActive="bg-[var(--c-topbar-hover)]"
+							[routerLinkActiveOptions]="{ exact: false }"
+							[routerLink]="link.path"
+							[queryParams]="link.query"
+						>
+							{{ link.label }}
+						</a>
+					</li>
+				}
+			</ul>
+		</nav>
 
+		<div class="flex items-center gap-2">
+			<app-topbar-search />
+
+			<div class="relative">
 				<button
-					class="theme-interactive theme-focus inline-flex h-9 w-9 items-center justify-center rounded-full text-[var(--c-text-strong)] hover:bg-[var(--c-bg-tertiary)]"
+					class="theme-interactive theme-focus inline-flex h-11 items-center gap-0.5 rounded-full border border-[var(--c-topbar-border)] pl-3.5 pr-2 text-xs font-semibold tracking-[0.14em] text-[var(--c-topbar-text)] hover:bg-[var(--c-topbar-hover)]"
+					aria-haspopup="menu"
 					[attr.aria-expanded]="languageMenuOpen()"
 					[attr.aria-label]="languageMenuLabel()"
 					(click)="toggleLanguageMenu()"
 					type="button"
 				>
-					<span class="material-symbols-outlined text-[20px]" aria-hidden="true">
-						arrow_drop_down
+					{{ currentLanguage().code.toUpperCase() }}
+					<span
+						class="material-symbols-outlined text-[18px] transition-transform duration-200"
+						[class.rotate-180]="languageMenuOpen()"
+						aria-hidden="true"
+					>
+						expand_more
 					</span>
 				</button>
 
 				@if (languageMenuOpen()) {
-					<div
-						class="absolute right-0 top-[calc(100%+0.5rem)] z-50 min-w-48 overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--c-bg-primary)] p-1 shadow-[var(--shadow-md)]"
+					<ul
+						class="absolute right-0 top-[calc(100%+0.5rem)] z-50 max-h-80 w-48 overflow-y-auto rounded-2xl border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-1 shadow-[var(--shadow-md)]"
+						role="menu"
 					>
 						@for (language of languages(); track language.code) {
-							<button
-								class="theme-interactive theme-focus flex w-full items-center gap-3 rounded-[calc(var(--radius-btn)-0.25rem)] px-3 py-2 text-left text-sm text-[var(--c-text)] hover:bg-[var(--c-bg-tertiary)]"
-								(click)="setLanguage(language)"
-								type="button"
-							>
-								<img
-									class="h-5 w-7 rounded-[4px] border border-black/10 object-cover"
-									[alt]="language.nativeName"
-									[ngSrc]="language.flagSrc"
-									width="28"
-									height="20"
-								/>
-								<span>{{ language.nativeName }}</span>
-							</button>
+							@let active = language.code === currentLanguage().code;
+							<li role="none">
+								<button
+									class="theme-interactive theme-focus flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm hover:bg-[var(--c-bg-tertiary)]"
+									role="menuitemradio"
+									[attr.aria-checked]="active"
+									(click)="setLanguage(language)"
+									type="button"
+								>
+									<span class="w-6 text-xs font-semibold tracking-[0.14em] text-[var(--c-text-muted)]">
+										{{ language.code.toUpperCase() }}
+									</span>
+									<span class="flex-1 text-[var(--c-text-strong)]" [class.font-semibold]="active">
+										{{ language.nativeName }}
+									</span>
+									@if (active) {
+										<span class="material-symbols-outlined text-[18px] text-[var(--c-primary)]" aria-hidden="true">check</span>
+									}
+								</button>
+							</li>
 						}
-					</div>
+					</ul>
 				}
 			</div>
 
 			<button
-				class="theme-interactive theme-focus inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--c-border)] bg-[var(--c-bg-primary)] text-[var(--c-text-strong)] hover:bg-[var(--c-bg-tertiary)]"
+				class="theme-interactive theme-focus inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--c-topbar-border)] text-[var(--c-topbar-text)] hover:bg-[var(--c-topbar-hover)]"
 				[attr.aria-label]="toggleLabel()"
 				(click)="toggleMode()"
 				type="button"
