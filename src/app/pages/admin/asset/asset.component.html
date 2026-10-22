@@ -1,0 +1,230 @@
+<a class="theme-focus inline-flex items-center gap-1 rounded text-sm font-medium text-[var(--c-text-muted)] hover:text-[var(--c-primary)]" routerLink="/admin/assets">
+	<span class="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_back</span>
+	Усі ассети
+</a>
+
+@let pageState = state();
+@switch (pageState) {
+	@case ('loading') {
+		<p class="mt-8 text-[var(--c-text-muted)]" role="status">Завантаження…</p>
+	}
+	@case ('missing') {
+		<div class="mt-8 rounded-[calc(var(--radius-card)*1.6)] border border-dashed border-[var(--c-border)] px-6 py-14 text-center">
+			<p class="text-xl font-semibold text-[var(--c-text-strong)]">Ассет не знайдено</p>
+			<p class="mt-2">Можливо, його видалили або змінили slug.</p>
+			<a class="theme-focus mt-4 inline-block rounded font-medium text-[var(--c-primary)] hover:underline" routerLink="/admin/assets">До списку ассетів</a>
+		</div>
+	}
+	@case ('ready') {
+		<form [formGroup]="form" (ngSubmit)="save()" novalidate>
+			<header class="mt-4 flex flex-wrap items-end justify-between gap-4">
+				<div class="min-w-0">
+					<h1 class="truncate text-3xl font-semibold tracking-[-0.02em] text-[var(--c-text-strong)]">
+						{{ originalSlug() ? form.controls.title.value || 'Без назви' : 'Новий ассет' }}
+					</h1>
+					@if (isPublished()) {
+						<a
+							class="theme-focus mt-2 inline-flex items-center gap-1 rounded text-sm font-medium text-[var(--c-primary)] hover:underline"
+							[routerLink]="['/product', originalSlug()]"
+							target="_blank"
+						>
+							Сторінка на сайті
+							<span class="material-symbols-outlined text-[16px]" aria-hidden="true">open_in_new</span>
+						</a>
+					}
+				</div>
+				<div class="flex flex-wrap items-center gap-3">
+					@if (saved() && form.pristine) {
+						<span class="inline-flex items-center gap-1 text-sm font-medium text-[var(--c-primary)]" role="status">
+							<span class="material-symbols-outlined text-[18px]" aria-hidden="true">check</span>
+							Збережено
+						</span>
+					}
+					@if (originalSlug()) {
+						<button
+							class="theme-interactive theme-focus inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-btn)] px-4 font-semibold text-[var(--c-text-muted)] hover:bg-[#a23b2a]/10 hover:text-[#a23b2a]"
+							type="button"
+							(click)="remove()"
+						>
+							<span class="material-symbols-outlined text-[20px]" aria-hidden="true">delete</span>
+							Видалити
+						</button>
+					}
+					<button
+						class="theme-interactive theme-focus inline-flex min-h-11 items-center rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-5 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)]"
+						type="submit"
+					>
+						{{ originalSlug() ? 'Зберегти' : 'Створити' }}
+					</button>
+				</div>
+			</header>
+
+			<div class="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_20rem] xl:items-start">
+				<div class="grid gap-6">
+					<!-- Main -->
+					<section class="rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-6" aria-labelledby="asset-main">
+						<h2 id="asset-main" class="text-lg font-semibold text-[var(--c-text-strong)]">Основне</h2>
+						<div class="mt-5 grid gap-4 sm:grid-cols-2">
+							<div>
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-title">Назва *</label>
+								<input id="asset-title" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="text" formControlName="title" [attr.aria-invalid]="showError(form.controls.title)" />
+								@if (showError(form.controls.title)) {
+									<p class="mt-1.5 text-sm text-[#a23b2a]">Вкажіть назву.</p>
+								}
+							</div>
+							<div>
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-slug">Slug *</label>
+								<input id="asset-slug" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 font-mono text-sm text-[var(--c-text-strong)]" type="text" placeholder="cesium-man" formControlName="slug" [attr.aria-invalid]="showError(form.controls.slug)" />
+								@if (form.controls.slug.hasError('taken')) {
+									<p class="mt-1.5 text-sm text-[#a23b2a]">Такий slug уже є.</p>
+								} @else if (showError(form.controls.slug)) {
+									<p class="mt-1.5 text-sm text-[#a23b2a]">Латиниця в нижньому регістрі, цифри й дефіси.</p>
+								} @else {
+									<p class="mt-1 text-xs text-[var(--c-text-muted)]">Адреса сторінки: /product/{{ form.controls.slug.value || '…' }}</p>
+								}
+							</div>
+							<div>
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-category">Категорія *</label>
+								<select id="asset-category" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" formControlName="category">
+									@for (item of categories; track item.slug) {
+										<option [value]="item.slug">{{ item.title }}</option>
+									}
+								</select>
+							</div>
+							<div>
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-seller">Продавець *</label>
+								<select id="asset-seller" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" formControlName="seller">
+									@for (item of sellers; track item.slug) {
+										<option [value]="item.slug">{{ item.name }}</option>
+									}
+								</select>
+							</div>
+							<div class="sm:col-span-2">
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-short">Короткий опис *</label>
+								<input id="asset-short" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="text" formControlName="short" [attr.aria-invalid]="showError(form.controls.short)" />
+								@if (showError(form.controls.short)) {
+									<p class="mt-1.5 text-sm text-[#a23b2a]">Одне речення для картки в каталозі.</p>
+								}
+							</div>
+							<div class="sm:col-span-2">
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-description">Опис</label>
+								<textarea id="asset-description" class="theme-focus min-h-32 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 py-2.5 text-[var(--c-text-strong)]" formControlName="description"></textarea>
+							</div>
+						</div>
+					</section>
+
+					<!-- Media -->
+					<section class="rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-6" aria-labelledby="asset-media">
+						<h2 id="asset-media" class="text-lg font-semibold text-[var(--c-text-strong)]">Медіа</h2>
+						<div class="mt-5 grid gap-4">
+							<div>
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-images">Зображення</label>
+								<textarea id="asset-images" class="theme-focus min-h-24 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 py-2.5 font-mono text-sm text-[var(--c-text-strong)]" placeholder="models/cesium-man-1.jpg" formControlName="images"></textarea>
+								<p class="mt-1 text-xs text-[var(--c-text-muted)]">Одне посилання на рядок; перше стане обкладинкою.</p>
+							</div>
+							<div>
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-model">GLB-модель</label>
+								<input id="asset-model" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 font-mono text-sm text-[var(--c-text-strong)]" type="text" placeholder="https://…/model.glb" formControlName="model" [attr.aria-invalid]="showError(form.controls.model)" />
+								@if (showError(form.controls.model)) {
+									<p class="mt-1.5 text-sm text-[#a23b2a]">Посилання https:// або шлях до файлу .glb.</p>
+								} @else {
+									<p class="mt-1 text-xs text-[var(--c-text-muted)]">Для 3D-перегляду на сторінці моделі.</p>
+								}
+							</div>
+						</div>
+					</section>
+
+					<!-- Specs -->
+					<section class="rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-6" aria-labelledby="asset-specs">
+						<h2 id="asset-specs" class="text-lg font-semibold text-[var(--c-text-strong)]">Характеристики</h2>
+						<div class="mt-5 grid gap-4 sm:grid-cols-2">
+							<div>
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-polygons">Полігони *</label>
+								<input id="asset-polygons" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="number" min="0" step="1" formControlName="polygons" [attr.aria-invalid]="showError(form.controls.polygons)" />
+								@if (showError(form.controls.polygons)) {
+									<p class="mt-1.5 text-sm text-[#a23b2a]">Невід'ємне число.</p>
+								}
+							</div>
+							<div>
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-textures">Текстури</label>
+								<input id="asset-textures" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="text" placeholder="PBR, 2K" formControlName="textures" />
+							</div>
+							<div>
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-archive">Розмір архіву</label>
+								<input id="asset-archive" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="text" placeholder="12 MB" formControlName="archiveSize" />
+							</div>
+							<div>
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-collection">Колекція</label>
+								<input id="asset-collection" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="text" formControlName="collection" />
+							</div>
+							<div class="sm:col-span-2">
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-software">Програми</label>
+								<input id="asset-software" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="text" placeholder="Blender, Unity, Unreal Engine" formControlName="software" />
+							</div>
+							<div>
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-renderers">Рендери</label>
+								<input id="asset-renderers" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="text" placeholder="Eevee, Cycles" formControlName="renderers" />
+							</div>
+							<div>
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-tags">Теги</label>
+								<input id="asset-tags" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="text" placeholder="персонаж, low-poly" formControlName="tags" />
+							</div>
+							<p class="text-xs text-[var(--c-text-muted)] sm:col-span-2">Програми, рендери й теги розділяйте комами.</p>
+						</div>
+					</section>
+				</div>
+
+				<!-- Sidebar -->
+				<aside class="grid gap-6 xl:sticky xl:top-6">
+					<section class="overflow-hidden rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)]" aria-label="Обкладинка">
+						@if (preview()) {
+							<img class="aspect-[4/3] w-full object-cover" [src]="preview()" alt="" width="320" height="240" />
+						} @else {
+							<div class="flex aspect-[4/3] items-center justify-center bg-[var(--c-bg-tertiary)] text-[var(--c-text-muted)]">
+								<span class="material-symbols-outlined text-[40px]" aria-hidden="true">image</span>
+							</div>
+						}
+					</section>
+
+					<section class="rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-6" aria-labelledby="asset-sale">
+						<h2 id="asset-sale" class="text-lg font-semibold text-[var(--c-text-strong)]">Продаж</h2>
+						<div class="mt-4">
+							<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-price">Ціна, ₴ *</label>
+							<input id="asset-price" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="number" min="0" step="1" formControlName="price" [attr.aria-invalid]="showError(form.controls.price)" />
+							@if (showError(form.controls.price)) {
+								<p class="mt-1.5 text-sm text-[#a23b2a]">Невід'ємне число.</p>
+							} @else {
+								<p class="mt-1 text-xs text-[var(--c-text-muted)]">0 — безкоштовна модель.</p>
+							}
+						</div>
+
+						<fieldset class="mt-5">
+							<legend class="mb-2 text-sm font-semibold text-[var(--c-text-strong)]">Призначення</legend>
+							<div class="grid gap-2">
+								@for (purpose of purposes; track purpose.value) {
+									<label class="flex cursor-pointer items-center gap-2.5 text-sm">
+										<input class="h-4 w-4 accent-[var(--c-primary)]" type="checkbox" [checked]="hasPurpose(purpose.value)" (change)="togglePurpose(purpose.value)" />
+										{{ purpose.label }}
+									</label>
+								}
+							</div>
+						</fieldset>
+
+						<fieldset class="mt-5">
+							<legend class="mb-2 text-sm font-semibold text-[var(--c-text-strong)]">Властивості</legend>
+							<div class="grid gap-2">
+								@for (flag of flags; track flag.key) {
+									<label class="flex cursor-pointer items-center gap-2.5 text-sm">
+										<input class="h-4 w-4 accent-[var(--c-primary)]" type="checkbox" [formControlName]="flag.key" />
+										{{ flag.label }}
+									</label>
+								}
+							</div>
+						</fieldset>
+					</section>
+				</aside>
+			</div>
+		</form>
+	}
+	@default never;
+}

@@ -1,0 +1,175 @@
+<header>
+	<h1 class="text-3xl font-semibold tracking-[-0.02em] text-[var(--c-text-strong)]">Налаштування</h1>
+	<p class="mt-2 max-w-2xl text-[var(--c-text-muted)]">
+		Сайт статичний: зміни зберігаються в цьому браузері. Щоб опублікувати їх, експортуйте JSON і замініть файл у
+		<code class="text-sm">src/data/</code>.
+	</p>
+</header>
+
+<div class="mt-8 grid max-w-4xl gap-6">
+	<!-- Store -->
+	<section class="rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-6 sm:p-8" aria-labelledby="store-title">
+		<h2 id="store-title" class="text-lg font-semibold text-[var(--c-text-strong)]">Магазин</h2>
+		<p class="mt-1 text-sm text-[var(--c-text-muted)]">Назва, контакти й опис для пошукових систем.</p>
+
+		<form class="mt-6 space-y-5" [formGroup]="storeForm" (ngSubmit)="saveStore()" novalidate>
+			<div class="grid gap-4 sm:grid-cols-2">
+				@for (field of storeFields; track field.key) {
+					<div [class.sm:col-span-2]="field.wide">
+						<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" [for]="'store-' + field.key">{{ field.label }}</label>
+						<input
+							class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]"
+							[id]="'store-' + field.key"
+							[type]="field.type"
+							[formControlName]="field.key"
+							[attr.aria-invalid]="showError(storeForm.controls[field.key])"
+						/>
+						@if (showError(storeForm.controls[field.key])) {
+							<p class="mt-1.5 text-sm text-[#a23b2a]">
+								@switch (field.key) {
+									@case ('siteUrl') { Вкажіть адресу, що починається з https://. }
+									@case ('email') { Вкажіть коректний email. }
+									@default { Заповніть поле. }
+								}
+							</p>
+						}
+					</div>
+				}
+				<div class="sm:col-span-2">
+					<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="store-description">SEO-опис</label>
+					<textarea
+						id="store-description"
+						class="theme-focus min-h-28 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 py-2.5 text-[var(--c-text-strong)]"
+						formControlName="description"
+					></textarea>
+					<p class="mt-1 text-xs text-[var(--c-text-muted)]">{{ storeForm.controls.description.value.length }} символів, оптимально до 160.</p>
+				</div>
+			</div>
+
+			@if (storeNotice(); as notice) {
+				<p class="text-sm" [class]="notice.tone === 'ok' ? 'text-[var(--c-primary)]' : 'text-[#a23b2a]'" role="status">{{ notice.text }}</p>
+			}
+
+			<div class="flex flex-wrap gap-3">
+				<button
+					class="theme-interactive theme-focus inline-flex min-h-11 items-center rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-5 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)]"
+					type="submit"
+				>
+					Зберегти
+				</button>
+				<button
+					class="theme-interactive theme-focus inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-btn)] border border-[var(--c-border)] px-5 font-semibold text-[var(--c-text-strong)] hover:border-[var(--c-primary)]"
+					type="button"
+					(click)="exportStore()"
+				>
+					<span class="material-symbols-outlined text-[20px]" aria-hidden="true">download</span>
+					company.json
+				</button>
+				<button class="theme-focus ml-auto rounded px-2 text-sm font-medium text-[var(--c-text-muted)] hover:text-[#a23b2a]" type="button" (click)="resetStore()">
+					Скинути
+				</button>
+			</div>
+		</form>
+	</section>
+
+	<!-- Account -->
+	<section class="rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-6 sm:p-8" aria-labelledby="account-title">
+		<h2 id="account-title" class="text-lg font-semibold text-[var(--c-text-strong)]">Обліковий запис</h2>
+		<p class="mt-1 text-sm text-[var(--c-text-muted)]">
+			Ви увійшли як <span class="font-medium text-[var(--c-text-strong)]">{{ auth.email() }}</span>. Акаунти адміністраторів керуються у Firebase.
+		</p>
+
+		@if (auth.hasPassword()) {
+			<form class="mt-6 space-y-5" [formGroup]="accountForm" (ngSubmit)="saveAccount()" novalidate>
+				<div class="grid gap-4 sm:grid-cols-2">
+					<div class="sm:col-span-2">
+						<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="account-current">Поточний пароль</label>
+						<input
+							id="account-current"
+							class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)] sm:max-w-[calc(50%-0.5rem)]"
+							type="password"
+							autocomplete="current-password"
+							formControlName="currentPassword"
+							[attr.aria-invalid]="showError(accountForm.controls.currentPassword)"
+						/>
+						@if (showError(accountForm.controls.currentPassword)) {
+							<p class="mt-1.5 text-sm text-[#a23b2a]">Введіть поточний пароль.</p>
+						}
+					</div>
+					<div>
+						<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="account-new">Новий пароль</label>
+						<input
+							id="account-new"
+							class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]"
+							type="password"
+							autocomplete="new-password"
+							formControlName="newPassword"
+							[attr.aria-invalid]="showError(accountForm.controls.newPassword)"
+						/>
+						@if (showError(accountForm.controls.newPassword)) {
+							<p class="mt-1.5 text-sm text-[#a23b2a]">Щонайменше 8 символів.</p>
+						}
+					</div>
+					<div>
+						<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="account-confirm">Повторіть пароль</label>
+						<input
+							id="account-confirm"
+							class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]"
+							type="password"
+							autocomplete="new-password"
+							formControlName="confirmPassword"
+							[attr.aria-invalid]="accountForm.hasError('mismatch') && accountForm.controls.confirmPassword.touched"
+						/>
+						@if (accountForm.hasError('mismatch') && accountForm.controls.confirmPassword.touched) {
+							<p class="mt-1.5 text-sm text-[#a23b2a]">Паролі не збігаються.</p>
+						}
+					</div>
+				</div>
+
+				@if (accountNotice(); as notice) {
+					<p class="text-sm" [class]="notice.tone === 'ok' ? 'text-[var(--c-primary)]' : 'text-[#a23b2a]'" role="status">{{ notice.text }}</p>
+				}
+
+				<button
+					class="theme-interactive theme-focus inline-flex min-h-11 items-center rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-5 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)]"
+					type="submit"
+				>
+					Змінити пароль
+				</button>
+			</form>
+		} @else {
+			<p class="mt-4 text-sm">Ви входите через Google, тому пароль змінюється в налаштуваннях Google-акаунта.</p>
+		}
+	</section>
+
+	<!-- Data -->
+	<section class="rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-6 sm:p-8" aria-labelledby="data-title">
+		<h2 id="data-title" class="text-lg font-semibold text-[var(--c-text-strong)]">Дані каталогу</h2>
+		<p class="mt-1 text-sm text-[var(--c-text-muted)]">
+			@if (assets.hasChanges()) {
+				У цьому браузері є незбережені в репозиторії зміни ассетів.
+			} @else {
+				Ассети збігаються з products.json поточної збірки.
+			}
+		</p>
+		<div class="mt-5 flex flex-wrap gap-3">
+			<button
+				class="theme-interactive theme-focus inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-btn)] border border-[var(--c-border)] px-5 font-semibold text-[var(--c-text-strong)] hover:border-[var(--c-primary)]"
+				type="button"
+				(click)="assets.export()"
+			>
+				<span class="material-symbols-outlined text-[20px]" aria-hidden="true">download</span>
+				products.json
+			</button>
+			@if (assets.hasChanges()) {
+				<button
+					class="theme-interactive theme-focus inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-btn)] border border-[#a23b2a]/40 px-5 font-semibold text-[#a23b2a] hover:bg-[#a23b2a]/10"
+					type="button"
+					(click)="resetAssets()"
+				>
+					Скинути зміни ассетів
+				</button>
+			}
+		</div>
+	</section>
+</div>

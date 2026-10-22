@@ -359,6 +359,25 @@ Keep environment files limited to public front-end configuration. Do not store s
 
 ---
 
+# Admin
+
+The admin lives at `/admin` (`/admin/login`, `/admin/assets`, `/admin/assets/:slug`, `/admin/settings`).
+It is excluded from `robots.txt` and marked `noindex`.
+
+Sign-in uses Firebase Auth (project `vroom-8ef42`, config in `environment.prod.ts`) with
+email/password or Google:
+
+- only emails listed in `environment.adminEmails` get into the admin; other accounts are signed out;
+- create admin accounts in Firebase Console → Authentication → Users (or let them use Google);
+- add the production domain to Authentication → Settings → Authorized domains, otherwise Google
+  sign-in fails there (`localhost` is allowed by default);
+- "Forgot password" on the login page sends Firebase's reset email.
+
+Assets and store settings are still saved in browser storage only. To publish them, export
+`products.json` / `company.json` from the admin, replace the files in `src/data/`, commit and deploy.
+
+---
+
 # Deployment
 
 Deployment is handled automatically via **GitHub Actions**.

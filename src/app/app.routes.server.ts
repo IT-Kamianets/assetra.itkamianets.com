@@ -20,6 +20,12 @@ export const serverRoutes: ServerRoute[] = [
 		getPrerenderParams: async () => sellers.map(({ slug }) => ({ slug })),
 	},
 	{
+		// Prerendered shells so a reload works on static hosting; new assets fall back to 404.html.
+		path: 'admin/assets/:slug',
+		renderMode: RenderMode.Prerender,
+		getPrerenderParams: async () => [{ slug: 'new' }, ...products.map(({ slug }) => ({ slug }))],
+	},
+	{
 		path: '**',
 		renderMode: RenderMode.Prerender,
 	},

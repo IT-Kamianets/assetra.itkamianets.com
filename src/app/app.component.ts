@@ -1,5 +1,5 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { Component, DestroyRef, effect, inject, PLATFORM_ID } from '@angular/core';
+import { Component, DestroyRef, effect, inject, PLATFORM_ID, signal } from '@angular/core';
 import { NavigationEnd, NavigationStart, Router, RouterOutlet } from '@angular/router';
 import { CanonicalService } from '@wawjs/ngx-default';
 import { LanguageService } from '@wawjs/ngx-translate';
@@ -12,14 +12,18 @@ import { TopbarComponent } from './layouts/topbar/topbar.component';
 	selector: 'app-root',
 	imports: [RouterOutlet, TopbarComponent, FooterComponent, ScrollTopComponent],
 	template: `
-		<div class="flex min-h-screen flex-col">
-			<app-topbar />
-			<main class="flex-1 pt-[var(--topbar-space)]">
-				<router-outlet />
-			</main>
-			<app-footer />
-			<app-scroll-top />
-		</div>
+		@if (isAdmin()) {
+			<router-outlet />
+		} @else {
+			<div class="flex min-h-screen flex-col">
+				<app-topbar />
+				<main class="flex-1 pt-[var(--topbar-space)]">
+					<router-outlet />
+				</main>
+				<app-footer />
+				<app-scroll-top />
+			</div>
+		}
 	`,
 })
 export class App {
@@ -28,6 +32,9 @@ export class App {
 	private readonly _languageService = inject(LanguageService);
 	private readonly _router = inject(Router);
 	private readonly _destroyRef = inject(DestroyRef);
+
+	/** Admin pages bring their own layout instead of the public topbar and footer. */
+	protected readonly isAdmin = signal(false);
 
 	constructor() {
 		this._canonicalService.initialize();
@@ -53,7 +60,10 @@ export class App {
 	private _markHomeRoute() {
 		const subscription = this._router.events.subscribe((event) => {
 			if (event instanceof NavigationEnd) {
-				this._document.documentElement.classList.toggle('route-home', _path(event.urlAfterRedirects) === '/');
+				const path = _path(event.urlAfterRedirects);
+
+				this._document.documentElement.classList.toggle('route-home', path === '/');
+				this.isAdmin.set(path === '/admin' || path.startsWith('/admin/'));
 			}
 		});
 

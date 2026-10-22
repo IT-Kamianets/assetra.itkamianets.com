@@ -6,6 +6,9 @@ import {
 	sellerMetaResolver,
 } from './feature/catalog/catalog.resolver';
 import { companyProfile } from './feature/company/company.data';
+import { adminGuard, adminLoginGuard } from './feature/admin/admin.guard';
+
+const ADMIN_ROBOTS = 'noindex, nofollow';
 
 export const routes: Routes = [
 	{
@@ -76,6 +79,40 @@ export const routes: Routes = [
 		resolve: { meta: sellerMetaResolver },
 		loadComponent: () =>
 			import('./pages/seller/seller.component').then((m) => m.SellerComponent),
+	},
+	{
+		path: 'admin/login',
+		canActivate: [adminLoginGuard],
+		data: { meta: { title: 'Вхід в адмінку', robots: ADMIN_ROBOTS } },
+		loadComponent: () =>
+			import('./pages/admin/login/login.component').then((m) => m.LoginComponent),
+	},
+	{
+		path: 'admin',
+		canActivate: [adminGuard],
+		loadComponent: () =>
+			import('./layouts/admin/admin-layout.component').then((m) => m.AdminLayoutComponent),
+		children: [
+			{ path: '', pathMatch: 'full', redirectTo: 'assets' },
+			{
+				path: 'assets',
+				data: { meta: { title: 'Ассети', robots: ADMIN_ROBOTS } },
+				loadComponent: () =>
+					import('./pages/admin/assets/assets.component').then((m) => m.AssetsComponent),
+			},
+			{
+				path: 'assets/:slug',
+				data: { meta: { title: 'Ассет', robots: ADMIN_ROBOTS } },
+				loadComponent: () =>
+					import('./pages/admin/asset/asset.component').then((m) => m.AssetComponent),
+			},
+			{
+				path: 'settings',
+				data: { meta: { title: 'Налаштування', robots: ADMIN_ROBOTS } },
+				loadComponent: () =>
+					import('./pages/admin/settings/settings.component').then((m) => m.SettingsComponent),
+			},
+		],
 	},
 	{
 		path: '**',
