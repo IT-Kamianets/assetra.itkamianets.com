@@ -93,5 +93,5 @@ export class ProductCardComponent {
 	protected readonly sellerName = computed(() => getSeller(this.product().seller)?.name ?? '');
 	protected readonly summary = computed(() => formatModelSummary(this.product()));
 	protected readonly price = computed(() => formatPrice(this.product().price));
-	protected readonly software = computed(() => this.product().formats.slice(0, 3).join(' · '));
+	protected readonly software = computed(() => this.product().formats.join(' · '));
 }

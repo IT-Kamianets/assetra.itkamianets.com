@@ -79,7 +79,7 @@ export class ProductComponent {
 			{ label: 'Полігони', value: formatPolygons(product.polygons) },
 			{ label: 'Ріг', value: product.rigged ? 'Так' : 'Ні' },
 			{ label: 'Анімація', value: product.animated ? 'Так' : 'Ні' },
-			{ label: 'Формати', value: product.formats.join(', ') },
+			{ label: 'Формат', value: product.formats.join(', ') },
 			{ label: 'Програми', value: product.software.join(', ') },
 			{ label: 'Рушії рендеру', value: product.renderers.join(', ') },
 			{ label: 'Текстури', value: product.textures },

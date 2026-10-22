@@ -18,7 +18,7 @@ import { ContactService } from '../../feature/contact/contact.service';
 type OrderType = 'custom' | 'cart';
 type SubmitState = 'idle' | 'sending' | 'sent' | 'error';
 
-const SOFTWARE = ['Blender', '3ds Max', 'Maya', 'Unity', 'Unreal Engine', 'Інше / FBX, OBJ, GLB'];
+const SOFTWARE = ['Blender', '3ds Max', 'Maya', 'Unity', 'Unreal Engine', 'Веб / AR (Three.js, model-viewer)', 'Інше'];
 const DEADLINES = ['Не терміново', 'Протягом тижня', '2–3 дні'];
 
 const STEPS = [

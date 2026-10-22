@@ -4,7 +4,6 @@ import { ActivatedRoute, Params, Router, RouterLink } from '@angular/router';
 import { BreadcrumbsComponent } from '../../feature/catalog/breadcrumbs/breadcrumbs.component';
 import {
 	categories,
-	FORMAT_OPTIONS,
 	getCategory,
 	matchesSearch,
 	POLYGON_TIER_LABELS,
@@ -16,7 +15,7 @@ import {
 import { Breadcrumb, CatalogSort, Product } from '../../feature/catalog/catalog.interface';
 import { ProductCardComponent } from '../../feature/catalog/product-card/product-card.component';
 
-type MultiFilterKey = 'seller' | 'purpose' | 'poly' | 'feature' | 'format';
+type MultiFilterKey = 'seller' | 'purpose' | 'poly' | 'feature';
 type Feature = 'rigged' | 'animated' | 'pbr';
 type PriceFilter = '' | 'free' | 'paid';
 
@@ -76,11 +75,6 @@ const FILTER_GROUPS: FilterGroup[] = [
 			{ value: 'pbr', label: 'PBR-текстури' },
 		],
 	},
-	{
-		key: 'format',
-		title: 'Формат',
-		options: FORMAT_OPTIONS.map((value) => ({ value, label: value })),
-	},
 ];
 
 const FEATURE_CHECKS: Record<Feature, (product: Product) => boolean> = {
@@ -130,7 +124,6 @@ export class CatalogComponent {
 			purpose: list('purpose'),
 			poly: list('poly'),
 			feature: list('feature'),
-			format: list('format'),
 			min: amount('min'),
 			max: amount('max'),
 			price: (price === 'free' || price === 'paid' ? price : '') as PriceFilter,
@@ -146,7 +139,6 @@ export class CatalogComponent {
 			filters.purpose.length +
 			filters.poly.length +
 			filters.feature.length +
-			filters.format.length +
 			(filters.price ? 1 : 0) +
 			(filters.min !== null || filters.max !== null ? 1 : 0) +
 			(filters.q ? 1 : 0)
@@ -165,7 +157,6 @@ export class CatalogComponent {
 				(!filters.purpose.length || product.purpose.some((purpose) => filters.purpose.includes(purpose))) &&
 				(!filters.poly.length || filters.poly.includes(polygonTier(product.polygons))) &&
 				filters.feature.every((feature) => FEATURE_CHECKS[feature as Feature]?.(product) ?? true) &&
-				(!filters.format.length || product.formats.some((format) => filters.format.includes(format))) &&
 				(filters.price !== 'free' || product.price === 0) &&
 				(filters.price !== 'paid' || product.price > 0) &&
 				(filters.min === null || product.price >= filters.min) &&

@@ -3,7 +3,6 @@ import { RouterLink } from '@angular/router';
 import {
 	categories,
 	countByCategory,
-	FORMAT_OPTIONS,
 	formatModelCount,
 	getProduct,
 	imageUrl,
@@ -56,7 +55,7 @@ export class LandingComponent {
 	protected readonly popular = products.filter((product) => product.isHit).slice(0, 4);
 	protected readonly fresh = products.filter((product) => product.isNew).slice(0, 4);
 
-	protected readonly formats = FORMAT_OPTIONS;
+	protected readonly glbFeatures = ['Геометрія + текстури', 'PBR-матеріали', 'Ріг і анімації', 'Один файл', 'AR-ready'];
 	protected readonly benefits = [
 		{
 			icon: 'view_in_ar',

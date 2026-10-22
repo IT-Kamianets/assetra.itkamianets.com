@@ -26,7 +26,7 @@ export const productMetaResolver: ResolveFn<MetaPage | RedirectCommand> = (route
 
 	return {
 		title: `${product.title}: 3D-модель`,
-		description: `${product.short} Формати: ${product.formats.join(', ')}.`,
+		description: `${product.short} Формат GLB, перегляд у 3D.`,
 		image: imageUrl(product.images[0]!, 1200),
 	};
 };

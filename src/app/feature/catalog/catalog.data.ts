@@ -20,12 +20,6 @@ export const POLYGON_TIER_LABELS: Record<PolygonTier, string> = {
 	high: 'High-poly (понад 100 тис.)',
 };
 
-/** Formats, most common first, so the filter list reads naturally. */
-const FORMAT_ORDER = ['FBX', 'OBJ', 'GLB', 'BLEND', 'MAX', 'USDZ', 'MA', 'SKP'];
-export const FORMAT_OPTIONS = [...new Set(products.flatMap((product) => product.formats))].sort(
-	(a, b) => (FORMAT_ORDER.indexOf(a) + 1 || 99) - (FORMAT_ORDER.indexOf(b) + 1 || 99),
-);
-
 export function polygonTier(polygons: number): PolygonTier {
 	return polygons < 10_000 ? 'low' : polygons <= 100_000 ? 'mid' : 'high';
 }

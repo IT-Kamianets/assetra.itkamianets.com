@@ -30,9 +30,7 @@
 			"Cycles"
 		],
 		"formats": [
-			"GLB",
-			"FBX",
-			"BLEND"
+			"GLB"
 		],
 		"tags": [
 			"персонаж",
@@ -75,10 +73,7 @@
 			"Arnold"
 		],
 		"formats": [
-			"GLB",
-			"FBX",
-			"MA",
-			"BLEND"
+			"GLB"
 		],
 		"tags": [
 			"робот",
@@ -121,9 +116,7 @@
 			"Eevee"
 		],
 		"formats": [
-			"GLB",
-			"FBX",
-			"BLEND"
+			"GLB"
 		],
 		"tags": [
 			"тварина",
@@ -166,9 +159,6 @@
 			"Cycles"
 		],
 		"formats": [
-			"MAX",
-			"FBX",
-			"OBJ",
 			"GLB"
 		],
 		"tags": [
@@ -211,9 +201,7 @@
 			"Corona"
 		],
 		"formats": [
-			"GLB",
-			"FBX",
-			"OBJ"
+			"GLB"
 		],
 		"tags": [
 			"іграшка",
@@ -256,10 +244,7 @@
 			"V-Ray"
 		],
 		"formats": [
-			"GLB",
-			"FBX",
-			"OBJ",
-			"BLEND"
+			"GLB"
 		],
 		"tags": [
 			"ретро",
@@ -298,9 +283,7 @@
 			"Cycles"
 		],
 		"formats": [
-			"MAX",
-			"GLB",
-			"FBX"
+			"GLB"
 		],
 		"tags": [
 			"фото",
@@ -341,9 +324,6 @@
 			"Cycles"
 		],
 		"formats": [
-			"MAX",
-			"FBX",
-			"OBJ",
 			"GLB"
 		],
 		"tags": [
@@ -385,9 +365,7 @@
 			"Corona"
 		],
 		"formats": [
-			"GLB",
-			"USDZ",
-			"FBX"
+			"GLB"
 		],
 		"tags": [
 			"окуляри",
@@ -426,9 +404,7 @@
 			"Arnold"
 		],
 		"formats": [
-			"GLB",
-			"FBX",
-			"OBJ"
+			"GLB"
 		],
 		"tags": [
 			"одяг",
@@ -469,9 +445,7 @@
 			"Cycles"
 		],
 		"formats": [
-			"GLB",
-			"FBX",
-			"BLEND"
+			"GLB"
 		],
 		"tags": [
 			"sci-fi",
@@ -512,8 +486,7 @@
 			"Eevee"
 		],
 		"formats": [
-			"GLB",
-			"FBX"
+			"GLB"
 		],
 		"tags": [
 			"ліхтар",
@@ -554,8 +527,7 @@
 			"Cycles"
 		],
 		"formats": [
-			"GLB",
-			"FBX"
+			"GLB"
 		],
 		"tags": [
 			"вогонь",
@@ -596,9 +568,7 @@
 			"Corona"
 		],
 		"formats": [
-			"GLB",
-			"FBX",
-			"OBJ"
+			"GLB"
 		],
 		"tags": [
 			"пляшка",
@@ -638,10 +608,7 @@
 			"V-Ray"
 		],
 		"formats": [
-			"MAX",
-			"FBX",
-			"OBJ",
-			"SKP"
+			"GLB"
 		],
 		"tags": [
 			"диван",
@@ -681,8 +648,6 @@
 			"V-Ray"
 		],
 		"formats": [
-			"MAX",
-			"FBX",
 			"GLB"
 		],
 		"tags": [
@@ -721,8 +686,6 @@
 			"V-Ray"
 		],
 		"formats": [
-			"MAX",
-			"FBX",
 			"GLB"
 		],
 		"tags": [
@@ -764,8 +727,6 @@
 			"Cycles"
 		],
 		"formats": [
-			"MAX",
-			"FBX",
 			"GLB"
 		],
 		"tags": [
@@ -804,9 +765,7 @@
 			"Corona"
 		],
 		"formats": [
-			"GLB",
-			"FBX",
-			"BLEND"
+			"GLB"
 		],
 		"tags": [
 			"лампа",
@@ -845,9 +804,7 @@
 			"Corona"
 		],
 		"formats": [
-			"GLB",
-			"FBX",
-			"OBJ"
+			"GLB"
 		],
 		"tags": [
 			"рослина",
@@ -886,8 +843,7 @@
 			"Corona"
 		],
 		"formats": [
-			"GLB",
-			"FBX"
+			"GLB"
 		],
 		"tags": [
 			"квіти",
@@ -928,9 +884,7 @@
 			"Eevee"
 		],
 		"formats": [
-			"GLB",
-			"FBX",
-			"OBJ"
+			"GLB"
 		],
 		"tags": [
 			"їжа",
