@@ -26,7 +26,7 @@ export const environment: {
 		measurementId: 'G-RP486LZW2B',
 	},
 	// Firebase accounts allowed into /admin; anyone else is signed out after login.
-	adminEmails: ['alina.siruk26@gmail.com'],
+	adminEmails: ['alina.siruk26@gmail.com', 'ceo@webart.work', 'kristinaolefirenko5@gmail.com'],
 	// The site is Ukrainian-first; English is the only other language.
 	languages: [
 		{
