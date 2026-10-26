@@ -367,7 +367,8 @@ It is excluded from `robots.txt` and marked `noindex`.
 Sign-in uses Firebase Auth (project `vroom-8ef42`, config in `environment.prod.ts`) with
 email/password or Google:
 
-- only emails listed in `environment.adminEmails` get into the admin; other accounts are signed out;
+- only emails listed in `environment.adminEmails` get into the admin; other accounts stay regular
+  site users (a non-admin trying `/admin/login` is signed out again);
 - create admin accounts in Firebase Console → Authentication → Users (or let them use Google);
 - add the production domain to Authentication → Settings → Authorized domains, otherwise Google
   sign-in fails there (`localhost` is allowed by default);
@@ -375,6 +376,31 @@ email/password or Google:
 
 Assets and store settings are still saved in browser storage only. To publish them, export
 `products.json` / `company.json` from the admin, replace the files in `src/data/`, commit and deploy.
+
+---
+
+# User Accounts, Favorites And Uploads
+
+Anyone can register at `/account` (the person icon in the topbar) with the same Firebase project.
+
+- **Downloads:** "Завантажити GLB" on a model page needs a signed-in user; guests are sent to
+  `/account?next=…` and brought back. The GLB URLs themselves stay public, so this is a UI gate.
+- **Favorites:** the heart on cards and model pages, list at `/favorites` (heart icon in the
+  topbar). Stored in browser storage: one list for guests, one per account; a guest's list moves
+  into the account on sign-in. Not synced between devices.
+- **"Мої моделі"** on `/account`: signed-in users upload a GLB (up to 7 MB) and an optional preview
+  image. Files go to the Cloudflare container `environment.uploadContainer` (`assetka`) through
+  `POST {apiUrl}/api/cloudflare/upload-base64`; records go to the Firestore collection `models`.
+
+One-time setup for uploads:
+
+1. Publish [`firestore.rules`](firestore.rules) in Firebase Console → Firestore Database → Rules
+   (merge with existing rules if the project has other apps).
+2. Allow the site in the R2 bucket's CORS policy (Cloudflare → R2 → bucket → Settings → CORS), so
+   uploaded GLBs on `cdn-it.webart.work` can be fetched from the browser:
+   `[{"AllowedOrigins":["https://assetra.itkamianets.com","http://localhost:4200"],"AllowedMethods":["GET","HEAD"],"AllowedHeaders":["*"]}]`
+3. Bigger files need a larger request body limit on `it.webart.work` (nginx currently rejects
+   ~10 MB bodies with 413).
 
 ---
 

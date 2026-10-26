@@ -7,7 +7,9 @@ import { LanguageService, TranslateDirective, TranslateService } from '@wawjs/ng
 import { ThemeService } from '@wawjs/ngx-ui';
 import type { Language } from '@wawjs/ngx-translate';
 import type { AppLanguage } from '../../../environments/environment.prod';
+import { AuthService } from '../../feature/auth/auth.service';
 import { CartService } from '../../feature/cart/cart.service';
+import { FavoritesService } from '../../feature/favorites/favorites.service';
 import { CompanyService } from '../../feature/company/company.service';
 import { ScrollService } from '../../services/scroll.service';
 import { TopbarSearchComponent } from './search/topbar-search.component';
@@ -32,6 +34,8 @@ export class TopbarComponent {
 	private readonly _router = inject(Router);
 	private readonly _scrollService = inject(ScrollService);
 	protected readonly cart = inject(CartService);
+	protected readonly auth = inject(AuthService);
+	protected readonly favorites = inject(FavoritesService);
 	private readonly _host = inject<ElementRef<HTMLElement>>(ElementRef);
 
 	protected readonly navLinks = [

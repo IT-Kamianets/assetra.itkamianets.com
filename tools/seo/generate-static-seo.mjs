@@ -55,6 +55,7 @@ function buildRobots(siteUrl) {
 	return `User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /account
 
 Sitemap: ${siteUrl}/sitemap.xml
 `;

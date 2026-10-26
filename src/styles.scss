@@ -51,3 +51,8 @@ a:focus-visible .logo-glow {
 		transform: none;
 	}
 }
+
+/* Solid Material Symbol, e.g. a heart for a favorited model (needs the FILL axis in index.html). */
+.icon-filled {
+	font-variation-settings: 'FILL' 1;
+}

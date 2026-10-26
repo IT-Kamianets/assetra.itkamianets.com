@@ -1,0 +1,277 @@
+<section
+	class="rounded-[calc(var(--radius-card)*2)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-6 sm:p-8"
+	aria-labelledby="my-models-title"
+>
+	<div class="flex flex-wrap items-center justify-between gap-4">
+		<div>
+			<h2
+				id="my-models-title"
+				class="text-2xl font-semibold tracking-[-0.02em] text-[var(--c-text-strong)]"
+			>
+				Мої моделі
+			</h2>
+			<p class="mt-1 text-sm text-[var(--c-text-muted)]">
+				Завантажуйте власні 3D-моделі у форматі GLB.
+			</p>
+		</div>
+		@if (!formOpen()) {
+			<button
+				class="theme-interactive theme-focus inline-flex min-h-12 items-center justify-center gap-2 rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-5 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)]"
+				type="button"
+				(click)="formOpen.set(true); notice.set(null)"
+			>
+				<span class="material-symbols-outlined text-[20px]" aria-hidden="true">add</span>
+				Додати модель
+			</button>
+		}
+	</div>
+
+	@if (notice(); as notice) {
+		<p
+			class="mt-5 rounded-[var(--radius-btn)] px-3 py-2.5 text-sm"
+			[class]="
+				notice.tone === 'ok'
+					? 'bg-[var(--c-bg-tertiary)] text-[var(--c-text-strong)]'
+					: 'bg-[#a23b2a]/10 text-[#a23b2a]'
+			"
+			role="alert"
+		>
+			{{ notice.text }}
+		</p>
+	}
+
+	@if (formOpen()) {
+		<form
+			class="mt-6 grid gap-5 rounded-[var(--radius-card)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] p-4 sm:p-5"
+			[formGroup]="form"
+			(ngSubmit)="submit([modelInput, imageInput])"
+			novalidate
+		>
+			<div>
+				<label
+					class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]"
+					for="model-title"
+					>Назва</label
+				>
+				<input
+					id="model-title"
+					class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] px-3 text-[var(--c-text-strong)]"
+					type="text"
+					maxlength="120"
+					formControlName="title"
+					[attr.aria-invalid]="showError('title')"
+					[attr.aria-describedby]="showError('title') ? 'model-title-error' : null"
+				/>
+				@if (showError('title')) {
+					<p id="model-title-error" class="mt-1.5 text-sm text-[#a23b2a]">
+						Вкажіть назву моделі.
+					</p>
+				}
+			</div>
+
+			<div>
+				<label
+					class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]"
+					for="model-category"
+					>Категорія</label
+				>
+				<select
+					id="model-category"
+					class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] px-3 text-[var(--c-text-strong)]"
+					formControlName="category"
+				>
+					@for (category of categories; track category.slug) {
+						<option [value]="category.slug">{{ category.title }}</option>
+					}
+				</select>
+			</div>
+
+			<div>
+				<label
+					class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]"
+					for="model-description"
+					>Опис
+					<span class="font-normal text-[var(--c-text-muted)]"
+						>(необов'язково)</span
+					></label
+				>
+				<textarea
+					id="model-description"
+					class="theme-focus min-h-24 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] px-3 py-2.5 text-[var(--c-text-strong)]"
+					maxlength="2000"
+					formControlName="description"
+				></textarea>
+			</div>
+
+			<div class="grid gap-5 sm:grid-cols-2">
+				<div>
+					<label
+						class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]"
+						for="model-file"
+						>Файл моделі (.glb)</label
+					>
+					<input
+						#modelInput
+						id="model-file"
+						class="theme-focus block w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-2 text-sm text-[var(--c-text-strong)] file:mr-3 file:rounded-full file:border-0 file:bg-[var(--c-bg-tertiary)] file:px-3 file:py-1.5 file:font-semibold file:text-[var(--c-text-strong)]"
+						type="file"
+						accept=".glb,model/gltf-binary"
+						[attr.aria-invalid]="fileTouched() && !modelFile()"
+						aria-describedby="model-file-hint"
+						(change)="pickFile($event, 'model')"
+					/>
+					<p
+						id="model-file-hint"
+						class="mt-1.5 text-sm"
+						[class]="
+							fileTouched() && !modelFile()
+								? 'text-[#a23b2a]'
+								: 'text-[var(--c-text-muted)]'
+						"
+					>
+						{{
+							fileTouched() && !modelFile()
+								? 'Оберіть файл моделі.'
+								: 'До ' + maxModelMb + ' МБ.'
+						}}
+					</p>
+				</div>
+				<div>
+					<label
+						class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]"
+						for="model-image"
+						>Прев'ю
+						<span class="font-normal text-[var(--c-text-muted)]"
+							>(необов'язково)</span
+						></label
+					>
+					<input
+						#imageInput
+						id="model-image"
+						class="theme-focus block w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-2 text-sm text-[var(--c-text-strong)] file:mr-3 file:rounded-full file:border-0 file:bg-[var(--c-bg-tertiary)] file:px-3 file:py-1.5 file:font-semibold file:text-[var(--c-text-strong)]"
+						type="file"
+						accept="image/jpeg,image/png,image/webp"
+						aria-describedby="model-image-hint"
+						(change)="pickFile($event, 'image')"
+					/>
+					<p id="model-image-hint" class="mt-1.5 text-sm text-[var(--c-text-muted)]">
+						JPG, PNG або WebP до {{ maxImageMb }} МБ.
+					</p>
+				</div>
+			</div>
+
+			<div class="flex flex-wrap gap-3">
+				<button
+					class="theme-interactive theme-focus inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-6 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)] disabled:opacity-60 sm:flex-none"
+					type="submit"
+					[disabled]="sending()"
+				>
+					<span class="material-symbols-outlined text-[20px]" aria-hidden="true"
+						>upload</span
+					>
+					{{ sending() ? 'Завантаження…' : 'Завантажити модель' }}
+				</button>
+				<button
+					class="theme-interactive theme-focus inline-flex min-h-12 flex-1 items-center justify-center rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] px-6 font-semibold text-[var(--c-text-strong)] hover:border-[var(--c-primary)] disabled:opacity-60 sm:flex-none"
+					type="button"
+					[disabled]="sending()"
+					(click)="formOpen.set(false)"
+				>
+					Скасувати
+				</button>
+			</div>
+		</form>
+	}
+
+	@if (userModels.loading()) {
+		<p class="mt-6 text-sm text-[var(--c-text-muted)]" role="status">
+			Завантажуємо ваші моделі…
+		</p>
+	} @else if (userModels.loadFailed()) {
+		<p
+			class="mt-6 rounded-[var(--radius-btn)] bg-[#a23b2a]/10 px-3 py-2.5 text-sm text-[#a23b2a]"
+			role="alert"
+		>
+			Не вдалося отримати список ваших моделей. Оновіть сторінку трохи пізніше.
+		</p>
+	} @else if (userModels.count()) {
+		<ul class="mt-6 grid gap-4 sm:grid-cols-2">
+			@for (model of userModels.models(); track model.id) {
+				<li
+					class="flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-[var(--c-border)] bg-[var(--c-bg-primary)]"
+				>
+					<div
+						class="flex aspect-[4/3] items-center justify-center bg-[var(--c-bg-tertiary)]"
+					>
+						@if (model.imageUrl) {
+							<img
+								class="h-full w-full object-cover"
+								[src]="model.imageUrl"
+								[alt]="model.title"
+								width="400"
+								height="300"
+								loading="lazy"
+							/>
+						} @else {
+							<span
+								class="material-symbols-outlined text-[48px] text-[var(--c-text-muted)]"
+								aria-hidden="true"
+								>view_in_ar</span
+							>
+						}
+					</div>
+					<div class="flex flex-1 flex-col gap-1 p-4">
+						<p
+							class="text-xs font-medium uppercase tracking-[0.14em] text-[var(--c-text-muted)]"
+						>
+							{{ categoryTitle(model.category) }}
+						</p>
+						<h3 class="font-semibold text-[var(--c-text-strong)]">{{ model.title }}</h3>
+						@if (model.description) {
+							<p class="line-clamp-2 text-sm text-[var(--c-text-muted)]">
+								{{ model.description }}
+							</p>
+						}
+						<p class="text-xs text-[var(--c-text-muted)]">
+							GLB · {{ formatSize(model.size) }}
+						</p>
+						<div class="mt-auto flex gap-2 pt-3">
+							<a
+								class="theme-interactive theme-focus inline-flex min-h-10 flex-1 items-center justify-center gap-1.5 rounded-[var(--radius-btn)] border border-[var(--c-border)] px-3 text-sm font-semibold text-[var(--c-text-strong)] hover:border-[var(--c-primary)]"
+								[href]="model.modelUrl"
+								target="_blank"
+								rel="noopener"
+							>
+								<span
+									class="material-symbols-outlined text-[18px]"
+									aria-hidden="true"
+									>download</span
+								>
+								GLB
+							</a>
+							<button
+								class="theme-interactive theme-focus inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-btn)] text-[var(--c-text-muted)] hover:bg-[var(--c-bg-tertiary)] hover:text-[#a23b2a] disabled:opacity-60"
+								type="button"
+								[disabled]="removing() === model.id"
+								[attr.aria-label]="'Видалити модель: ' + model.title"
+								(click)="remove(model)"
+							>
+								<span
+									class="material-symbols-outlined text-[20px]"
+									aria-hidden="true"
+									>delete</span
+								>
+							</button>
+						</div>
+					</div>
+				</li>
+			}
+		</ul>
+	} @else if (!formOpen()) {
+		<p
+			class="mt-6 rounded-[var(--radius-card)] border border-dashed border-[var(--c-border)] px-4 py-8 text-center text-sm text-[var(--c-text-muted)]"
+		>
+			У вас ще немає моделей. Натисніть «Додати модель», щоб завантажити першу.
+		</p>
+	}
+</section>

@@ -9,6 +9,7 @@ export const environment: {
 	languages: AppLanguage[];
 	firebase: FirebaseOptions;
 	adminEmails: string[];
+	uploadContainer: string;
 } = {
 	apiUrl: 'https://it.webart.work',
 	appVersion: '1.0.0',
@@ -27,6 +28,8 @@ export const environment: {
 	},
 	// Firebase accounts allowed into /admin; anyone else is signed out after login.
 	adminEmails: ['alina.siruk26@gmail.com', 'ceo@webart.work', 'kristinaolefirenko5@gmail.com'],
+	// Cloudflare container on apiUrl (/api/cloudflare) where users' uploaded models are stored.
+	uploadContainer: 'assetka',
 	// The site is Ukrainian-first; English is the only other language.
 	languages: [
 		{

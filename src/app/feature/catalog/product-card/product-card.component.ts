@@ -1,6 +1,7 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CartService } from '../../cart/cart.service';
+import { FavoritesService } from '../../favorites/favorites.service';
 import { formatModelSummary, formatPrice, getCategory, getSeller, imageUrl } from '../catalog.data';
 import { Product } from '../catalog.interface';
 
@@ -74,6 +75,17 @@ import { Product } from '../catalog.interface';
 		>
 			<span class="material-symbols-outlined text-[20px]" aria-hidden="true">{{ inCart() ? 'check' : 'add_shopping_cart' }}</span>
 		</button>
+
+		<button
+			class="theme-interactive theme-focus absolute right-3 top-14 inline-flex h-9 w-9 items-center justify-center rounded-full bg-[var(--c-bg-secondary)]/90 shadow-[var(--shadow-sm)] hover:bg-[var(--c-bg-secondary)]"
+			[class]="isFavorite() ? 'text-[#c0392b]' : 'text-[var(--c-text-strong)]'"
+			type="button"
+			[attr.aria-pressed]="isFavorite()"
+			[attr.aria-label]="(isFavorite() ? 'Прибрати з обраного: ' : 'Додати в обране: ') + product().title"
+			(click)="favorites.toggle(product().slug)"
+		>
+			<span class="material-symbols-outlined text-[20px]" [class.icon-filled]="isFavorite()" aria-hidden="true">favorite</span>
+		</button>
 	`,
 	host: { class: 'relative block h-full' },
 })
@@ -82,6 +94,8 @@ export class ProductCardComponent {
 
 	protected readonly cart = inject(CartService);
 	protected readonly inCart = computed(() => this.cart.has(this.product().slug));
+	protected readonly favorites = inject(FavoritesService);
+	protected readonly isFavorite = computed(() => this.favorites.has(this.product().slug));
 
 	protected readonly mainImage = computed(() => imageUrl(this.product().images[0]!, 600));
 	protected readonly hoverImage = computed(() => {

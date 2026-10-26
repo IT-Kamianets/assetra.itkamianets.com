@@ -1,0 +1,53 @@
+<div class="mx-auto max-w-[var(--container)] px-4 py-8 sm:px-6 lg:py-10">
+	<app-breadcrumbs [items]="breadcrumbs" />
+
+	<header class="mt-6 flex flex-wrap items-end justify-between gap-4">
+		<div>
+			<h1 class="text-3xl font-semibold tracking-[-0.02em] text-[var(--c-text-strong)] sm:text-4xl">Обране</h1>
+			@if (favorites.count()) {
+				<p class="mt-2 text-[var(--c-text-muted)]" aria-live="polite">{{ countLabel() }}</p>
+			}
+		</div>
+		@if (favorites.count()) {
+			<button
+				class="theme-focus inline-flex items-center gap-1.5 rounded text-sm font-medium text-[var(--c-text-muted)] hover:text-[#a23b2a]"
+				type="button"
+				(click)="favorites.clear()"
+			>
+				<span class="material-symbols-outlined text-[18px]" aria-hidden="true">delete_sweep</span>
+				Очистити обране
+			</button>
+		}
+	</header>
+
+	@if (!auth.isLoggedIn()) {
+		<div class="mt-6 flex gap-3 rounded-[var(--radius-card)] bg-[var(--c-bg-tertiary)] px-4 py-3 text-sm leading-6 text-[var(--c-text-strong)]">
+			<span class="material-symbols-outlined text-[20px] text-[var(--c-primary)]" aria-hidden="true">info</span>
+			<p>
+				Обране зберігається в цьому браузері.
+				<a class="theme-focus rounded font-semibold text-[var(--c-primary)] hover:underline" routerLink="/account" [queryParams]="{ mode: 'register', next: '/favorites' }">Зареєструйтеся</a>,
+				щоб завантажувати моделі з каталогу й додавати власні.
+			</p>
+		</div>
+	}
+
+	@if (favorites.count()) {
+		<ul class="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+			@for (item of favorites.items(); track item.slug) {
+				<li><app-product-card [product]="item" /></li>
+			}
+		</ul>
+	} @else {
+		<div class="mt-8 flex flex-col items-center rounded-[calc(var(--radius-card)*1.6)] border border-dashed border-[var(--c-border)] px-6 py-16 text-center">
+			<span class="material-symbols-outlined text-[48px] text-[var(--c-text-muted)]" aria-hidden="true">favorite</span>
+			<h2 class="mt-4 text-xl font-semibold text-[var(--c-text-strong)]">Тут поки порожньо</h2>
+			<p class="mt-2 max-w-md text-[var(--c-text-muted)]">Натискайте на сердечко на картці моделі, щоб зберегти її тут і повернутися до неї пізніше.</p>
+			<a
+				class="theme-interactive theme-focus mt-6 inline-flex min-h-12 items-center justify-center rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-6 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)]"
+				routerLink="/catalog"
+			>
+				До каталогу
+			</a>
+		</div>
+	}
+</div>

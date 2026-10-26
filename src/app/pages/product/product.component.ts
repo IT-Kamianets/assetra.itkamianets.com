@@ -1,7 +1,9 @@
 import { Component, computed, inject, linkedSignal, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../feature/auth/auth.service';
 import { CartService } from '../../feature/cart/cart.service';
+import { FavoritesService } from '../../feature/favorites/favorites.service';
 import { BreadcrumbsComponent } from '../../feature/catalog/breadcrumbs/breadcrumbs.component';
 import {
 	formatModelCount,
@@ -30,6 +32,8 @@ export class ProductComponent {
 	private readonly _route = inject(ActivatedRoute);
 	private readonly _router = inject(Router);
 	protected readonly cart = inject(CartService);
+	protected readonly auth = inject(AuthService);
+	protected readonly favorites = inject(FavoritesService);
 	private readonly _params = toSignal(this._route.paramMap, {
 		initialValue: this._route.snapshot.paramMap,
 	});
@@ -39,6 +43,7 @@ export class ProductComponent {
 	protected readonly category = computed(() => getCategory(this.product().category));
 	protected readonly seller = computed(() => getSeller(this.product().seller));
 	protected readonly inCart = computed(() => this.cart.has(this.product().slug));
+	protected readonly isFavorite = computed(() => this.favorites.has(this.product().slug));
 	protected readonly sellerProducts = computed(() => productsBySeller(this.product().seller));
 	protected readonly sellerCount = computed(() => formatModelCount(this.sellerProducts().length));
 	protected readonly moreFromSeller = computed(() =>
@@ -56,6 +61,7 @@ export class ProductComponent {
 		return 0;
 	});
 	protected readonly darkStage = signal(false);
+	protected readonly downloading = signal(false);
 
 	protected readonly images = computed(() =>
 		this.product().images.map((image) => ({
@@ -115,5 +121,44 @@ export class ProductComponent {
 
 	protected show3d() {
 		this.tab.set('3d');
+	}
+
+	/** Signed-in users get the GLB file; guests are sent to sign in and brought back here afterwards. */
+	protected async download() {
+		const { model, slug } = this.product();
+
+		if (!model || this.downloading()) {
+			return;
+		}
+
+		this.downloading.set(true);
+		await this.auth.ready;
+
+		if (!this.auth.isLoggedIn()) {
+			this.downloading.set(false);
+			await this._router.navigate(['/account'], { queryParams: { next: this._router.url } });
+			return;
+		}
+
+		try {
+			// Fetching as a blob keeps the file name; `download` is ignored on cross-origin links.
+			const response = await fetch(model);
+
+			if (!response.ok) {
+				throw new Error(`HTTP ${response.status}`);
+			}
+
+			const url = URL.createObjectURL(await response.blob());
+			const link = document.createElement('a');
+
+			link.href = url;
+			link.download = `${slug}.glb`;
+			link.click();
+			URL.revokeObjectURL(url);
+		} catch {
+			window.open(model, '_blank', 'noopener');
+		} finally {
+			this.downloading.set(false);
+		}
 	}
 }

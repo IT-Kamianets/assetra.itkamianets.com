@@ -1,10 +1,10 @@
 <header class="px-3 pt-3 sm:px-6 sm:pt-4">
 	<div
-		class="mx-auto flex min-h-14 w-full max-w-[var(--container)] items-center justify-between overflow-visible rounded-full border border-[var(--c-topbar-border)] bg-[var(--c-topbar-bg)] py-2 pl-3 pr-2 text-[var(--c-topbar-text)] shadow-[0_8px_32px_rgba(30,32,27,0.12)] transition-[background-color,border-color,color,box-shadow] duration-300 backdrop-blur-2xl backdrop-saturate-[1.8] sm:pl-5"
+		class="mx-auto flex min-h-14 w-full max-w-[var(--container)] items-center justify-between overflow-visible rounded-full border border-[var(--c-topbar-border)] bg-[var(--c-topbar-bg)] py-2 pl-2 pr-2 text-[var(--c-topbar-text)] shadow-[0_8px_32px_rgba(30,32,27,0.12)] transition-[background-color,border-color,color,box-shadow] duration-300 backdrop-blur-2xl backdrop-saturate-[1.8] sm:pl-5"
 	>
 		<a
 			[translate]="{ ariaLabel: 'Go to homepage' }"
-			class="group inline-flex items-center gap-3"
+			class="group inline-flex shrink-0 items-center gap-3"
 			routerLink="/"
 		>
 			<img
@@ -22,12 +22,12 @@
 			}
 		</a>
 
-		<nav class="mr-auto ml-4 sm:ml-8" aria-label="Основна навігація">
+		<nav class="mr-auto ml-1 sm:ml-8" aria-label="Основна навігація">
 			<ul class="flex items-center gap-1">
 				@for (link of navLinks; track link.label) {
 					<li [class.hidden]="link.secondary" [class.md:block]="link.secondary">
 						<a
-							class="theme-interactive theme-focus inline-flex min-h-10 items-center rounded-full px-3 text-sm font-medium text-[var(--c-topbar-text)] hover:bg-[var(--c-topbar-hover)]"
+							class="theme-interactive theme-focus inline-flex min-h-10 items-center rounded-full px-2.5 text-sm font-medium sm:px-3 text-[var(--c-topbar-text)] hover:bg-[var(--c-topbar-hover)]"
 							routerLinkActive="bg-[var(--c-topbar-hover)]"
 							[routerLinkActiveOptions]="{ exact: false }"
 							[routerLink]="link.path"
@@ -40,11 +40,11 @@
 			</ul>
 		</nav>
 
-		<div class="flex items-center gap-2">
+		<div class="flex items-center gap-1 sm:gap-2">
 			<app-topbar-search />
 
 			<a
-				class="theme-interactive theme-focus relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--c-topbar-border)] text-[var(--c-topbar-text)] hover:bg-[var(--c-topbar-hover)]"
+				class="theme-interactive theme-focus relative inline-flex h-10 w-10 items-center sm:h-11 sm:w-11 justify-center rounded-full border border-[var(--c-topbar-border)] text-[var(--c-topbar-text)] hover:bg-[var(--c-topbar-hover)]"
 				routerLink="/cart"
 				[attr.aria-label]="'Кошик, моделей: ' + cart.count()"
 			>
@@ -59,9 +59,43 @@
 				}
 			</a>
 
+			<a
+				class="theme-interactive theme-focus relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--c-topbar-border)] text-[var(--c-topbar-text)] hover:bg-[var(--c-topbar-hover)] sm:h-11 sm:w-11"
+				routerLink="/favorites"
+				[attr.aria-label]="'Обране, моделей: ' + favorites.count()"
+			>
+				<span class="material-symbols-outlined text-[22px]" aria-hidden="true">favorite</span>
+				@if (favorites.count()) {
+					<span
+						class="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--c-accent)] px-1 text-[11px] font-semibold leading-none text-[#2f3328]"
+						aria-hidden="true"
+					>
+						{{ favorites.count() }}
+					</span>
+				}
+			</a>
+
+			<a
+				class="theme-interactive theme-focus inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--c-topbar-border)] text-[var(--c-topbar-text)] hover:bg-[var(--c-topbar-hover)] sm:h-11 sm:w-11"
+				routerLink="/account"
+				[attr.aria-label]="auth.isLoggedIn() ? 'Мій акаунт: ' + auth.email() : 'Увійти або зареєструватися'"
+				[title]="auth.isLoggedIn() ? auth.email() : 'Увійти або зареєструватися'"
+			>
+				@if (auth.isLoggedIn()) {
+					<span
+						class="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--c-accent)] text-sm font-semibold uppercase leading-none text-[#2f3328]"
+						aria-hidden="true"
+					>
+						{{ auth.email().charAt(0) }}
+					</span>
+				} @else {
+					<span class="material-symbols-outlined text-[22px]" aria-hidden="true">person</span>
+				}
+			</a>
+
 			<div class="relative">
 				<button
-					class="theme-interactive theme-focus inline-flex h-11 items-center gap-0.5 rounded-full border border-[var(--c-topbar-border)] pl-3.5 pr-2 text-xs font-semibold tracking-[0.14em] text-[var(--c-topbar-text)] hover:bg-[var(--c-topbar-hover)]"
+					class="theme-interactive theme-focus inline-flex h-10 items-center gap-0.5 rounded-full border border-[var(--c-topbar-border)] px-2 sm:h-11 sm:pl-3.5 sm:pr-2 text-xs font-semibold tracking-[0.14em] text-[var(--c-topbar-text)] hover:bg-[var(--c-topbar-hover)]"
 					aria-haspopup="menu"
 					[attr.aria-expanded]="languageMenuOpen()"
 					[attr.aria-label]="languageMenuLabel()"
@@ -70,7 +104,7 @@
 				>
 					{{ currentLanguage().code.toUpperCase() }}
 					<span
-						class="material-symbols-outlined text-[18px] transition-transform duration-200"
+						class="material-symbols-outlined text-[18px] transition-transform duration-200 max-sm:!hidden"
 						[class.rotate-180]="languageMenuOpen()"
 						aria-hidden="true"
 					>
@@ -109,8 +143,9 @@
 				}
 			</div>
 
+			<!-- Hidden on phones: the bar has no room for it next to the account icon. -->
 			<button
-				class="theme-interactive theme-focus inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--c-topbar-border)] text-[var(--c-topbar-text)] hover:bg-[var(--c-topbar-hover)]"
+				class="theme-interactive theme-focus hidden h-11 w-11 items-center justify-center rounded-full border border-[var(--c-topbar-border)] text-[var(--c-topbar-text)] hover:bg-[var(--c-topbar-hover)] sm:inline-flex"
 				[attr.aria-label]="toggleLabel()"
 				(click)="toggleMode()"
 				type="button"

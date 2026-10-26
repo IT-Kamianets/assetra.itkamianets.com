@@ -81,6 +81,18 @@ export const routes: Routes = [
 			import('./pages/seller/seller.component').then((m) => m.SellerComponent),
 	},
 	{
+		path: 'favorites',
+		data: { meta: { title: 'Обране', robots: 'noindex, follow' } },
+		loadComponent: () =>
+			import('./pages/favorites/favorites.component').then((m) => m.FavoritesComponent),
+	},
+	{
+		path: 'account',
+		data: { meta: { title: 'Вхід і реєстрація', robots: 'noindex, follow' } },
+		loadComponent: () =>
+			import('./pages/account/account.component').then((m) => m.AccountComponent),
+	},
+	{
 		path: 'admin/login',
 		canActivate: [adminLoginGuard],
 		data: { meta: { title: 'Вхід в адмінку', robots: ADMIN_ROBOTS } },
