@@ -105,6 +105,8 @@ export class AssetComponent {
 	/** Slug the asset is stored under; empty while creating. */
 	protected readonly originalSlug = signal('');
 	protected readonly saved = signal(false);
+	protected readonly saving = signal(false);
+	protected readonly saveError = signal('');
 	protected readonly preview = signal('');
 	/** Which upload is running, and the last upload error per field. */
 	protected readonly uploading = signal<UploadKind | ''>('');
@@ -342,7 +344,18 @@ export class AssetComponent {
 		const asset = this._toProduct();
 		const isRename = asset.slug !== this.originalSlug();
 
-		this._assets.save(asset, this.originalSlug() || undefined);
+		this.saving.set(true);
+		this.saveError.set('');
+		const result = await this._assets.save(asset, this.originalSlug() || undefined);
+		this.saving.set(false);
+
+		if (result !== 'ok') {
+			this.saveError.set(
+				result === 'taken' ? 'Такий slug уже зайнятий іншим автором. Змініть slug.' : 'Не вдалося зберегти. Перевірте інтернет і спробуйте ще раз.',
+			);
+			return;
+		}
+
 		this.originalSlug.set(asset.slug);
 		this._sellerSlug.set(asset.seller);
 		this.isPublished.set(!!getProduct(asset.slug));
@@ -360,7 +373,11 @@ export class AssetComponent {
 			return;
 		}
 
-		this._assets.remove(this.originalSlug());
+		if (!(await this._assets.remove(this.originalSlug()))) {
+			this.saveError.set('Не вдалося видалити. Спробуйте ще раз.');
+			return;
+		}
+
 		await this._router.navigateByUrl('/admin/assets');
 	}
 

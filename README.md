@@ -374,12 +374,14 @@ email/password or Google:
   sign-in fails there (`localhost` is allowed by default);
 - "Forgot password" on the login page sends Firebase's reset email.
 
-Admin sections: «Профіль» (your seller info → `sellers.json`), «Ассети» (→ `products.json`),
+Admin sections: «Профіль» (your seller info → `sellers.json`), «Ассети» (stored live in Firestore
+`assets/{slug}` with the owner's `uid`: each admin sees and edits only their own, and they show on the
+site right away next to the built-in `products.json` catalog),
 «Колекції» (catalog collections → `src/data/collection/collections.json`; an asset picks one in its
 form, and its `collection` field holds the collection slug) and «Налаштування» (→ `company.json`).
 
-All of them are saved in browser storage only. To publish, export the JSON from the admin, replace
-the file in `src/data/`, commit and deploy. Catalog collections show on `/collections` next to the
+Profile, collections and settings are saved in browser storage only. To publish them, copy the JSON
+from the admin (the </> sync window for collections), replace the file in `src/data/`, commit and deploy. Catalog collections show on `/collections` next to the
 authors' collections from Firestore.
 
 ---

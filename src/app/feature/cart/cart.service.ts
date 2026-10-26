@@ -32,7 +32,8 @@ export class CartService {
 		void this._store.getJson<string[]>(STORE_KEY).then((saved) => {
 			if (Array.isArray(saved)) {
 				// Keep anything added before the restore finished.
-				this._slugs.update((current) => [...new Set([...saved, ...current])].filter((slug) => getProduct(slug)));
+				// Keep every saved slug: Firestore assets load later, and `items` shows only existing products.
+				this._slugs.update((current) => [...new Set([...saved, ...current])]);
 			}
 		});
 	}

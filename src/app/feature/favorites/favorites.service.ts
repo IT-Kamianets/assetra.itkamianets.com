@@ -87,5 +87,6 @@ export class FavoritesService {
 }
 
 function _valid(saved: unknown): string[] {
-	return Array.isArray(saved) ? saved.filter((slug): slug is string => typeof slug === 'string' && !!getProduct(slug)) : [];
+	// Slugs are kept even before live assets load; `items` shows only products that exist.
+	return Array.isArray(saved) ? saved.filter((slug): slug is string => typeof slug === 'string') : [];
 }

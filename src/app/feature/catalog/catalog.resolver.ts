@@ -1,7 +1,9 @@
-import { inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { inject, PLATFORM_ID } from '@angular/core';
 import { RedirectCommand, ResolveFn, Router } from '@angular/router';
 import type { MetaPage } from '@wawjs/ngx-core';
 import { getCategory, getProduct, getSeller, imageUrl, productsBySeller } from './catalog.data';
+import { LiveCatalogService } from './live-catalog.service';
 
 export const categoryMetaResolver: ResolveFn<MetaPage | RedirectCommand> = (route) => {
 	const category = getCategory(route.paramMap.get('category'));
@@ -17,11 +19,20 @@ export const categoryMetaResolver: ResolveFn<MetaPage | RedirectCommand> = (rout
 	};
 };
 
-export const productMetaResolver: ResolveFn<MetaPage | RedirectCommand> = (route) => {
-	const product = getProduct(route.paramMap.get('slug'));
+export const productMetaResolver: ResolveFn<MetaPage | RedirectCommand> = async (route) => {
+	const slug = route.paramMap.get('slug');
+	const router = inject(Router);
+	const live = isPlatformBrowser(inject(PLATFORM_ID)) ? inject(LiveCatalogService) : null;
+	let product = getProduct(slug);
+
+	// Assets published from the admin live in Firestore and are not prerendered.
+	if (!product && live) {
+		await live.ready;
+		product = getProduct(slug);
+	}
 
 	if (!product) {
-		return new RedirectCommand(inject(Router).parseUrl('/catalog'));
+		return new RedirectCommand(router.parseUrl('/catalog'));
 	}
 
 	return {

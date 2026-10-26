@@ -5,7 +5,7 @@ import {
 	getCategory,
 	imageUrl,
 	matchesSearch,
-	products,
+	allProducts,
 } from '../../../feature/catalog/catalog.data';
 
 const SUGGESTION_LIMIT = 5;
@@ -34,7 +34,7 @@ export class TopbarSearchComponent {
 	protected readonly matches = computed(() => {
 		const query = this.query().trim();
 
-		return query.length < 2 ? [] : products.filter((product) => matchesSearch(product, query));
+		return query.length < 2 ? [] : allProducts().filter((product) => matchesSearch(product, query));
 	});
 	protected readonly suggestions = computed(() =>
 		this.matches()

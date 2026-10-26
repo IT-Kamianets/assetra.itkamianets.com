@@ -8,7 +8,7 @@ import {
 	matchesSearch,
 	POLYGON_TIER_LABELS,
 	polygonTier,
-	products,
+	allProducts,
 	PURPOSE_LABELS,
 	sellers,
 } from '../../feature/catalog/catalog.data';
@@ -46,8 +46,8 @@ const PRICE_OPTIONS: { value: PriceFilter; label: string }[] = [
 ];
 
 const PRICE_BOUNDS = {
-	min: Math.min(...products.map((product) => product.price)),
-	max: Math.max(...products.map((product) => product.price)),
+	min: Math.min(...allProducts().map((product) => product.price)),
+	max: Math.max(...allProducts().map((product) => product.price)),
 };
 
 const FILTER_GROUPS: FilterGroup[] = [
@@ -149,7 +149,7 @@ export class CatalogComponent {
 		const category = this.category();
 		const filters = this.filters();
 
-		const matches = products.filter(
+		const matches = allProducts().filter(
 			(product) =>
 				(!category || product.category === category.slug) &&
 				matchesSearch(product, filters.q) &&

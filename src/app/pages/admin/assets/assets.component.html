@@ -10,12 +10,13 @@
 	</div>
 	<div class="flex flex-wrap gap-3">
 		<button
-			class="theme-interactive theme-focus inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-btn)] border border-[var(--c-border)] px-4 font-semibold text-[var(--c-text-strong)] hover:border-[var(--c-primary)]"
+			class="theme-interactive theme-focus inline-flex h-11 w-11 items-center justify-center rounded-[var(--radius-btn)] border border-[var(--c-border)] text-[var(--c-text-strong)] hover:border-[var(--c-primary)]"
 			type="button"
-			(click)="assets.export()"
+			aria-label="Синхронізація JSON"
+			title="Синхронізація JSON"
+			(click)="syncDialog.open()"
 		>
-			<span class="material-symbols-outlined text-[20px]" aria-hidden="true">download</span>
-			Експорт JSON
+			<span class="material-symbols-outlined text-[22px]" aria-hidden="true">code</span>
 		</button>
 		<a
 			class="theme-interactive theme-focus inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-4 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)]"
@@ -28,12 +29,20 @@
 	</div>
 </header>
 
-@if (assets.hasChanges()) {
-	<p class="mt-6 flex items-start gap-2 rounded-[var(--radius-card)] bg-[var(--c-bg-tertiary)] px-4 py-3 text-sm">
-		<span class="material-symbols-outlined text-[20px] text-[var(--c-primary)]" aria-hidden="true">info</span>
-		Є зміни, яких ще немає на сайті. Експортуйте JSON і замініть ним src/data/product/products.json.
+@if (notice(); as text) {
+	<p class="mt-6 flex items-start gap-2 rounded-[var(--radius-card)] bg-[#a23b2a]/10 px-4 py-3 text-sm text-[#a23b2a]" role="alert">
+		<span class="material-symbols-outlined text-[20px]" aria-hidden="true">error</span>
+		{{ text }}
 	</p>
 }
+
+<app-json-sync-dialog
+	#syncDialog
+	description="Тут усі ваші ассети одним JSON. Змініть їх або вставте JSON, який написав чат зі штучним інтелектом. Ваші ассети, яких немає в JSON, буде видалено."
+	[source]="syncSource"
+	[validate]="syncValidate"
+	(synced)="sync($event)"
+/>
 
 <div class="mt-6 flex flex-wrap gap-3">
 	<label class="relative min-w-60 flex-1">
@@ -142,9 +151,20 @@
 			</tbody>
 		</table>
 	</div>
+} @else if (assets.loading()) {
+	<p class="mt-6 text-[var(--c-text-muted)]" role="status">Завантажуємо ваші ассети…</p>
+} @else if (assets.loadFailed()) {
+	<p class="mt-6 rounded-[var(--radius-card)] bg-[#a23b2a]/10 px-4 py-3 text-sm text-[#a23b2a]" role="alert">
+		Не вдалося завантажити ваші ассети. Оновіть сторінку трохи пізніше.
+	</p>
 } @else {
 	<div class="mt-4 rounded-[calc(var(--radius-card)*1.6)] border border-dashed border-[var(--c-border)] px-6 py-14 text-center">
-		<p class="font-semibold text-[var(--c-text-strong)]">Нічого не знайдено</p>
-		<p class="mt-1 text-sm">{{ collection() ? 'У цій колекції ще немає ассетів, або змініть пошук.' : 'Змініть пошук або категорію.' }}</p>
+		@if (assets.count()) {
+			<p class="font-semibold text-[var(--c-text-strong)]">Нічого не знайдено</p>
+			<p class="mt-1 text-sm">{{ collection() ? 'У цій колекції ще немає ваших ассетів, або змініть пошук.' : 'Змініть пошук або категорію.' }}</p>
+		} @else {
+			<p class="font-semibold text-[var(--c-text-strong)]">У вас ще немає ассетів</p>
+			<p class="mt-1 text-sm">Натисніть «Додати ассет»: він збережеться у вашому акаунті й одразу з'явиться на сайті.</p>
+		}
 	</div>
 }

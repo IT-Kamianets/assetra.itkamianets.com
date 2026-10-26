@@ -1,3 +1,4 @@
+import { computed, signal } from '@angular/core';
 import categoriesData from '../../../data/category/categories.json';
 import collectionsData from '../../../data/collection/collections.json';
 import productsData from '../../../data/product/products.json';
@@ -5,9 +6,23 @@ import sellersData from '../../../data/seller/sellers.json';
 import { CatalogCollection, Category, PolygonTier, Product, ProductPurpose, Seller } from './catalog.interface';
 
 export const categories = categoriesData as Category[];
+/** Built-in catalog from products.json; prerendered with the site. */
 export const products = productsData as Product[];
 export const sellers = sellersData as Seller[];
 export const collections = collectionsData as CatalogCollection[];
+
+const _staticSlugs = new Set(products.map((product) => product.slug));
+const _live = signal<Product[]>([]);
+
+/**
+ * Every product on the site: products.json plus assets admins published in Firestore (loaded in the
+ * browser by LiveCatalogService). The helpers below read it, so computed views update when it loads.
+ */
+export const allProducts = computed(() => [...products, ..._live().filter((product) => !_staticSlugs.has(product.slug))]);
+
+export function setLiveProducts(list: Product[]) {
+	_live.set(list);
+}
 
 export const PURPOSE_LABELS: Record<ProductPurpose, string> = {
 	games: 'Ігри',
@@ -35,11 +50,11 @@ export function getCollection(slug: string | null | undefined): CatalogCollectio
 }
 
 export function productsInCollection(slug: string): Product[] {
-	return products.filter((product) => product.collection === slug);
+	return allProducts().filter((product) => product.collection === slug);
 }
 
 export function getProduct(slug: string | null | undefined): Product | undefined {
-	return products.find((product) => product.slug === slug);
+	return allProducts().find((product) => product.slug === slug);
 }
 
 export function getSeller(slug: string | null | undefined): Seller | undefined {
@@ -47,7 +62,7 @@ export function getSeller(slug: string | null | undefined): Seller | undefined {
 }
 
 export function productsBySeller(slug: string): Product[] {
-	return products.filter((product) => product.seller === slug);
+	return allProducts().filter((product) => product.seller === slug);
 }
 
 export function sellerInitials(seller: Seller): string {
@@ -76,16 +91,17 @@ export function matchesSearch(product: Product, query: string): boolean {
 }
 
 export function countByCategory(slug: string): number {
-	return products.filter((product) => product.category === slug).length;
+	return allProducts().filter((product) => product.category === slug).length;
 }
 
 export function getRelatedProducts(product: Product, limit = 4): Product[] {
+	const all = allProducts();
 	const sameCollection = product.collection
-		? products.filter(
+		? all.filter(
 				(item) => item.slug !== product.slug && item.collection === product.collection,
 			)
 		: [];
-	const sameCategory = products.filter(
+	const sameCategory = all.filter(
 		(item) =>
 			item.slug !== product.slug &&
 			item.category === product.category &&

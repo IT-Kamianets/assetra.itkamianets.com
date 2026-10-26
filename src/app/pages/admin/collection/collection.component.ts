@@ -138,7 +138,7 @@ export class CollectionComponent {
 
 		// A renamed slug must follow into the assets that belong to the collection.
 		if (originalSlug && isRename) {
-			this._moveAssets(originalSlug, value.slug);
+			await this._moveAssets(originalSlug, value.slug);
 		}
 
 		this.originalSlug.set(value.slug);
@@ -159,7 +159,7 @@ export class CollectionComponent {
 			return;
 		}
 
-		this._moveAssets(this.originalSlug(), '');
+		await this._moveAssets(this.originalSlug(), '');
 		this._collections.remove(this.originalSlug());
 		await this._router.navigateByUrl('/admin/collections');
 	}
@@ -198,11 +198,13 @@ export class CollectionComponent {
 	}
 
 	private _moveAssets(from: string, to: string) {
-		for (const asset of this._assets.assets().filter((item) => item.collection === from)) {
-			const { collection: _, ...rest } = asset;
+		return Promise.all(
+			this._assets.assets().filter((item) => item.collection === from).map((asset) => {
+				const { collection: _, ...rest } = asset;
 
-			this._assets.save(to ? { ...rest, collection: to } : rest, asset.slug);
-		}
+				return this._assets.save(to ? { ...rest, collection: to } : rest, asset.slug);
+			}),
+		);
 	}
 
 	private _uniqueSlug(control: AbstractControl<string>): ValidationErrors | null {

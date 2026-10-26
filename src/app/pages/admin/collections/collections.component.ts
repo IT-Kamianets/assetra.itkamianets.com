@@ -47,7 +47,7 @@ export class CollectionsComponent {
 		return formatModelCount(count);
 	}
 
-	protected sync(text: string) {
+	protected async sync(text: string) {
 		const parsed = parseCollections(text);
 
 		if ('error' in parsed) {
@@ -57,27 +57,29 @@ export class CollectionsComponent {
 		const kept = new Set(parsed.collections.map((collection) => collection.slug));
 
 		for (const { slug } of this.collections.collections().filter((collection) => !kept.has(collection.slug))) {
-			this._detachAssets(slug);
+			await this._detachAssets(slug);
 		}
 
 		this.collections.replaceAll(parsed.collections);
 	}
 
-	protected remove(slug: string, title: string, count: number) {
+	protected async remove(slug: string, title: string, count: number) {
 		if (!confirm(`Видалити колекцію «${title}»?${count ? ` Ассети (${count}) залишаться, але вже без колекції.` : ''}`)) {
 			return;
 		}
 
-		this._detachAssets(slug);
+		await this._detachAssets(slug);
 		this.collections.remove(slug);
 	}
 
 	/** Assets of a deleted collection stay, just without a collection. */
 	private _detachAssets(slug: string) {
-		for (const asset of this._assets.assets().filter((item) => item.collection === slug)) {
-			const { collection: _, ...rest } = asset;
+		return Promise.all(
+			this._assets.assets().filter((item) => item.collection === slug).map((asset) => {
+				const { collection: _, ...rest } = asset;
 
-			this._assets.save(rest, asset.slug);
-		}
+				return this._assets.save(rest, asset.slug);
+			}),
+		);
 	}
 }

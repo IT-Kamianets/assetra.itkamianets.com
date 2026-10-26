@@ -59,6 +59,26 @@ service cloud.firestore {
       allow delete: if ownsExisting();
     }
 
+    // Same list as environment.adminEmails; keep both in sync.
+    function isAdmin() {
+      return signedIn() && request.auth.token.email in ['alina.siruk26@gmail.com', 'ceo@webart.work', 'kristinaolefirenko5@gmail.com'];
+    }
+
+    // Catalog assets published from /admin; the document id is the slug. Each admin edits only their own.
+    match /assets/{slug} {
+      allow read: if true;
+
+      allow create: if isAdmin() && ownsNew()
+        && request.resource.data.slug == slug
+        && text('title', 200) && request.resource.data.title.size() > 0;
+
+      allow update: if isAdmin() && ownsExisting() && ownsNew()
+        && request.resource.data.slug == slug
+        && text('title', 200) && request.resource.data.title.size() > 0;
+
+      allow delete: if isAdmin() && ownsExisting();
+    }
+
     // Authors' collections (/account → "Мої колекції", public at /collections).
     match /collections/{collectionId} {
       allow read: if true;

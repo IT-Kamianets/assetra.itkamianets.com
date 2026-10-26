@@ -4,6 +4,7 @@ import { NavigationEnd, NavigationStart, Router, RouterOutlet } from '@angular/r
 import { CanonicalService } from '@wawjs/ngx-default';
 import { LanguageService } from '@wawjs/ngx-translate';
 import { environment } from '../environments/environment';
+import { LiveCatalogService } from './feature/catalog/live-catalog.service';
 import { FooterComponent } from './layouts/footer/footer.component';
 import { ScrollTopComponent } from './layouts/scroll-top/scroll-top.component';
 import { TopbarComponent } from './layouts/topbar/topbar.component';
@@ -42,6 +43,8 @@ export class App {
 		this._markHomeRoute();
 
 		if (isPlatformBrowser(inject(PLATFORM_ID))) {
+			// Adds assets published from the admin to the prerendered catalog.
+			void inject(LiveCatalogService).ready;
 			this._scrollToTopOnPageChange();
 		}
 

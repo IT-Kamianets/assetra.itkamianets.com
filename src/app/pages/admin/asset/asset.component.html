@@ -31,7 +31,9 @@
 					}
 				</div>
 				<div class="flex flex-wrap items-center gap-3">
-					@if (saved() && form.pristine) {
+					@if (saveError()) {
+						<span class="text-sm font-medium text-[#a23b2a]" role="alert">{{ saveError() }}</span>
+					} @else if (saved() && form.pristine) {
 						<span class="inline-flex items-center gap-1 text-sm font-medium text-[var(--c-primary)]" role="status">
 							<span class="material-symbols-outlined text-[18px]" aria-hidden="true">check</span>
 							Збережено
@@ -48,10 +50,11 @@
 						</button>
 					}
 					<button
-						class="theme-interactive theme-focus inline-flex min-h-11 items-center rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-5 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)]"
+						class="theme-interactive theme-focus inline-flex min-h-11 items-center rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-5 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)] disabled:opacity-60"
 						type="submit"
+						[disabled]="needsProfile() || saving()"
 					>
-						{{ originalSlug() ? 'Зберегти' : 'Створити' }}
+						{{ saving() ? 'Збереження…' : originalSlug() ? 'Зберегти' : 'Створити' }}
 					</button>
 				</div>
 			</header>

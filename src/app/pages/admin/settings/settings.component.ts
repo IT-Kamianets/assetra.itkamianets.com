@@ -1,8 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { AdminAssetsService } from '../../../feature/admin/admin-assets.service';
 import { AdminAuthResult, AdminAuthService } from '../../../feature/admin/admin-auth.service';
 import { AdminSettingsService } from '../../../feature/admin/admin-settings.service';
+import { formatModelCount } from '../../../feature/catalog/catalog.data';
 
 type Notice = { tone: 'ok' | 'error'; text: string } | null;
 
@@ -31,6 +32,7 @@ export class SettingsComponent {
 	private readonly _settings = inject(AdminSettingsService);
 	protected readonly auth = inject(AdminAuthService);
 	protected readonly assets = inject(AdminAssetsService);
+	protected readonly assetsLabel = computed(() => formatModelCount(this.assets.count()));
 
 	protected readonly storeFields = STORE_FIELDS;
 
@@ -102,11 +104,6 @@ export class SettingsComponent {
 		this.accountNotice.set({ tone: 'ok', text: 'Пароль змінено.' });
 	}
 
-	protected resetAssets() {
-		if (confirm('Скинути всі зміни в ассетах і повернутися до products.json?')) {
-			this.assets.reset();
-		}
-	}
 }
 
 function _passwordsMatch(group: AbstractControl): ValidationErrors | null {

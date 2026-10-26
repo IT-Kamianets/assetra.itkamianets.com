@@ -146,30 +146,7 @@
 	<section class="rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-6 sm:p-8" aria-labelledby="data-title">
 		<h2 id="data-title" class="text-lg font-semibold text-[var(--c-text-strong)]">Дані каталогу</h2>
 		<p class="mt-1 text-sm text-[var(--c-text-muted)]">
-			@if (assets.hasChanges()) {
-				У цьому браузері є незбережені в репозиторії зміни ассетів.
-			} @else {
-				Ассети збігаються з products.json поточної збірки.
-			}
+			Ваші ассети зберігаються в базі й одразу з'являються на сайті: {{ assetsLabel() }}. Базові моделі каталогу лежать у products.json.
 		</p>
-		<div class="mt-5 flex flex-wrap gap-3">
-			<button
-				class="theme-interactive theme-focus inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-btn)] border border-[var(--c-border)] px-5 font-semibold text-[var(--c-text-strong)] hover:border-[var(--c-primary)]"
-				type="button"
-				(click)="assets.export()"
-			>
-				<span class="material-symbols-outlined text-[20px]" aria-hidden="true">download</span>
-				products.json
-			</button>
-			@if (assets.hasChanges()) {
-				<button
-					class="theme-interactive theme-focus inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-btn)] border border-[#a23b2a]/40 px-5 font-semibold text-[#a23b2a] hover:bg-[#a23b2a]/10"
-					type="button"
-					(click)="resetAssets()"
-				>
-					Скинути зміни ассетів
-				</button>
-			}
-		</div>
 	</section>
 </div>
