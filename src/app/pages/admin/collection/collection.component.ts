@@ -6,6 +6,8 @@ import { AdminAssetsService } from '../../../feature/admin/admin-assets.service'
 import { AdminCollectionsService } from '../../../feature/admin/admin-collections.service';
 import { COVER_SIZE, cropAndUploadCover } from '../../../feature/admin/image-upload';
 import { slugify } from '../../../feature/admin/slugify';
+import { BreadcrumbsComponent } from '../../../feature/catalog/breadcrumbs/breadcrumbs.component';
+import { Breadcrumb } from '../../../feature/catalog/catalog.interface';
 import { formatModelCount, getCollection, imageUrl } from '../../../feature/catalog/catalog.data';
 
 const NEW_SLUG = 'new';
@@ -15,7 +17,7 @@ type PageState = 'loading' | 'ready' | 'missing';
 
 /** Create (`/admin/collections/new`) or edit one catalog collection, like the asset page. */
 @Component({
-	imports: [ReactiveFormsModule, RouterLink],
+	imports: [ReactiveFormsModule, RouterLink, BreadcrumbsComponent],
 	templateUrl: './collection.component.html',
 })
 export class CollectionComponent {
@@ -32,6 +34,13 @@ export class CollectionComponent {
 	protected readonly originalSlug = signal('');
 	protected readonly saved = signal(false);
 	protected readonly isPublished = signal(false);
+	/** Mirrors the title field, so the breadcrumbs follow what is typed. */
+	private readonly _title = signal('');
+	protected readonly breadcrumbs = computed<Breadcrumb[]>(() => [
+		{ label: 'Адмінка', path: '/admin' },
+		{ label: 'Колекції', path: '/admin/collections' },
+		{ label: this.originalSlug() ? this._title() || 'Без назви' : 'Нова колекція' },
+	]);
 	protected readonly uploading = signal(false);
 	protected readonly uploadError = signal('');
 
@@ -54,6 +63,8 @@ export class CollectionComponent {
 	private _autoSlug = '';
 
 	constructor() {
+		this.form.controls.title.valueChanges.pipe(takeUntilDestroyed()).subscribe((title) => this._title.set(title));
+
 		this._route.paramMap.pipe(takeUntilDestroyed()).subscribe((params) => {
 			void this._load(params.get('slug') ?? NEW_SLUG);
 		});

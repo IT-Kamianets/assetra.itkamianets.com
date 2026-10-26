@@ -1,7 +1,4 @@
-<a class="theme-focus inline-flex items-center gap-1 rounded text-sm font-medium text-[var(--c-text-muted)] hover:text-[var(--c-primary)]" routerLink="/admin/collections">
-	<span class="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_back</span>
-	Усі колекції
-</a>
+<app-breadcrumbs [items]="breadcrumbs()" />
 
 @let pageState = state();
 @switch (pageState) {

@@ -5,11 +5,10 @@ import { AdminAssetsService } from '../../feature/admin/admin-assets.service';
 import { AdminCollectionsService } from '../../feature/admin/admin-collections.service';
 
 const NAV_LINKS = [
-	{ path: '/admin/profile', icon: 'storefront', label: 'Профіль', nested: false },
-	{ path: '/admin/assets', icon: 'deployed_code', label: 'Ассети', nested: false },
-	// Collections group assets, so they sit under «Ассети» in the menu.
-	{ path: '/admin/collections', icon: 'collections_bookmark', label: 'Колекції', nested: true },
-	{ path: '/admin/settings', icon: 'settings', label: 'Налаштування', nested: false },
+	{ path: '/admin/profile', icon: 'storefront', label: 'Профіль' },
+	{ path: '/admin/assets', icon: 'deployed_code', label: 'Ассети' },
+	{ path: '/admin/collections', icon: 'collections_bookmark', label: 'Колекції' },
+	{ path: '/admin/settings', icon: 'settings', label: 'Налаштування' },
 ];
 
 /** Shell for signed-in admin pages. The admin is browser-only, so the prerendered shell is not hydrated. */
@@ -35,7 +34,6 @@ const NAV_LINKS = [
 							<li>
 								<a
 									class="theme-interactive theme-focus flex min-h-10 items-center gap-2.5 rounded-[var(--radius-btn)] px-3 text-sm font-medium text-[var(--c-text-strong)] hover:bg-[var(--c-bg-tertiary)]"
-									[class.lg:ml-6]="link.nested"
 									routerLinkActive="bg-[var(--c-bg-tertiary)] text-[var(--c-primary)]"
 									[routerLink]="link.path"
 								>

@@ -5,12 +5,13 @@
 	</div>
 	<div class="flex flex-wrap gap-3">
 		<button
-			class="theme-interactive theme-focus inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-btn)] border border-[var(--c-border)] px-4 font-semibold text-[var(--c-text-strong)] hover:border-[var(--c-primary)]"
+			class="theme-interactive theme-focus inline-flex h-11 w-11 items-center justify-center rounded-[var(--radius-btn)] border border-[var(--c-border)] text-[var(--c-text-strong)] hover:border-[var(--c-primary)]"
 			type="button"
-			(click)="collections.export()"
+			aria-label="Синхронізація JSON"
+			title="Синхронізація JSON"
+			(click)="syncDialog.open()"
 		>
-			<span class="material-symbols-outlined text-[20px]" aria-hidden="true">download</span>
-			Експорт JSON
+			<span class="material-symbols-outlined text-[22px]" aria-hidden="true">code</span>
 		</button>
 		<a
 			class="theme-interactive theme-focus inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-4 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)]"
@@ -25,9 +26,17 @@
 @if (collections.hasChanges()) {
 	<p class="mt-6 flex items-start gap-2 rounded-[var(--radius-card)] bg-[var(--c-bg-tertiary)] px-4 py-3 text-sm">
 		<span class="material-symbols-outlined text-[20px] text-[var(--c-primary)]" aria-hidden="true">info</span>
-		Є зміни, яких ще немає на сайті. Експортуйте JSON і замініть ним src/data/collection/collections.json.
+		Є зміни, яких ще немає на сайті. Відкрийте синхронізацію (&lt;/&gt;), скопіюйте масив "collections" і замініть ним src/data/collection/collections.json.
 	</p>
 }
+
+<app-json-sync-dialog
+	#syncDialog
+	description="Тут усі колекції одним JSON. Змініть їх або вставте JSON, який написав чат зі штучним інтелектом. Колекції, яких немає в JSON, буде видалено (їхні ассети залишаться без колекції)."
+	[source]="syncSource"
+	[validate]="syncValidate"
+	(synced)="sync($event)"
+/>
 
 <div class="mt-6 flex flex-wrap gap-3">
 	<label class="relative min-w-60 flex-1">
@@ -73,9 +82,25 @@
 							</a>
 						</td>
 						<td class="hidden max-w-md px-4 py-3 lg:table-cell">
-							<span class="line-clamp-2 text-[var(--c-text-muted)]">{{ row.collection.description }}</span>
+							<a
+								class="theme-focus line-clamp-2 rounded text-[var(--c-text-muted)] hover:text-[var(--c-primary)]"
+								routerLink="/admin/assets"
+								[queryParams]="{ collection: row.collection.slug }"
+								[title]="'Ассети колекції ' + row.collection.title"
+							>
+								{{ row.collection.description || 'Без опису' }}
+							</a>
 						</td>
-						<td class="px-4 py-3 text-right tabular-nums whitespace-nowrap">{{ modelCount(row.count) }}</td>
+						<td class="px-4 py-3 text-right whitespace-nowrap">
+							<a
+								class="theme-focus rounded tabular-nums font-medium text-[var(--c-primary)] hover:underline"
+								routerLink="/admin/assets"
+								[queryParams]="{ collection: row.collection.slug }"
+								[attr.aria-label]="'Ассети колекції ' + row.collection.title + ': ' + modelCount(row.count)"
+							>
+								{{ modelCount(row.count) }}
+							</a>
+						</td>
 						<td class="px-2 py-3">
 							<div class="flex justify-end">
 								<a

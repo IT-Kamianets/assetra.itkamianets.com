@@ -7,6 +7,7 @@ import { AdminCollectionsService } from '../../../feature/admin/admin-collection
 import { AdminProfileService } from '../../../feature/admin/admin-profile.service';
 import { COVER_SIZE, cropAndUploadCover } from '../../../feature/admin/image-upload';
 import { slugify } from '../../../feature/admin/slugify';
+import { BreadcrumbsComponent } from '../../../feature/catalog/breadcrumbs/breadcrumbs.component';
 import { uploadFile } from '../../../feature/cloud/cloud';
 import {
 	categories,
@@ -15,7 +16,7 @@ import {
 	imageUrl,
 	PURPOSE_LABELS,
 } from '../../../feature/catalog/catalog.data';
-import { Product, ProductDetails, ProductPurpose } from '../../../feature/catalog/catalog.interface';
+import { Breadcrumb, Product, ProductDetails, ProductPurpose } from '../../../feature/catalog/catalog.interface';
 import {
 	DetailFlag,
 	FILE_FORMATS,
@@ -84,7 +85,7 @@ type PageState = 'loading' | 'ready' | 'missing';
 
 /** Create (`/admin/assets/new`) or edit one asset of the catalog. */
 @Component({
-	imports: [ReactiveFormsModule, RouterLink],
+	imports: [ReactiveFormsModule, RouterLink, BreadcrumbsComponent],
 	templateUrl: './asset.component.html',
 })
 export class AssetComponent {
@@ -126,6 +127,13 @@ export class AssetComponent {
 	protected readonly textureMaps = TEXTURE_MAPS;
 	protected readonly fileFormats = FILE_FORMATS;
 	protected readonly isPublished = signal(false);
+	/** Mirrors the title field, so the breadcrumbs follow what is typed. */
+	private readonly _title = signal('');
+	protected readonly breadcrumbs = computed<Breadcrumb[]>(() => [
+		{ label: 'Адмінка', path: '/admin' },
+		{ label: 'Ассети', path: '/admin/assets' },
+		{ label: this.originalSlug() ? this._title() || 'Без назви' : 'Новий ассет' },
+	]);
 	/** Seller of the asset being edited; new assets get the admin's profile seller. */
 	private readonly _sellerSlug = signal('');
 	protected readonly needsProfile = computed(() => !this.originalSlug() && !this._profile.hasProfile());
@@ -195,6 +203,8 @@ export class AssetComponent {
 	});
 
 	constructor() {
+		this.form.controls.title.valueChanges.pipe(takeUntilDestroyed()).subscribe((title) => this._title.set(title));
+
 		this._route.paramMap.pipe(takeUntilDestroyed()).subscribe((params) => {
 			void this._load(params.get('slug') ?? NEW_SLUG);
 		});

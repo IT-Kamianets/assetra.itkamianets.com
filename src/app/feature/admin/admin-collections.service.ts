@@ -39,6 +39,11 @@ export class AdminCollectionsService {
 		this._set(index === -1 ? [collection, ...list] : list.map((item, i) => (i === index ? collection : item)));
 	}
 
+	/** Replaces the whole list (JSON sync); collections missing from `list` are deleted. */
+	replaceAll(list: CatalogCollection[]) {
+		this._set(list);
+	}
+
 	remove(slug: string) {
 		this._set(this._collections().filter((collection) => collection.slug !== slug));
 	}
