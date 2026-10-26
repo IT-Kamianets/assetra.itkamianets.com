@@ -2,7 +2,7 @@ import { Component, computed, inject, Injector, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { AdminAssetsService } from '../../../feature/admin/admin-assets.service';
+import { AdminAssetsService, AssetSaveResult } from '../../../feature/admin/admin-assets.service';
 import { AdminCollectionsService } from '../../../feature/admin/admin-collections.service';
 import { AdminProfileService } from '../../../feature/admin/admin-profile.service';
 import { COVER_SIZE, cropAndUploadCover } from '../../../feature/admin/image-upload';
@@ -37,6 +37,12 @@ const GLB_PATTERN = /^(https?:\/\/\S+|[\w./-]+\.glb)$/;
 const MAX_GLB_MB = 7;
 
 type UploadKind = 'cover' | 'model' | 'modelLow';
+
+const SAVE_ERRORS: Record<Exclude<AssetSaveResult, 'ok'>, string> = {
+	taken: 'Такий slug уже зайнятий іншим автором. Змініть slug.',
+	denied: 'База не дозволяє зберегти: не опубліковані правила Firestore для ассетів або ваша пошта не в списку адмінів.',
+	error: 'Не вдалося зберегти. Перевірте інтернет і спробуйте ще раз.',
+};
 
 /** Label/value pairs for the selects of the details section. */
 const _options = <T extends string>(labels: Record<T, string>) =>
@@ -350,9 +356,7 @@ export class AssetComponent {
 		this.saving.set(false);
 
 		if (result !== 'ok') {
-			this.saveError.set(
-				result === 'taken' ? 'Такий slug уже зайнятий іншим автором. Змініть slug.' : 'Не вдалося зберегти. Перевірте інтернет і спробуйте ще раз.',
-			);
+			this.saveError.set(SAVE_ERRORS[result]);
 			return;
 		}
 

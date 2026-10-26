@@ -6,7 +6,8 @@ import { Product } from '../catalog/catalog.interface';
 import { ASSETS_COLLECTION, LiveCatalogService, StoredAsset, toProduct } from '../catalog/live-catalog.service';
 import { getDb } from '../cloud/cloud';
 
-export type AssetSaveResult = 'ok' | 'taken' | 'error';
+/** `denied`: Firestore refused the write itself (rules not published, or the email is not an admin). */
+export type AssetSaveResult = 'ok' | 'taken' | 'denied' | 'error';
 
 const STATIC_SLUGS = new Set(products.map((product) => product.slug));
 
@@ -71,8 +72,7 @@ export class AdminAssetsService {
 			}
 		} catch (error) {
 			console.error(error);
-			// Writing over a slug another admin owns is refused by the Firestore rules.
-			return (error as { code?: string })?.code === 'permission-denied' ? 'taken' : 'error';
+			return this._explain(error, [asset.slug]);
 		}
 
 		const list = this._assets().filter((item) => item.slug !== asset.slug && item.slug !== originalSlug);
@@ -123,12 +123,32 @@ export class AdminAssetsService {
 			await batch.commit();
 		} catch (error) {
 			console.error(error);
-			return (error as { code?: string })?.code === 'permission-denied' ? 'taken' : 'error';
+			return this._explain(error, list.map((asset) => asset.slug));
 		}
 
 		this._assets.set(list);
 		void this._live.refresh();
 		return 'ok';
+	}
+
+	/**
+	 * A refused write means either that another admin owns one of the slugs, or that this account
+	 * cannot write at all (rules not published, email not in the admin list). Reading tells them apart.
+	 */
+	private async _explain(error: unknown, slugs: string[]): Promise<AssetSaveResult> {
+		if ((error as { code?: string })?.code !== 'permission-denied') {
+			return 'error';
+		}
+
+		try {
+			const [db, { doc, getDoc }] = await Promise.all([getDb(), import('firebase/firestore')]);
+			const uid = this._auth.uid();
+			const owners = await Promise.all(slugs.map(async (slug) => (await getDoc(doc(db, ASSETS_COLLECTION, slug))).data()?.['uid']));
+
+			return owners.some((owner) => owner && owner !== uid) ? 'taken' : 'denied';
+		} catch {
+			return 'denied';
+		}
 	}
 
 	private async _load(uid: string) {
