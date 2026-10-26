@@ -8,6 +8,7 @@ import {
 	UserModel,
 	UserModelsService,
 } from '../../../feature/user-models/user-models.service';
+import { CollectionsService } from '../../../feature/collections/collections.service';
 
 type Notice = { tone: 'ok' | 'error'; text: string } | null;
 
@@ -27,6 +28,7 @@ const ERRORS: Record<Exclude<UploadResult, 'ok'>, string> = {
 })
 export class MyModelsComponent {
 	protected readonly userModels = inject(UserModelsService);
+	protected readonly collections = inject(CollectionsService);
 	private readonly _fb = inject(NonNullableFormBuilder);
 
 	protected readonly categories = categories;
@@ -36,6 +38,7 @@ export class MyModelsComponent {
 		title: this._fb.control('', [Validators.required, Validators.maxLength(120)]),
 		category: this._fb.control(categories[0]?.slug ?? '', Validators.required),
 		description: this._fb.control('', Validators.maxLength(2000)),
+		collectionId: this._fb.control(''),
 	});
 	protected readonly modelFile = signal<File | null>(null);
 	protected readonly imageFile = signal<File | null>(null);
@@ -43,6 +46,7 @@ export class MyModelsComponent {
 	protected readonly formOpen = signal(false);
 	protected readonly sending = signal(false);
 	protected readonly removing = signal('');
+	protected readonly moving = signal('');
 	protected readonly notice = signal<Notice>(null);
 
 	protected showError(control: 'title'): boolean {
@@ -94,6 +98,16 @@ export class MyModelsComponent {
 		this.fileTouched.set(false);
 		fileInputs.forEach((input) => (input.value = ''));
 		this.formOpen.set(false);
+	}
+
+	protected async moveToCollection(model: UserModel, collection: string) {
+		this.moving.set(model.id);
+		const moved = await this.userModels.setCollection(model, collection);
+		this.moving.set('');
+
+		if (!moved) {
+			this.notice.set({ tone: 'error', text: 'Не вдалося змінити колекцію моделі. Спробуйте ще раз.' });
+		}
 	}
 
 	protected async remove(model: UserModel) {

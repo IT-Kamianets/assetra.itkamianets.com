@@ -3,6 +3,7 @@ import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthResult, AuthService } from '../../feature/auth/auth.service';
 import { MyModelsComponent } from './my-models/my-models.component';
+import { MyCollectionsComponent } from './my-collections/my-collections.component';
 
 type Mode = 'login' | 'register';
 type Notice = { tone: 'ok' | 'error'; text: string } | null;
@@ -20,7 +21,7 @@ const ERRORS: Partial<Record<AuthResult, string>> = {
 };
 
 @Component({
-	imports: [ReactiveFormsModule, RouterLink, MyModelsComponent],
+	imports: [ReactiveFormsModule, RouterLink, MyModelsComponent, MyCollectionsComponent],
 	host: { ngSkipHydration: 'true' },
 	templateUrl: './account.component.html',
 })

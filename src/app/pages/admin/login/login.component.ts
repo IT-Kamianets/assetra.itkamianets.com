@@ -93,7 +93,7 @@ export class LoginComponent {
 		if (result === 'forbidden' && this._auth.deniedEmail()) {
 			this.notice.set({
 				tone: 'error',
-				text: `Акаунт ${this._auth.deniedEmail()} не має доступу. Додайте його в adminEmails у environment.prod.ts.`,
+				text: `Акаунт ${this._auth.deniedEmail()} не має доступу.`,
 			});
 			return;
 		}

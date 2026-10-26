@@ -2,10 +2,14 @@ import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AdminAuthService } from '../../feature/admin/admin-auth.service';
 import { AdminAssetsService } from '../../feature/admin/admin-assets.service';
+import { AdminCollectionsService } from '../../feature/admin/admin-collections.service';
 
 const NAV_LINKS = [
-	{ path: '/admin/assets', icon: 'deployed_code', label: 'Ассети' },
-	{ path: '/admin/settings', icon: 'settings', label: 'Налаштування' },
+	{ path: '/admin/profile', icon: 'storefront', label: 'Профіль', nested: false },
+	{ path: '/admin/assets', icon: 'deployed_code', label: 'Ассети', nested: false },
+	// Collections group assets, so they sit under «Ассети» in the menu.
+	{ path: '/admin/collections', icon: 'collections_bookmark', label: 'Колекції', nested: true },
+	{ path: '/admin/settings', icon: 'settings', label: 'Налаштування', nested: false },
 ];
 
 /** Shell for signed-in admin pages. The admin is browser-only, so the prerendered shell is not hydrated. */
@@ -31,6 +35,7 @@ const NAV_LINKS = [
 							<li>
 								<a
 									class="theme-interactive theme-focus flex min-h-10 items-center gap-2.5 rounded-[var(--radius-btn)] px-3 text-sm font-medium text-[var(--c-text-strong)] hover:bg-[var(--c-bg-tertiary)]"
+									[class.lg:ml-6]="link.nested"
 									routerLinkActive="bg-[var(--c-bg-tertiary)] text-[var(--c-primary)]"
 									[routerLink]="link.path"
 								>
@@ -38,6 +43,8 @@ const NAV_LINKS = [
 									<span class="sr-only sm:not-sr-only">{{ link.label }}</span>
 									@if (link.path === '/admin/assets') {
 										<span class="ml-auto hidden text-xs text-[var(--c-text-muted)] lg:inline">{{ assets.count() }}</span>
+									} @else if (link.path === '/admin/collections') {
+										<span class="ml-auto hidden text-xs text-[var(--c-text-muted)] lg:inline">{{ collections.count() }}</span>
 									}
 								</a>
 							</li>
@@ -79,6 +86,7 @@ export class AdminLayoutComponent {
 	private readonly _router = inject(Router);
 	protected readonly auth = inject(AdminAuthService);
 	protected readonly assets = inject(AdminAssetsService);
+	protected readonly collections = inject(AdminCollectionsService);
 	protected readonly navLinks = NAV_LINKS;
 
 	protected async logout() {

@@ -1,0 +1,144 @@
+<header>
+	<h1 class="text-3xl font-semibold tracking-[-0.02em] text-[var(--c-text-strong)]">Профіль</h1>
+	<p class="mt-2 max-w-2xl text-[var(--c-text-muted)]">
+		Інформація про вас як продавця. Вона показується на сторінці продавця, а всі нові ассети створюються від вашого імені.
+	</p>
+</header>
+
+<div class="mt-8 grid max-w-4xl gap-6">
+	<section class="rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-6 sm:p-8" aria-labelledby="profile-title">
+		<div class="flex flex-wrap items-start justify-between gap-4">
+			<div>
+				<h2 id="profile-title" class="text-lg font-semibold text-[var(--c-text-strong)]">Продавець</h2>
+				<p class="mt-1 text-sm text-[var(--c-text-muted)]">Назва студії чи ваше ім'я, місто, опис і спеціалізації.</p>
+			</div>
+			<label class="text-sm">
+				<span class="mb-1.5 block font-semibold text-[var(--c-text-strong)]">Заповнити з наявного продавця</span>
+				<select
+					class="theme-focus h-11 w-56 rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]"
+					(change)="copyFrom($any($event.target).value); $any($event.target).value = ''"
+				>
+					<option value="">Оберіть…</option>
+					@for (seller of sellers; track seller.slug) {
+						<option [value]="seller.slug">{{ seller.name }}</option>
+					}
+				</select>
+			</label>
+		</div>
+
+		<form class="mt-6 space-y-5" [formGroup]="form" (ngSubmit)="save()" novalidate>
+			<div class="grid gap-4 sm:grid-cols-2">
+				<div>
+					<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="profile-name">Назва *</label>
+					<input
+						id="profile-name"
+						class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]"
+						type="text"
+						maxlength="80"
+						placeholder="PolyForge Studio"
+						formControlName="name"
+						[attr.aria-invalid]="showError(form.controls.name)"
+					/>
+					@if (showError(form.controls.name)) {
+						<p class="mt-1.5 text-sm text-[#a23b2a]">Вкажіть назву.</p>
+					}
+				</div>
+				<div>
+					<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="profile-slug">Slug *</label>
+					<input
+						id="profile-slug"
+						class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 font-mono text-sm text-[var(--c-text-strong)]"
+						type="text"
+						formControlName="slug"
+						[attr.aria-invalid]="showError(form.controls.slug)"
+					/>
+					@if (showError(form.controls.slug)) {
+						<p class="mt-1.5 text-sm text-[#a23b2a]">Латиниця в нижньому регістрі, цифри й дефіси.</p>
+					} @else {
+						<p class="mt-1 text-xs text-[var(--c-text-muted)]">Адреса сторінки: /seller/{{ form.controls.slug.value || '…' }}</p>
+					}
+				</div>
+				<div>
+					<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="profile-city">Місто</label>
+					<input
+						id="profile-city"
+						class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]"
+						type="text"
+						formControlName="city"
+					/>
+				</div>
+				<div class="grid grid-cols-[minmax(0,1fr)_auto] gap-4">
+					<div>
+						<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="profile-since">На Assetra з року *</label>
+						<input
+							id="profile-since"
+							class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]"
+							type="number"
+							min="1990"
+							[max]="thisYear"
+							formControlName="since"
+							[attr.aria-invalid]="showError(form.controls.since)"
+						/>
+						@if (showError(form.controls.since)) {
+							<p class="mt-1.5 text-sm text-[#a23b2a]">Рік від 1990 до {{ thisYear }}.</p>
+						}
+					</div>
+					<div>
+						<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="profile-color">Колір</label>
+						<input
+							id="profile-color"
+							class="theme-focus h-12 w-16 cursor-pointer rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] p-1"
+							type="color"
+							formControlName="color"
+							aria-describedby="profile-color-hint"
+						/>
+					</div>
+					<p id="profile-color-hint" class="col-span-2 -mt-2 text-xs text-[var(--c-text-muted)]">Колір — тло аватара з ініціалами.</p>
+				</div>
+				<div class="sm:col-span-2">
+					<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="profile-bio">Про себе</label>
+					<textarea
+						id="profile-bio"
+						class="theme-focus min-h-28 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 py-2.5 text-[var(--c-text-strong)]"
+						maxlength="600"
+						formControlName="bio"
+					></textarea>
+				</div>
+				<div class="sm:col-span-2">
+					<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="profile-specialties">Спеціалізації</label>
+					<input
+						id="profile-specialties"
+						class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]"
+						type="text"
+						placeholder="Персонажі, Анімація, Game-ready"
+						formControlName="specialties"
+						aria-describedby="profile-specialties-hint"
+					/>
+					<p id="profile-specialties-hint" class="mt-1 text-xs text-[var(--c-text-muted)]">Через кому.</p>
+				</div>
+			</div>
+
+			@if (notice(); as notice) {
+				<p class="text-sm" [class]="notice.tone === 'ok' ? 'text-[var(--c-primary)]' : 'text-[#a23b2a]'" role="status">{{ notice.text }}</p>
+			}
+
+			<div class="flex flex-wrap gap-3">
+				<button
+					class="theme-interactive theme-focus inline-flex min-h-11 items-center rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-5 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)]"
+					type="submit"
+				>
+					Зберегти
+				</button>
+				<button
+					class="theme-interactive theme-focus inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-5 font-semibold text-[var(--c-text-strong)] hover:border-[var(--c-primary)] disabled:opacity-60"
+					type="button"
+					[disabled]="!profile.hasProfile()"
+					(click)="export()"
+				>
+					<span class="material-symbols-outlined text-[20px]" aria-hidden="true">download</span>
+					Експорт sellers.json
+				</button>
+			</div>
+		</form>
+	</section>
+</div>

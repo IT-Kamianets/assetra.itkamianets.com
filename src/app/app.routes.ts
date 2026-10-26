@@ -81,6 +81,17 @@ export const routes: Routes = [
 			import('./pages/seller/seller.component').then((m) => m.SellerComponent),
 	},
 	{
+		path: 'collections',
+		data: {
+			meta: {
+				title: 'Колекції 3D-моделей',
+				description:
+					'Тематичні колекції від авторів Assetra: добірки 3D-моделей для окремих ігор, сцен і сетингів у форматі GLB.',
+			},
+		},
+		loadComponent: () => import('./pages/collections/collections.component').then((m) => m.CollectionsComponent),
+	},
+	{
 		path: 'favorites',
 		data: { meta: { title: 'Обране', robots: 'noindex, follow' } },
 		loadComponent: () =>
@@ -107,6 +118,12 @@ export const routes: Routes = [
 		children: [
 			{ path: '', pathMatch: 'full', redirectTo: 'assets' },
 			{
+				path: 'profile',
+				data: { meta: { title: 'Профіль', robots: ADMIN_ROBOTS } },
+				loadComponent: () =>
+					import('./pages/admin/profile/profile.component').then((m) => m.ProfileComponent),
+			},
+			{
 				path: 'assets',
 				data: { meta: { title: 'Ассети', robots: ADMIN_ROBOTS } },
 				loadComponent: () =>
@@ -117,6 +134,18 @@ export const routes: Routes = [
 				data: { meta: { title: 'Ассет', robots: ADMIN_ROBOTS } },
 				loadComponent: () =>
 					import('./pages/admin/asset/asset.component').then((m) => m.AssetComponent),
+			},
+			{
+				path: 'collections',
+				data: { meta: { title: 'Колекції', robots: ADMIN_ROBOTS } },
+				loadComponent: () =>
+					import('./pages/admin/collections/collections.component').then((m) => m.CollectionsComponent),
+			},
+			{
+				path: 'collections/:slug',
+				data: { meta: { title: 'Колекція', robots: ADMIN_ROBOTS } },
+				loadComponent: () =>
+					import('./pages/admin/collection/collection.component').then((m) => m.CollectionComponent),
 			},
 			{
 				path: 'settings',

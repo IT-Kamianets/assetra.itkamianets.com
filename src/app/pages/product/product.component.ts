@@ -7,6 +7,7 @@ import { FavoritesService } from '../../feature/favorites/favorites.service';
 import { BreadcrumbsComponent } from '../../feature/catalog/breadcrumbs/breadcrumbs.component';
 import {
 	formatModelCount,
+	getCollection,
 	formatPolygons,
 	formatPrice,
 	getCategory,
@@ -15,9 +16,9 @@ import {
 	getSeller,
 	imageUrl,
 	productsBySeller,
-	PURPOSE_LABELS,
 } from '../../feature/catalog/catalog.data';
 import { Breadcrumb } from '../../feature/catalog/catalog.interface';
+import { detailGroups } from '../../feature/catalog/product-details';
 import { ModelViewerComponent } from '../../feature/catalog/model-viewer/model-viewer.component';
 import { ProductCardComponent } from '../../feature/catalog/product-card/product-card.component';
 import { SellerAvatarComponent } from '../../feature/catalog/seller-avatar/seller-avatar.component';
@@ -41,6 +42,9 @@ export class ProductComponent {
 	// The route resolver redirects unknown slugs, so a product is always present here.
 	protected readonly product = computed(() => getProduct(this._params().get('slug'))!);
 	protected readonly category = computed(() => getCategory(this.product().category));
+	protected readonly collection = computed(() => getCollection(this.product().collection));
+	/** The 3D preview prefers the light low-poly file; downloads always get the full `model`. */
+	protected readonly viewerModel = computed(() => this.product().modelLow || this.product().model || '');
 	protected readonly seller = computed(() => getSeller(this.product().seller));
 	protected readonly inCart = computed(() => this.cart.has(this.product().slug));
 	protected readonly isFavorite = computed(() => this.favorites.has(this.product().slug));
@@ -78,22 +82,9 @@ export class ProductComponent {
 		return rigged && animated ? 'Так / Так' : rigged ? 'Так / Ні' : 'Ні';
 	});
 
-	protected readonly specs = computed(() => {
-		const product = this.product();
-
-		return [
-			{ label: 'Полігони', value: formatPolygons(product.polygons) },
-			{ label: 'Ріг', value: product.rigged ? 'Так' : 'Ні' },
-			{ label: 'Анімація', value: product.animated ? 'Так' : 'Ні' },
-			{ label: 'Формат', value: product.formats.join(', ') },
-			{ label: 'Програми', value: product.software.join(', ') },
-			{ label: 'Рушії рендеру', value: product.renderers.join(', ') },
-			{ label: 'Текстури', value: product.textures },
-			{ label: 'Призначення', value: product.purpose.map((purpose) => PURPOSE_LABELS[purpose]).join(', ') },
-			{ label: 'Теги', value: product.tags.join(', ') },
-			{ label: 'Розмір архіву', value: product.archiveSize },
-		];
-	});
+	protected readonly polygons = computed(() => formatPolygons(this.product().polygons));
+	/** Every filled technical field, grouped like on 3D marketplaces. */
+	protected readonly detailGroups = computed(() => detailGroups(this.product()));
 
 	/** Similar models, minus the ones already shown in "more from this seller". */
 	protected readonly related = computed(() =>

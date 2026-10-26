@@ -1,25 +1,73 @@
 rules_version = '2';
 
-// Firestore rules for Assetra (project vroom-8ef42).
-// Publish in Firebase console → Firestore Database → Rules, or with `firebase deploy --only firestore:rules`.
-// If the project already has rules for other apps, merge the `models` block into them instead of replacing.
+// Firestore rules of project vroom-8ef42, shared by VRoom and Assetra. This is the full published
+// set: keep the VRoom `interiors` block when changing it, and publish the whole file in
+// Firebase console → Firestore Database → Rules.
 service cloud.firestore {
   match /databases/{database}/documents {
+    // VRoom: user interiors with floors and spaces.
+    match /interiors/{interiorId} {
+      allow create: if request.auth != null
+        && request.resource.data.ownerId == request.auth.uid;
+      allow read, update, delete: if request.auth != null
+        && resource.data.ownerId == request.auth.uid;
+
+      match /floors/{floorId}/spaces/{spaceId} {
+        allow read, write: if request.auth != null
+          && get(/databases/$(database)/documents/interiors/$(interiorId)).data.ownerId == request.auth.uid;
+      }
+    }
+
+    // Assetra below.
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function ownsNew() {
+      return signedIn() && request.resource.data.uid == request.auth.uid;
+    }
+
+    function ownsExisting() {
+      return signedIn() && resource.data.uid == request.auth.uid;
+    }
+
+    // '' (no collection) or one of the signed-in author's collections.
+    function ownCollection(id) {
+      return id == '' || get(/databases/$(database)/documents/collections/$(id)).data.uid == request.auth.uid;
+    }
+
+    function text(field, max) {
+      return request.resource.data[field] is string && request.resource.data[field].size() <= max;
+    }
+
     // Models users upload from their profile (/account → "Мої моделі").
     match /models/{modelId} {
       allow read: if true;
 
-      allow create: if request.auth != null
-        && request.resource.data.uid == request.auth.uid
-        && request.resource.data.title is string
-        && request.resource.data.title.size() > 0
-        && request.resource.data.title.size() <= 120
-        && request.resource.data.description is string
-        && request.resource.data.description.size() <= 2000
+      allow create: if ownsNew()
+        && text('title', 120) && request.resource.data.title.size() > 0
+        && text('description', 2000)
+        && text('collectionId', 40) && ownCollection(request.resource.data.collectionId)
         && request.resource.data.modelUrl is string
         && request.resource.data.modelUrl.matches('https://cdn-it[.]webart[.]work/assetka/.*');
 
-      allow delete: if request.auth != null && resource.data.uid == request.auth.uid;
+      // Owners may only move a model between their collections.
+      allow update: if ownsExisting()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['collectionId'])
+        && text('collectionId', 40) && ownCollection(request.resource.data.collectionId);
+
+      allow delete: if ownsExisting();
+    }
+
+    // Authors' collections (/account → "Мої колекції", public at /collections).
+    match /collections/{collectionId} {
+      allow read: if true;
+
+      allow create: if ownsNew()
+        && text('title', 80) && request.resource.data.title.size() > 0
+        && text('description', 1000);
+
+      allow delete: if ownsExisting();
     }
   }
 }

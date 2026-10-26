@@ -1,5 +1,6 @@
 import { RenderMode, ServerRoute } from '@angular/ssr';
 import categories from '../data/category/categories.json';
+import collections from '../data/collection/collections.json';
 import products from '../data/product/products.json';
 import sellers from '../data/seller/sellers.json';
 
@@ -24,6 +25,11 @@ export const serverRoutes: ServerRoute[] = [
 		path: 'admin/assets/:slug',
 		renderMode: RenderMode.Prerender,
 		getPrerenderParams: async () => [{ slug: 'new' }, ...products.map(({ slug }) => ({ slug }))],
+	},
+	{
+		path: 'admin/collections/:slug',
+		renderMode: RenderMode.Prerender,
+		getPrerenderParams: async () => [{ slug: 'new' }, ...collections.map(({ slug }) => ({ slug }))],
 	},
 	{
 		path: '**',

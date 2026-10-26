@@ -1,0 +1,199 @@
+<div class="mx-auto max-w-[var(--container)] px-4 py-8 sm:px-6 lg:py-10">
+	<app-breadcrumbs [items]="breadcrumbs()" />
+
+	@if (catalogCollection(); as current) {
+		<header class="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] lg:items-center">
+			<div class="flex aspect-[16/9] items-center justify-center overflow-hidden rounded-[calc(var(--radius-card)*1.6)] bg-[var(--c-bg-tertiary)]">
+				@if (current.image) {
+					<img class="h-full w-full object-cover" [src]="current.image" [alt]="current.title" width="800" height="450" />
+				} @else {
+					<span class="material-symbols-outlined text-[64px] text-[var(--c-text-muted)]" aria-hidden="true">collections_bookmark</span>
+				}
+			</div>
+			<div>
+				<p class="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--c-primary)]">Колекція Assetra</p>
+				<h1 class="mt-2 text-3xl font-semibold tracking-[-0.02em] text-[var(--c-text-strong)] sm:text-4xl">{{ current.title }}</h1>
+				@if (current.description) {
+					<p class="mt-4 text-lg leading-8">{{ current.description }}</p>
+				}
+				<p class="mt-4 text-[var(--c-text-muted)]">{{ modelCount(catalogProducts().length) }}</p>
+			</div>
+		</header>
+
+		@if (catalogProducts().length) {
+			<ul class="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-4">
+				@for (item of catalogProducts(); track item.slug) {
+					<li><app-product-card [product]="item" /></li>
+				}
+			</ul>
+		} @else {
+			<p class="mt-10 rounded-[var(--radius-card)] border border-dashed border-[var(--c-border)] px-4 py-10 text-center text-[var(--c-text-muted)]">
+				У цій колекції ще немає моделей.
+			</p>
+		}
+	} @else if (collectionId()) {
+		@if (state() === 'loading') {
+			<p class="mt-10 text-[var(--c-text-muted)]" role="status">Завантажуємо колекцію…</p>
+		} @else if (state() === 'error') {
+			<p class="mt-10 rounded-[var(--radius-btn)] bg-[#a23b2a]/10 px-4 py-3 text-[#a23b2a]" role="alert">
+				Не вдалося завантажити колекцію. Оновіть сторінку трохи пізніше.
+			</p>
+		} @else if (collection(); as current) {
+			<header class="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] lg:items-center">
+				<div class="flex aspect-[16/9] items-center justify-center overflow-hidden rounded-[calc(var(--radius-card)*1.6)] bg-[var(--c-bg-tertiary)]">
+					@if (current.imageUrl) {
+						<img class="h-full w-full object-cover" [src]="current.imageUrl" [alt]="current.title" width="800" height="450" />
+					} @else {
+						<span class="material-symbols-outlined text-[64px] text-[var(--c-text-muted)]" aria-hidden="true">public</span>
+					}
+				</div>
+				<div>
+					<p class="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--c-primary)]">Колекція</p>
+					<h1 class="mt-2 text-3xl font-semibold tracking-[-0.02em] text-[var(--c-text-strong)] sm:text-4xl">{{ current.title }}</h1>
+					@if (current.description) {
+						<p class="mt-4 text-lg leading-8">{{ current.description }}</p>
+					}
+					<p class="mt-4 text-[var(--c-text-muted)]">{{ modelCount(models().length) }}</p>
+				</div>
+			</header>
+
+			@if (models().length) {
+				<ul class="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-4">
+					@for (model of models(); track model.id) {
+						<li class="flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)]">
+							<div class="flex aspect-square items-center justify-center bg-[var(--c-bg-tertiary)]">
+								@if (model.imageUrl) {
+									<img class="h-full w-full object-cover" [src]="model.imageUrl" [alt]="model.title" width="400" height="400" loading="lazy" />
+								} @else {
+									<span class="material-symbols-outlined text-[48px] text-[var(--c-text-muted)]" aria-hidden="true">view_in_ar</span>
+								}
+							</div>
+							<div class="flex flex-1 flex-col gap-1 p-4">
+								<p class="text-xs font-medium uppercase tracking-[0.14em] text-[var(--c-text-muted)]">{{ categoryTitle(model.category) }}</p>
+								<h2 class="font-semibold leading-snug text-[var(--c-text-strong)]">{{ model.title }}</h2>
+								@if (model.description) {
+									<p class="line-clamp-3 text-sm text-[var(--c-text-muted)]">{{ model.description }}</p>
+								}
+								<div class="mt-auto pt-3">
+									@if (auth.isLoggedIn()) {
+										<a
+											class="theme-interactive theme-focus inline-flex min-h-10 w-full items-center justify-center gap-1.5 rounded-[var(--radius-btn)] border border-[var(--c-primary)] bg-[var(--c-bg-tertiary)] px-3 text-sm font-semibold text-[var(--c-text-strong)]"
+											[href]="model.modelUrl"
+											target="_blank"
+											rel="noopener"
+										>
+											<span class="material-symbols-outlined text-[18px] text-[var(--c-primary)]" aria-hidden="true">download</span>
+											Завантажити GLB
+										</a>
+									} @else {
+										<button
+											class="theme-interactive theme-focus inline-flex min-h-10 w-full items-center justify-center gap-1.5 rounded-[var(--radius-btn)] border border-[var(--c-border)] px-3 text-sm font-semibold text-[var(--c-text-strong)] hover:border-[var(--c-primary)]"
+											type="button"
+											(click)="signInToDownload()"
+										>
+											<span class="material-symbols-outlined text-[18px]" aria-hidden="true">login</span>
+											Увійти, щоб завантажити
+										</button>
+									}
+								</div>
+							</div>
+						</li>
+					}
+				</ul>
+			} @else {
+				<p class="mt-10 rounded-[var(--radius-card)] border border-dashed border-[var(--c-border)] px-4 py-10 text-center text-[var(--c-text-muted)]">
+					У цій колекції ще немає моделей.
+				</p>
+			}
+		} @else {
+			<div class="mt-10 text-center">
+				<h1 class="text-2xl font-semibold text-[var(--c-text-strong)]">Колекцію не знайдено</h1>
+				<p class="mt-2 text-[var(--c-text-muted)]">Можливо, автор її видалив.</p>
+				<a class="theme-focus mt-6 inline-block rounded font-semibold text-[var(--c-primary)] hover:underline" routerLink="/collections">Усі колекції</a>
+			</div>
+		}
+	} @else {
+		<header class="mt-6 flex flex-wrap items-end justify-between gap-4">
+			<div>
+				<h1 class="text-3xl font-semibold tracking-[-0.02em] text-[var(--c-text-strong)] sm:text-4xl">Колекції</h1>
+				<p class="mt-2 max-w-2xl text-[var(--c-text-muted)]">Тематичні добірки моделей: окремі ігрові всесвіти, сцени й сетинги від Assetra та авторів.</p>
+			</div>
+			<a
+				class="theme-interactive theme-focus inline-flex min-h-12 items-center justify-center gap-2 rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-5 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)]"
+				routerLink="/account"
+				[queryParams]="auth.isLoggedIn() ? null : { mode: 'register' }"
+			>
+				<span class="material-symbols-outlined text-[20px]" aria-hidden="true">add</span>
+				Створити свою колекцію
+			</a>
+		</header>
+
+		@if (catalogCollections.length) {
+			<h2 class="mt-10 text-2xl font-semibold text-[var(--c-text-strong)]">Колекції Assetra</h2>
+			<ul class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+				@for (item of catalogCollections; track item.slug) {
+					<li>
+						<a
+							class="theme-focus group flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] transition-shadow duration-200 hover:shadow-[var(--shadow-md)]"
+							routerLink="/collections"
+							[queryParams]="{ collection: item.slug }"
+						>
+							<div class="flex aspect-[16/9] items-center justify-center bg-[var(--c-bg-tertiary)]">
+								@if (item.image) {
+									<img class="h-full w-full object-cover" [src]="item.image" [alt]="item.title" width="480" height="270" loading="lazy" />
+								} @else {
+									<span class="material-symbols-outlined text-[56px] text-[var(--c-text-muted)]" aria-hidden="true">collections_bookmark</span>
+								}
+							</div>
+							<div class="p-4">
+								<h3 class="text-lg font-semibold text-[var(--c-text-strong)] group-hover:text-[var(--c-primary)]">{{ item.title }}</h3>
+								<p class="mt-1 text-sm text-[var(--c-text-muted)]">{{ modelCount(catalogCount(item.slug)) }}</p>
+							</div>
+						</a>
+					</li>
+				}
+			</ul>
+		}
+
+		<h2 class="mt-12 text-2xl font-semibold text-[var(--c-text-strong)]">Колекції авторів</h2>
+		@if (state() === 'loading') {
+			<p class="mt-5 text-[var(--c-text-muted)]" role="status">Завантажуємо колекції авторів…</p>
+		} @else if (state() === 'error') {
+			<p class="mt-5 rounded-[var(--radius-btn)] bg-[#a23b2a]/10 px-4 py-3 text-[#a23b2a]" role="alert">
+				Не вдалося завантажити колекції авторів. Оновіть сторінку трохи пізніше.
+			</p>
+		} @else if (all().length) {
+			<ul class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+				@for (item of all(); track item.id) {
+					<li>
+						<a
+							class="theme-focus group flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] transition-shadow duration-200 hover:shadow-[var(--shadow-md)]"
+							routerLink="/collections"
+							[queryParams]="{ collection: item.id }"
+						>
+							<div class="flex aspect-[16/9] items-center justify-center bg-[var(--c-bg-tertiary)]">
+								@if (item.imageUrl) {
+									<img class="h-full w-full object-cover" [src]="item.imageUrl" [alt]="item.title" width="480" height="270" loading="lazy" />
+								} @else {
+									<span class="material-symbols-outlined text-[56px] text-[var(--c-text-muted)]" aria-hidden="true">public</span>
+								}
+							</div>
+							<div class="p-4">
+								<h3 class="text-lg font-semibold text-[var(--c-text-strong)] group-hover:text-[var(--c-primary)]">{{ item.title }}</h3>
+								@if (item.description) {
+									<p class="mt-1 line-clamp-2 text-sm text-[var(--c-text-muted)]">{{ item.description }}</p>
+								}
+							</div>
+						</a>
+					</li>
+				}
+			</ul>
+		} @else {
+			<div class="mt-5 flex flex-col items-center rounded-[calc(var(--radius-card)*1.6)] border border-dashed border-[var(--c-border)] px-6 py-12 text-center">
+				<span class="material-symbols-outlined text-[48px] text-[var(--c-text-muted)]" aria-hidden="true">public</span>
+				<p class="mt-4 text-xl font-semibold text-[var(--c-text-strong)]">Колекцій авторів поки немає</p>
+				<p class="mt-2 max-w-md text-[var(--c-text-muted)]">Зареєструйтеся, створіть свою колекцію в профілі й додайте до неї моделі.</p>
+			</div>
+		}
+	}
+</div>

@@ -374,8 +374,13 @@ email/password or Google:
   sign-in fails there (`localhost` is allowed by default);
 - "Forgot password" on the login page sends Firebase's reset email.
 
-Assets and store settings are still saved in browser storage only. To publish them, export
-`products.json` / `company.json` from the admin, replace the files in `src/data/`, commit and deploy.
+Admin sections: «Профіль» (your seller info → `sellers.json`), «Ассети» (→ `products.json`),
+«Колекції» (catalog collections → `src/data/collection/collections.json`; an asset picks one in its
+form, and its `collection` field holds the collection slug) and «Налаштування» (→ `company.json`).
+
+All of them are saved in browser storage only. To publish, export the JSON from the admin, replace
+the file in `src/data/`, commit and deploy. Catalog collections show on `/collections` next to the
+authors' collections from Firestore.
 
 ---
 
@@ -391,6 +396,12 @@ Anyone can register at `/account` (the person icon in the topbar) with the same 
 - **"Мої моделі"** on `/account`: signed-in users upload a GLB (up to 7 MB) and an optional preview
   image. Files go to the Cloudflare container `environment.uploadContainer` (`assetka`) through
   `POST {apiUrl}/api/cloudflare/upload-base64`; records go to the Firestore collection `models`.
+- **Collections:** authors group their models into themed collections ("Мої колекції" on
+  `/account`, e.g. one collection for VRoom, another for a fantasy setting). They live in the
+  Firestore collection `collections`; a model points to one through its `collectionId` field.
+  Public list at `/collections`, one collection at `/collections?collection=<id>` (a query param,
+  because these pages cannot be prerendered).
+- Firestore records are public, so they hold no author emails, only the Firebase `uid`.
 
 One-time setup for uploads:
 

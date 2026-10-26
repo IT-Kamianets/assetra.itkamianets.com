@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AdminAssetsService } from '../../../feature/admin/admin-assets.service';
+import { AdminProfileService } from '../../../feature/admin/admin-profile.service';
 import {
 	categories,
 	formatModelCount,
@@ -17,6 +18,7 @@ import {
 })
 export class AssetsComponent {
 	protected readonly assets = inject(AdminAssetsService);
+	private readonly _profile = inject(AdminProfileService);
 	protected readonly categories = categories;
 
 	protected readonly search = signal('');
@@ -25,6 +27,7 @@ export class AssetsComponent {
 	protected readonly rows = computed(() => {
 		const search = this.search().trim().toLowerCase();
 		const category = this.category();
+		const profile = this._profile.profile();
 
 		return this.assets
 			.assets()
@@ -37,7 +40,7 @@ export class AssetsComponent {
 				asset,
 				thumb: asset.images[0] ? imageUrl(asset.images[0], 120) : '',
 				category: getCategory(asset.category)?.title ?? asset.category,
-				seller: getSeller(asset.seller)?.name ?? asset.seller,
+				seller: (profile?.slug === asset.seller ? profile.name : getSeller(asset.seller)?.name) ?? asset.seller,
 				price: formatPrice(asset.price),
 				polygons: formatPolygons(asset.polygons),
 			}));

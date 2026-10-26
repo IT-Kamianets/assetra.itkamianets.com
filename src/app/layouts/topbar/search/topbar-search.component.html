@@ -1,5 +1,5 @@
 <button
-	class="theme-interactive theme-focus inline-flex h-10 w-10 items-center sm:h-11 sm:w-11 justify-center rounded-full border border-[var(--c-topbar-border)] text-[var(--c-topbar-text)] hover:bg-[var(--c-topbar-hover)] md:hidden"
+	class="theme-interactive theme-focus inline-flex h-10 w-10 items-center sm:h-11 sm:w-11 justify-center rounded-full border border-[var(--c-topbar-border)] text-[var(--c-topbar-text)] hover:bg-[var(--c-topbar-hover)] lg:hidden"
 	type="button"
 	aria-label="Пошук моделей"
 	[attr.aria-expanded]="mobileOpen()"
@@ -9,7 +9,7 @@
 </button>
 
 <form
-	class="fixed inset-x-3 top-[5.25rem] z-50 rounded-3xl border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-3 shadow-[var(--shadow-md)] md:static md:block md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none"
+	class="fixed inset-x-3 top-[5.25rem] z-50 rounded-3xl border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-3 shadow-[var(--shadow-md)] lg:static lg:block lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none"
 	[class.hidden]="!mobileOpen()"
 	role="search"
 	(submit)="submit($event)"
@@ -17,14 +17,14 @@
 	<label class="relative block">
 		<span class="sr-only">Пошук моделей</span>
 		<span
-			class="material-symbols-outlined pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-[var(--c-text-muted)] md:text-[#414638]"
+			class="material-symbols-outlined pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-[var(--c-text-muted)] lg:text-[#414638]"
 			aria-hidden="true"
 		>
 			search
 		</span>
 		<input
 			#input
-			class="theme-focus h-11 w-full rounded-full border border-[var(--c-border)] bg-[var(--c-bg-primary)] pl-10 pr-4 text-sm text-[var(--c-text-strong)] placeholder:text-[var(--c-text-muted)] md:h-10 md:w-56 md:border-transparent md:bg-[#d9d5c7] md:text-[#2f3328] md:placeholder:text-[#5f6453] lg:w-72 [&::-webkit-search-cancel-button]:appearance-none"
+			class="theme-focus h-11 w-full rounded-full border border-[var(--c-border)] bg-[var(--c-bg-primary)] pl-10 pr-4 text-sm text-[var(--c-text-strong)] placeholder:text-[var(--c-text-muted)] lg:h-10 lg:w-56 lg:border-transparent lg:bg-[#d9d5c7] lg:text-[#2f3328] lg:placeholder:text-[#5f6453] xl:w-72 [&::-webkit-search-cancel-button]:appearance-none"
 			type="search"
 			placeholder="Пошук моделей…"
 			autocomplete="off"
@@ -36,7 +36,7 @@
 
 	@if (showResults()) {
 		<div
-			class="mt-2 overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--c-bg-secondary)] md:absolute md:right-0 md:top-full md:w-96 md:shadow-[var(--shadow-md)]"
+			class="mt-2 overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--c-bg-secondary)] lg:absolute lg:right-0 lg:top-full lg:w-96 lg:shadow-[var(--shadow-md)]"
 		>
 			@if (suggestions().length) {
 				<ul aria-label="Знайдені моделі">

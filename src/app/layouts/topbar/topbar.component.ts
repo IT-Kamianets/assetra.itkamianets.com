@@ -40,6 +40,7 @@ export class TopbarComponent {
 
 	protected readonly navLinks = [
 		{ label: 'Каталог', path: '/catalog', query: null, secondary: false },
+		{ label: 'Колекції', path: '/collections', query: null, secondary: true },
 		{ label: 'Продавці', path: '/sellers', query: null, secondary: true },
 	];
 	protected readonly mode = computed(() => this._themeService.mode() ?? 'light');

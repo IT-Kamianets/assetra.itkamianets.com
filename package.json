@@ -17,6 +17,7 @@
 		"@google/model-viewer": "4.4.0",
 		"@wawjs/ngx-core": "22.0.9",
 		"@wawjs/ngx-default": "22.0.3",
+		"@wawjs/ngx-fabric": "22.0.9",
 		"@wawjs/ngx-translate": "22.0.9",
 		"@wawjs/ngx-ui": "22.0.9",
 		"express": "5.1.0",

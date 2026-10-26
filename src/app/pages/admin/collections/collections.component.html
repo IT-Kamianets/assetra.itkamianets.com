@@ -1,0 +1,117 @@
+<header class="flex flex-wrap items-end justify-between gap-4">
+	<div>
+		<h1 class="text-3xl font-semibold tracking-[-0.02em] text-[var(--c-text-strong)]">Колекції</h1>
+		<p class="mt-2 text-[var(--c-text-muted)]" aria-live="polite">{{ countLabel() }}</p>
+	</div>
+	<div class="flex flex-wrap gap-3">
+		<button
+			class="theme-interactive theme-focus inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-btn)] border border-[var(--c-border)] px-4 font-semibold text-[var(--c-text-strong)] hover:border-[var(--c-primary)]"
+			type="button"
+			(click)="collections.export()"
+		>
+			<span class="material-symbols-outlined text-[20px]" aria-hidden="true">download</span>
+			Експорт JSON
+		</button>
+		<a
+			class="theme-interactive theme-focus inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-4 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)]"
+			routerLink="/admin/collections/new"
+		>
+			<span class="material-symbols-outlined text-[20px]" aria-hidden="true">add</span>
+			Додати колекцію
+		</a>
+	</div>
+</header>
+
+@if (collections.hasChanges()) {
+	<p class="mt-6 flex items-start gap-2 rounded-[var(--radius-card)] bg-[var(--c-bg-tertiary)] px-4 py-3 text-sm">
+		<span class="material-symbols-outlined text-[20px] text-[var(--c-primary)]" aria-hidden="true">info</span>
+		Є зміни, яких ще немає на сайті. Експортуйте JSON і замініть ним src/data/collection/collections.json.
+	</p>
+}
+
+<div class="mt-6 flex flex-wrap gap-3">
+	<label class="relative min-w-60 flex-1">
+		<span class="sr-only">Пошук</span>
+		<span class="material-symbols-outlined pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-[20px] text-[var(--c-text-muted)]" aria-hidden="true">search</span>
+		<input
+			class="theme-focus h-11 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] pr-3 pl-10 text-[var(--c-text-strong)]"
+			type="search"
+			placeholder="Назва або slug"
+			[value]="search()"
+			(input)="search.set($any($event.target).value)"
+		/>
+	</label>
+</div>
+
+@if (rows().length) {
+	<div class="mt-4 overflow-x-auto rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)]">
+		<table class="w-full min-w-[32rem] text-left text-sm">
+			<thead class="border-b border-[var(--c-border)] text-xs uppercase tracking-[0.1em] text-[var(--c-text-muted)]">
+				<tr>
+					<th class="px-4 py-3 font-medium" scope="col">Колекція</th>
+					<th class="hidden px-4 py-3 font-medium lg:table-cell" scope="col">Опис</th>
+					<th class="px-4 py-3 text-right font-medium" scope="col">Ассети</th>
+					<th class="px-4 py-3" scope="col"><span class="sr-only">Дії</span></th>
+				</tr>
+			</thead>
+			<tbody class="divide-y divide-[var(--c-border)]">
+				@for (row of rows(); track row.collection.slug) {
+					<tr class="hover:bg-[var(--c-bg-primary)]">
+						<td class="px-4 py-3">
+							<a class="theme-focus flex items-center gap-3 rounded" [routerLink]="['/admin/collections', row.collection.slug]">
+								@if (row.thumb) {
+									<img class="h-12 w-12 shrink-0 rounded-[var(--radius)] object-cover" [src]="row.thumb" alt="" width="48" height="48" loading="lazy" />
+								} @else {
+									<span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-[var(--radius)] bg-[var(--c-bg-tertiary)] text-[var(--c-text-muted)]" aria-hidden="true">
+										<span class="material-symbols-outlined text-[20px]">collections_bookmark</span>
+									</span>
+								}
+								<span class="min-w-0">
+									<span class="block font-semibold text-[var(--c-text-strong)] hover:text-[var(--c-primary)]">{{ row.collection.title }}</span>
+									<span class="block text-xs text-[var(--c-text-muted)]">{{ row.collection.slug }}</span>
+								</span>
+							</a>
+						</td>
+						<td class="hidden max-w-md px-4 py-3 lg:table-cell">
+							<span class="line-clamp-2 text-[var(--c-text-muted)]">{{ row.collection.description }}</span>
+						</td>
+						<td class="px-4 py-3 text-right tabular-nums whitespace-nowrap">{{ modelCount(row.count) }}</td>
+						<td class="px-2 py-3">
+							<div class="flex justify-end">
+								<a
+									class="theme-interactive theme-focus inline-flex h-9 w-9 items-center justify-center rounded-full text-[var(--c-text-muted)] hover:bg-[var(--c-bg-tertiary)] hover:text-[var(--c-primary)]"
+									routerLink="/admin/assets/new"
+									[queryParams]="{ collection: row.collection.slug }"
+									[attr.aria-label]="'Додати ассет у колекцію: ' + row.collection.title"
+									title="Додати ассет у колекцію"
+								>
+									<span class="material-symbols-outlined text-[20px]" aria-hidden="true">add</span>
+								</a>
+								<a
+									class="theme-interactive theme-focus inline-flex h-9 w-9 items-center justify-center rounded-full text-[var(--c-text-muted)] hover:bg-[var(--c-bg-tertiary)] hover:text-[var(--c-primary)]"
+									[routerLink]="['/admin/collections', row.collection.slug]"
+									[attr.aria-label]="'Редагувати: ' + row.collection.title"
+								>
+									<span class="material-symbols-outlined text-[20px]" aria-hidden="true">edit</span>
+								</a>
+								<button
+									class="theme-interactive theme-focus inline-flex h-9 w-9 items-center justify-center rounded-full text-[var(--c-text-muted)] hover:bg-[var(--c-bg-tertiary)] hover:text-[#a23b2a]"
+									type="button"
+									[attr.aria-label]="'Видалити: ' + row.collection.title"
+									(click)="remove(row.collection.slug, row.collection.title, row.count)"
+								>
+									<span class="material-symbols-outlined text-[20px]" aria-hidden="true">delete</span>
+								</button>
+							</div>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+} @else {
+	<div class="mt-4 rounded-[calc(var(--radius-card)*1.6)] border border-dashed border-[var(--c-border)] px-6 py-14 text-center">
+		<p class="font-semibold text-[var(--c-text-strong)]">{{ search() ? 'Нічого не знайдено' : 'Колекцій ще немає' }}</p>
+		<p class="mt-1 text-sm">{{ search() ? 'Змініть пошук.' : 'Додайте першу, а потім обирайте її у формі ассета.' }}</p>
+	</div>
+}

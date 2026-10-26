@@ -59,6 +59,16 @@
 				</div>
 			</header>
 
+			@if (needsProfile()) {
+				<p class="mt-6 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-[var(--radius-card)] bg-[var(--c-bg-tertiary)] px-4 py-3 text-sm text-[var(--c-text-strong)]" role="status">
+					<span class="material-symbols-outlined text-[20px] text-[var(--c-primary)]" aria-hidden="true">storefront</span>
+					Нові ассети створюються від вашого імені як продавця.
+					<a class="theme-focus rounded font-semibold text-[var(--c-primary)] hover:underline" routerLink="/admin/profile">Спершу заповніть профіль</a>
+				</p>
+			} @else if (sellerName()) {
+				<p class="mt-2 text-sm text-[var(--c-text-muted)]">Продавець: <span class="font-medium text-[var(--c-text-strong)]">{{ sellerName() }}</span></p>
+			}
+
 			<div class="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_20rem] xl:items-start">
 				<div class="grid gap-6">
 					<!-- Main -->
@@ -92,12 +102,17 @@
 								</select>
 							</div>
 							<div>
-								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-seller">Продавець *</label>
-								<select id="asset-seller" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" formControlName="seller">
-									@for (item of sellers; track item.slug) {
-										<option [value]="item.slug">{{ item.name }}</option>
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-collection">Колекція</label>
+								<select id="asset-collection" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" formControlName="collection" aria-describedby="asset-collection-hint">
+									<option value="">Без колекції</option>
+									@for (item of collectionOptions(); track item.slug) {
+										<option [value]="item.slug">{{ item.title }}</option>
 									}
 								</select>
+								<p id="asset-collection-hint" class="mt-1 text-xs text-[var(--c-text-muted)]">
+									До якої колекції додати ассет.
+									<a class="theme-focus rounded font-medium text-[var(--c-primary)] hover:underline" routerLink="/admin/collections/new">Нова колекція</a>
+								</p>
 							</div>
 							<div class="sm:col-span-2">
 								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-short">Короткий опис *</label>
@@ -116,28 +131,73 @@
 					<!-- Media -->
 					<section class="rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-6" aria-labelledby="asset-media">
 						<h2 id="asset-media" class="text-lg font-semibold text-[var(--c-text-strong)]">Медіа</h2>
-						<div class="mt-5 grid gap-4">
+						<div class="mt-5 grid gap-5">
+							<!-- Cover -->
 							<div>
-								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-images">Зображення</label>
-								<textarea id="asset-images" class="theme-focus min-h-24 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 py-2.5 font-mono text-sm text-[var(--c-text-strong)]" placeholder="models/cesium-man-1.jpg" formControlName="images"></textarea>
-								<p class="mt-1 text-xs text-[var(--c-text-muted)]">Одне посилання на рядок; перше стане обкладинкою.</p>
-							</div>
-							<div>
-								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-model">GLB-модель</label>
-								<input id="asset-model" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 font-mono text-sm text-[var(--c-text-strong)]" type="text" placeholder="https://…/model.glb" formControlName="model" [attr.aria-invalid]="showError(form.controls.model)" />
-								@if (showError(form.controls.model)) {
-									<p class="mt-1.5 text-sm text-[#a23b2a]">Посилання https:// або шлях до файлу .glb.</p>
-								} @else {
-									<p class="mt-1 text-xs text-[var(--c-text-muted)]">Для 3D-перегляду на сторінці моделі.</p>
+								<p class="mb-1.5 text-sm font-semibold text-[var(--c-text-strong)]">Обкладинка</p>
+								<div class="flex flex-wrap items-center gap-3">
+									<label
+										class="theme-interactive focus-within:shadow-[var(--focus-ring)] inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-4 font-semibold text-[var(--c-text-strong)] hover:border-[var(--c-primary)]"
+										[class.pointer-events-none]="!!uploading()"
+										[class.opacity-60]="!!uploading()"
+									>
+										<span class="material-symbols-outlined text-[20px]" aria-hidden="true">add_photo_alternate</span>
+										{{ uploading() === 'cover' ? 'Завантаження…' : preview() ? 'Замінити обкладинку' : 'Завантажити обкладинку' }}
+										<input #coverInput class="sr-only" type="file" accept="image/jpeg,image/png,image/webp" [disabled]="!!uploading()" (change)="pickCover(coverInput)" />
+									</label>
+									<span class="text-xs text-[var(--c-text-muted)]">Квадрат {{ coverSize }}×{{ coverSize }}, JPEG. Кадр обираєте в редакторі.</span>
+								</div>
+								@if (uploadError().cover; as error) {
+									<p class="mt-1.5 text-sm text-[#a23b2a]" role="alert">{{ error }}</p>
 								}
 							</div>
+
+							<!-- GLB files -->
+							@for (glb of glbFields; track glb.kind) {
+								@let url = form.controls[glb.kind].value;
+								<div>
+									<p class="mb-1.5 text-sm font-semibold text-[var(--c-text-strong)]">{{ glb.label }}</p>
+									<div class="flex flex-wrap items-center gap-3">
+										<label
+											class="theme-interactive focus-within:shadow-[var(--focus-ring)] inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-4 font-semibold text-[var(--c-text-strong)] hover:border-[var(--c-primary)]"
+											[class.pointer-events-none]="!!uploading()"
+											[class.opacity-60]="!!uploading()"
+										>
+											<span class="material-symbols-outlined text-[20px]" aria-hidden="true">upload_file</span>
+											{{ uploading() === glb.kind ? 'Завантаження…' : url ? 'Замінити .glb' : 'Завантажити .glb' }}
+											<input #glbInput class="sr-only" type="file" accept=".glb,model/gltf-binary" [disabled]="!!uploading()" (change)="pickGlb(glbInput, glb.kind)" />
+										</label>
+										@if (url) {
+											<a class="theme-focus min-w-0 truncate rounded font-mono text-sm text-[var(--c-primary)] hover:underline" [href]="url" target="_blank" rel="noopener" [title]="url">
+												{{ fileName(url) }}
+											</a>
+											<button
+												class="theme-interactive theme-focus inline-flex h-9 w-9 items-center justify-center rounded-full text-[var(--c-text-muted)] hover:bg-[var(--c-bg-tertiary)] hover:text-[#a23b2a]"
+												type="button"
+												[attr.aria-label]="'Прибрати файл: ' + glb.label"
+												(click)="clearModel(glb.kind)"
+											>
+												<span class="material-symbols-outlined text-[20px]" aria-hidden="true">close</span>
+											</button>
+										}
+									</div>
+									@if (uploadError()[glb.kind]; as error) {
+										<p class="mt-1.5 text-sm text-[#a23b2a]" role="alert">{{ error }}</p>
+									} @else {
+										<p class="mt-1 text-xs text-[var(--c-text-muted)]">{{ glb.hint }} До {{ maxGlbMb }} МБ.</p>
+									}
+								</div>
+							}
 						</div>
 					</section>
 
 					<!-- Specs -->
 					<section class="rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-6" aria-labelledby="asset-specs">
 						<h2 id="asset-specs" class="text-lg font-semibold text-[var(--c-text-strong)]">Характеристики</h2>
-						<div class="mt-5 grid gap-4 sm:grid-cols-2">
+						<p class="mt-1 text-sm text-[var(--c-text-muted)]">Заповнюйте все, що знаєте: на сторінці моделі показуються тільки заповнені поля.</p>
+
+						<h3 class="mt-6 border-t border-[var(--c-border)] pt-5 text-sm font-semibold uppercase tracking-[0.12em] text-[var(--c-text-muted)]">Геометрія</h3>
+						<div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 							<div>
 								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-polygons">Полігони *</label>
 								<input id="asset-polygons" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="number" min="0" step="1" formControlName="polygons" [attr.aria-invalid]="showError(form.controls.polygons)" />
@@ -145,27 +205,176 @@
 									<p class="mt-1.5 text-sm text-[#a23b2a]">Невід'ємне число.</p>
 								}
 							</div>
+							<ng-container formGroupName="details">
+								@for (field of detailCounts.slice(0, 3); track field.key) {
+									<div>
+										<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" [for]="'asset-' + field.key">{{ field.label }}</label>
+										<input class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" [id]="'asset-' + field.key" type="number" min="0" step="1" [formControlName]="field.key" />
+									</div>
+								}
+								<div>
+									<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-geometry">Тип сітки</label>
+									<select id="asset-geometry" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" formControlName="geometry">
+										<option value="">Не вказано</option>
+										@for (option of detailOptions.geometry; track option.value) {
+											<option [value]="option.value">{{ option.label }}</option>
+										}
+									</select>
+								</div>
+								<div>
+									<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-style">Стиль</label>
+									<select id="asset-style" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" formControlName="style">
+										<option value="">Не вказано</option>
+										@for (option of detailOptions.style; track option.value) {
+											<option [value]="option.value">{{ option.label }}</option>
+										}
+									</select>
+								</div>
+								<div class="sm:col-span-2 lg:col-span-3">
+									<p class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]">Розміри (ширина × висота × глибина)</p>
+									<div class="grid grid-cols-[repeat(3,minmax(0,1fr))_minmax(0,6rem)] gap-2">
+										<input class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="number" min="0" step="any" formControlName="width" aria-label="Ширина" placeholder="Ш" />
+										<input class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="number" min="0" step="any" formControlName="height" aria-label="Висота" placeholder="В" />
+										<input class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="number" min="0" step="any" formControlName="depth" aria-label="Глибина" placeholder="Г" />
+										<select class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" formControlName="unit" aria-label="Одиниці">
+											@for (option of detailOptions.unit; track option.value) {
+												<option [value]="option.value">{{ option.label }}</option>
+											}
+										</select>
+									</div>
+									<p class="mt-1 text-xs text-[var(--c-text-muted)]">Заповніть усі три, щоб розміри показалися на сайті.</p>
+								</div>
+							</ng-container>
+						</div>
+
+						<h3 class="mt-6 border-t border-[var(--c-border)] pt-5 text-sm font-semibold uppercase tracking-[0.12em] text-[var(--c-text-muted)]">Матеріали й текстури</h3>
+						<div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 							<div>
-								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-textures">Текстури</label>
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-textures">Текстури (коротко)</label>
 								<input id="asset-textures" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="text" placeholder="PBR, 2K" formControlName="textures" />
+							</div>
+							<ng-container formGroupName="details">
+								<div>
+									<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-resolution">Роздільність текстур</label>
+									<select id="asset-resolution" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" formControlName="textureResolution">
+										<option value="">Не вказано</option>
+										@for (resolution of textureResolutions; track resolution) {
+											<option [value]="resolution">{{ resolution }}</option>
+										}
+									</select>
+								</div>
+								<div>
+									<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-pbr">PBR-воркфлоу</label>
+									<select id="asset-pbr" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" formControlName="pbrWorkflow">
+										<option value="">Не вказано</option>
+										@for (option of detailOptions.pbrWorkflow; track option.value) {
+											<option [value]="option.value">{{ option.label }}</option>
+										}
+									</select>
+								</div>
+								<div>
+									<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-uv">UV-розгортка</label>
+									<select id="asset-uv" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" formControlName="uv">
+										<option value="">Не вказано</option>
+										@for (option of detailOptions.uv; track option.value) {
+											<option [value]="option.value">{{ option.label }}</option>
+										}
+									</select>
+								</div>
+								@for (field of detailCounts.slice(3, 5); track field.key) {
+									<div>
+										<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" [for]="'asset-' + field.key">{{ field.label }}</label>
+										<input class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" [id]="'asset-' + field.key" type="number" min="0" step="1" [formControlName]="field.key" />
+									</div>
+								}
+							</ng-container>
+							<fieldset class="sm:col-span-2 lg:col-span-3">
+								<legend class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]">Карти текстур</legend>
+								@let mapControl = form.controls.details.controls.textureMaps;
+								<div class="flex flex-wrap gap-2">
+									@for (map of textureMaps; track map) {
+										<label class="flex cursor-pointer items-center gap-2 rounded-full border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 py-1.5 text-sm has-[:checked]:border-[var(--c-primary)] has-[:checked]:bg-[var(--c-bg-tertiary)]">
+											<input class="h-4 w-4 accent-[var(--c-primary)]" type="checkbox" [checked]="hasItem(mapControl.value, map)" (change)="toggleItem(mapControl, map)" />
+											{{ map }}
+										</label>
+									}
+								</div>
+							</fieldset>
+						</div>
+
+						<h3 class="mt-6 border-t border-[var(--c-border)] pt-5 text-sm font-semibold uppercase tracking-[0.12em] text-[var(--c-text-muted)]">Ріг і анімація</h3>
+						<div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" formGroupName="details">
+							@for (field of detailCounts.slice(5); track field.key) {
+								<div>
+									<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" [for]="'asset-' + field.key">{{ field.label }}</label>
+									<input class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" [id]="'asset-' + field.key" type="number" min="0" step="1" [formControlName]="field.key" />
+								</div>
+							}
+							<p class="self-end pb-3 text-xs text-[var(--c-text-muted)]">Позначки Rigged і Animated — у правій колонці.</p>
+						</div>
+
+						<h3 class="mt-6 border-t border-[var(--c-border)] pt-5 text-sm font-semibold uppercase tracking-[0.12em] text-[var(--c-text-muted)]">Використання й ліцензія</h3>
+						<div class="mt-4 grid gap-4 sm:grid-cols-2" formGroupName="details">
+							<fieldset class="sm:col-span-2">
+								<legend class="sr-only">Властивості моделі</legend>
+								<div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+									@for (flag of detailFlags; track flag.key) {
+										<label class="flex cursor-pointer items-center gap-2.5 text-sm">
+											<input class="h-4 w-4 accent-[var(--c-primary)]" type="checkbox" [formControlName]="flag.key" />
+											{{ flag.label }}
+										</label>
+									}
+								</div>
+							</fieldset>
+							<div>
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-license">Ліцензія</label>
+								<select id="asset-license" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" formControlName="license">
+									<option value="">Не вказано</option>
+									@for (option of detailOptions.license; track option.value) {
+										<option [value]="option.value">{{ option.label }}</option>
+									}
+								</select>
+							</div>
+							<div>
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-published">Дата публікації</label>
+								<input id="asset-published" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="date" formControlName="published" />
+							</div>
+						</div>
+
+						<h3 class="mt-6 border-t border-[var(--c-border)] pt-5 text-sm font-semibold uppercase tracking-[0.12em] text-[var(--c-text-muted)]">Файли й програми</h3>
+						<div class="mt-4 grid gap-4 sm:grid-cols-2">
+							<fieldset class="sm:col-span-2">
+								<legend class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]">Формати в архіві</legend>
+								<div class="flex flex-wrap gap-2">
+									@for (format of fileFormats; track format) {
+										<label class="flex cursor-pointer items-center gap-2 rounded-full border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 py-1.5 text-sm has-[:checked]:border-[var(--c-primary)] has-[:checked]:bg-[var(--c-bg-tertiary)]">
+											<input class="h-4 w-4 accent-[var(--c-primary)]" type="checkbox" [checked]="hasItem(form.controls.formats.value, format)" (change)="toggleItem(form.controls.formats, format)" />
+											{{ format }}
+										</label>
+									}
+								</div>
+							</fieldset>
+							<div>
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-software">Програми</label>
+								<input id="asset-software" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="text" placeholder="Blender, Unity, Unreal Engine" formControlName="software" />
+							</div>
+							<div formGroupName="details">
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-version">Версія програми</label>
+								<input id="asset-version" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="text" placeholder="Blender 4.2" formControlName="softwareVersion" />
+							</div>
+							<div>
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-renderers">Рушії рендеру</label>
+								<input id="asset-renderers" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="text" placeholder="Eevee, Cycles" formControlName="renderers" />
+							</div>
+							<div formGroupName="details">
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-plugins">Потрібні плагіни</label>
+								<input id="asset-plugins" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="text" placeholder="Немає" formControlName="plugins" />
 							</div>
 							<div>
 								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-archive">Розмір архіву</label>
 								<input id="asset-archive" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="text" placeholder="12 MB" formControlName="archiveSize" />
 							</div>
-							<div>
-								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-collection">Колекція</label>
-								<input id="asset-collection" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="text" formControlName="collection" />
-							</div>
 							<div class="sm:col-span-2">
-								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-software">Програми</label>
-								<input id="asset-software" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="text" placeholder="Blender, Unity, Unreal Engine" formControlName="software" />
-							</div>
-							<div>
-								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-renderers">Рендери</label>
-								<input id="asset-renderers" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="text" placeholder="Eevee, Cycles" formControlName="renderers" />
-							</div>
-							<div>
 								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-tags">Теги</label>
 								<input id="asset-tags" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="text" placeholder="персонаж, low-poly" formControlName="tags" />
 							</div>

@@ -1,0 +1,179 @@
+<a class="theme-focus inline-flex items-center gap-1 rounded text-sm font-medium text-[var(--c-text-muted)] hover:text-[var(--c-primary)]" routerLink="/admin/collections">
+	<span class="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_back</span>
+	Усі колекції
+</a>
+
+@let pageState = state();
+@switch (pageState) {
+	@case ('loading') {
+		<p class="mt-8 text-[var(--c-text-muted)]" role="status">Завантаження…</p>
+	}
+	@case ('missing') {
+		<div class="mt-8 rounded-[calc(var(--radius-card)*1.6)] border border-dashed border-[var(--c-border)] px-6 py-14 text-center">
+			<p class="text-xl font-semibold text-[var(--c-text-strong)]">Колекцію не знайдено</p>
+			<p class="mt-2">Можливо, її видалили або змінили slug.</p>
+			<a class="theme-focus mt-4 inline-block rounded font-medium text-[var(--c-primary)] hover:underline" routerLink="/admin/collections">До списку колекцій</a>
+		</div>
+	}
+	@case ('ready') {
+		<form [formGroup]="form" (ngSubmit)="save()" novalidate>
+			<header class="mt-4 flex flex-wrap items-end justify-between gap-4">
+				<div class="min-w-0">
+					<h1 class="truncate text-3xl font-semibold tracking-[-0.02em] text-[var(--c-text-strong)]">
+						{{ originalSlug() ? form.controls.title.value || 'Без назви' : 'Нова колекція' }}
+					</h1>
+					@if (isPublished()) {
+						<a
+							class="theme-focus mt-2 inline-flex items-center gap-1 rounded text-sm font-medium text-[var(--c-primary)] hover:underline"
+							routerLink="/collections"
+							[queryParams]="{ collection: originalSlug() }"
+							target="_blank"
+						>
+							Сторінка на сайті
+							<span class="material-symbols-outlined text-[16px]" aria-hidden="true">open_in_new</span>
+						</a>
+					}
+				</div>
+				<div class="flex flex-wrap items-center gap-3">
+					@if (saved() && form.pristine) {
+						<span class="inline-flex items-center gap-1 text-sm font-medium text-[var(--c-primary)]" role="status">
+							<span class="material-symbols-outlined text-[18px]" aria-hidden="true">check</span>
+							Збережено
+						</span>
+					}
+					@if (originalSlug()) {
+						<button
+							class="theme-interactive theme-focus inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-btn)] px-4 font-semibold text-[var(--c-text-muted)] hover:bg-[#a23b2a]/10 hover:text-[#a23b2a]"
+							type="button"
+							(click)="remove()"
+						>
+							<span class="material-symbols-outlined text-[20px]" aria-hidden="true">delete</span>
+							Видалити
+						</button>
+					}
+					<button
+						class="theme-interactive theme-focus inline-flex min-h-11 items-center rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-5 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)] disabled:opacity-60"
+						type="submit"
+						[disabled]="uploading()"
+					>
+						{{ originalSlug() ? 'Зберегти' : 'Створити' }}
+					</button>
+				</div>
+			</header>
+
+			<div class="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_20rem] xl:items-start">
+				<div class="grid gap-6">
+					<!-- Main -->
+					<section class="rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-6" aria-labelledby="collection-main">
+						<h2 id="collection-main" class="text-lg font-semibold text-[var(--c-text-strong)]">Основне</h2>
+						<div class="mt-5 grid gap-4 sm:grid-cols-2">
+							<div>
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="collection-title">Назва *</label>
+								<input
+									id="collection-title"
+									class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]"
+									type="text"
+									maxlength="80"
+									formControlName="title"
+									[attr.aria-invalid]="showError(form.controls.title)"
+								/>
+								@if (showError(form.controls.title)) {
+									<p class="mt-1.5 text-sm text-[#a23b2a]">Вкажіть назву.</p>
+								}
+							</div>
+							<div>
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="collection-slug">Slug *</label>
+								<input
+									id="collection-slug"
+									class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 font-mono text-sm text-[var(--c-text-strong)]"
+									type="text"
+									placeholder="mecha"
+									formControlName="slug"
+									[attr.aria-invalid]="showError(form.controls.slug)"
+								/>
+								@if (form.controls.slug.hasError('taken')) {
+									<p class="mt-1.5 text-sm text-[#a23b2a]">Такий slug уже є.</p>
+								} @else if (showError(form.controls.slug)) {
+									<p class="mt-1.5 text-sm text-[#a23b2a]">Латиниця в нижньому регістрі, цифри й дефіси.</p>
+								} @else {
+									<p class="mt-1 text-xs text-[var(--c-text-muted)]">Адреса сторінки: /collections?collection={{ form.controls.slug.value || '…' }}</p>
+								}
+							</div>
+							<div class="sm:col-span-2">
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="collection-description">Опис</label>
+								<textarea
+									id="collection-description"
+									class="theme-focus min-h-28 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 py-2.5 text-[var(--c-text-strong)]"
+									maxlength="600"
+									formControlName="description"
+								></textarea>
+							</div>
+						</div>
+					</section>
+
+					<!-- Media -->
+					<section class="rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-6" aria-labelledby="collection-media">
+						<h2 id="collection-media" class="text-lg font-semibold text-[var(--c-text-strong)]">Медіа</h2>
+						<p class="mt-5 mb-1.5 text-sm font-semibold text-[var(--c-text-strong)]">Обкладинка</p>
+						<div class="flex flex-wrap items-center gap-3">
+							<label
+								class="theme-interactive inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-4 font-semibold text-[var(--c-text-strong)] focus-within:shadow-[var(--focus-ring)] hover:border-[var(--c-primary)]"
+								[class.pointer-events-none]="uploading()"
+								[class.opacity-60]="uploading()"
+							>
+								<span class="material-symbols-outlined text-[20px]" aria-hidden="true">add_photo_alternate</span>
+								{{ uploading() ? 'Завантаження…' : preview() ? 'Замінити обкладинку' : 'Завантажити обкладинку' }}
+								<input #coverInput class="sr-only" type="file" accept="image/jpeg,image/png,image/webp" [disabled]="uploading()" (change)="pickCover(coverInput)" />
+							</label>
+							<span class="text-xs text-[var(--c-text-muted)]">Квадрат {{ coverSize }}×{{ coverSize }}, JPEG. Кадр обираєте в редакторі.</span>
+						</div>
+						@if (uploadError()) {
+							<p class="mt-1.5 text-sm text-[#a23b2a]" role="alert">{{ uploadError() }}</p>
+						}
+					</section>
+				</div>
+
+				<!-- Sidebar -->
+				<aside class="grid gap-6 xl:sticky xl:top-6">
+					<section class="overflow-hidden rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)]" aria-label="Обкладинка">
+						@if (preview()) {
+							<img class="aspect-square w-full object-cover" [src]="preview()" alt="" width="320" height="320" />
+						} @else {
+							<div class="flex aspect-square items-center justify-center bg-[var(--c-bg-tertiary)] text-[var(--c-text-muted)]">
+								<span class="material-symbols-outlined text-[40px]" aria-hidden="true">collections_bookmark</span>
+							</div>
+						}
+					</section>
+
+					@if (originalSlug()) {
+						<section class="rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-6" aria-labelledby="collection-assets">
+							<h2 id="collection-assets" class="text-lg font-semibold text-[var(--c-text-strong)]">Ассети</h2>
+							<p class="mt-1 text-sm text-[var(--c-text-muted)]">{{ membersLabel() }}</p>
+							@if (members().length) {
+								<ul class="mt-4 grid gap-2">
+									@for (asset of members(); track asset.slug) {
+										<li>
+											<a class="theme-focus flex items-center gap-2 rounded text-sm font-medium text-[var(--c-text-strong)] hover:text-[var(--c-primary)]" [routerLink]="['/admin/assets', asset.slug]">
+												<span class="material-symbols-outlined text-[18px] text-[var(--c-text-muted)]" aria-hidden="true">deployed_code</span>
+												<span class="truncate">{{ asset.title }}</span>
+											</a>
+										</li>
+									}
+								</ul>
+							}
+							<a
+								class="theme-interactive theme-focus mt-4 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-4 text-sm font-semibold text-[var(--c-text-strong)] hover:border-[var(--c-primary)]"
+								routerLink="/admin/assets/new"
+								[queryParams]="{ collection: originalSlug() }"
+							>
+								<span class="material-symbols-outlined text-[18px]" aria-hidden="true">add</span>
+								Додати ассет у колекцію
+							</a>
+						</section>
+					}
+				</aside>
+			</div>
+		</form>
+	}
+	@default never;
+}

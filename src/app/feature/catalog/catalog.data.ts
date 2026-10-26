@@ -1,11 +1,13 @@
 import categoriesData from '../../../data/category/categories.json';
+import collectionsData from '../../../data/collection/collections.json';
 import productsData from '../../../data/product/products.json';
 import sellersData from '../../../data/seller/sellers.json';
-import { Category, PolygonTier, Product, ProductPurpose, Seller } from './catalog.interface';
+import { CatalogCollection, Category, PolygonTier, Product, ProductPurpose, Seller } from './catalog.interface';
 
 export const categories = categoriesData as Category[];
 export const products = productsData as Product[];
 export const sellers = sellersData as Seller[];
+export const collections = collectionsData as CatalogCollection[];
 
 export const PURPOSE_LABELS: Record<ProductPurpose, string> = {
 	games: 'Ігри',
@@ -26,6 +28,14 @@ export function polygonTier(polygons: number): PolygonTier {
 
 export function getCategory(slug: string | null | undefined): Category | undefined {
 	return categories.find((category) => category.slug === slug);
+}
+
+export function getCollection(slug: string | null | undefined): CatalogCollection | undefined {
+	return collections.find((collection) => collection.slug === slug);
+}
+
+export function productsInCollection(slug: string): Product[] {
+	return products.filter((product) => product.collection === slug);
 }
 
 export function getProduct(slug: string | null | undefined): Product | undefined {
@@ -59,7 +69,7 @@ export function matchesSearch(product: Product, query: string): boolean {
 	const category = getCategory(product.category)?.title ?? '';
 	const seller = getSeller(product.seller)?.name ?? '';
 
-	return [product.title, product.short, product.collection ?? '', category, seller, ...product.tags, ...product.formats]
+	return [product.title, product.short, getCollection(product.collection)?.title ?? '', category, seller, ...product.tags, ...product.formats]
 		.join(' ')
 		.toLowerCase()
 		.includes(search);

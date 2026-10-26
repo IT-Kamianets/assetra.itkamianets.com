@@ -16,7 +16,7 @@ const SUGGESTION_LIMIT = 5;
 	imports: [RouterLink],
 	templateUrl: './topbar-search.component.html',
 	host: {
-		class: 'block md:relative',
+		class: 'block lg:relative',
 		'(focusout)': 'onFocusOut($event)',
 		'(keydown.escape)': 'close()',
 	},

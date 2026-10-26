@@ -126,7 +126,7 @@ app-topbar.is-glass {
     text-shadow: 0 1px 10px rgba(20, 22, 18, 0.45);
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 1024px) {
     app-topbar-search input {
       border-color: rgba(247, 245, 239, 0.45);
       background: rgba(247, 245, 239, 0.12);
