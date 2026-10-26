@@ -5,6 +5,8 @@ import { collections } from '../catalog/catalog.data';
 import { CatalogCollection } from '../catalog/catalog.interface';
 import { downloadJson } from './admin-download';
 
+/** Snapshot of the data in the build, to tell real edits from an unchanged saved copy. */
+const _BUILT = JSON.stringify(collections);
 const STORE_KEY = 'admin-collections';
 
 /**
@@ -16,10 +18,10 @@ export class AdminCollectionsService {
 	private readonly _store = inject(StoreService);
 	private readonly _isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 	private readonly _collections = signal<CatalogCollection[]>(structuredClone(collections));
-	private readonly _changed = signal(false);
 
 	readonly collections = this._collections.asReadonly();
-	readonly hasChanges = this._changed.asReadonly();
+	/** True when the list differs from the collections data the site was built with. */
+	readonly hasChanges = computed(() => JSON.stringify(this._collections()) !== _BUILT);
 	readonly count = computed(() => this._collections().length);
 	readonly ready: Promise<void> = this._isBrowser ? this._restore() : Promise.resolve();
 
@@ -50,7 +52,6 @@ export class AdminCollectionsService {
 
 	reset() {
 		this._collections.set(structuredClone(collections));
-		this._changed.set(false);
 		void this._store.remove(STORE_KEY);
 	}
 
@@ -63,13 +64,11 @@ export class AdminCollectionsService {
 
 		if (Array.isArray(saved)) {
 			this._collections.set(saved);
-			this._changed.set(true);
 		}
 	}
 
 	private _set(list: CatalogCollection[]) {
 		this._collections.set(list);
-		this._changed.set(true);
 
 		if (this._isBrowser) {
 			void this._store.setJson(STORE_KEY, list);

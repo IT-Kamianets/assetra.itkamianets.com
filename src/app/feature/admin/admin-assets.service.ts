@@ -5,6 +5,8 @@ import { products } from '../catalog/catalog.data';
 import { Product } from '../catalog/catalog.interface';
 import { downloadJson } from './admin-download';
 
+/** Snapshot of the data in the build, to tell real edits from an unchanged saved copy. */
+const _BUILT = JSON.stringify(products);
 const STORE_KEY = 'admin-assets';
 
 /**
@@ -16,11 +18,11 @@ export class AdminAssetsService {
 	private readonly _store = inject(StoreService);
 	private readonly _isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 	private readonly _assets = signal<Product[]>(structuredClone(products));
-	private readonly _changed = signal(false);
 
 	readonly assets = this._assets.asReadonly();
 	/** True when the list differs from the products.json the site was built with. */
-	readonly hasChanges = this._changed.asReadonly();
+	/** True when the list differs from the products data the site was built with. */
+	readonly hasChanges = computed(() => JSON.stringify(this._assets()) !== _BUILT);
 	readonly count = computed(() => this._assets().length);
 	readonly ready: Promise<void> = this._isBrowser ? this._restore() : Promise.resolve();
 
@@ -47,7 +49,6 @@ export class AdminAssetsService {
 	/** Drops local edits and returns to the products.json from the build. */
 	reset() {
 		this._assets.set(structuredClone(products));
-		this._changed.set(false);
 		void this._store.remove(STORE_KEY);
 	}
 
@@ -60,13 +61,11 @@ export class AdminAssetsService {
 
 		if (Array.isArray(saved)) {
 			this._assets.set(saved);
-			this._changed.set(true);
 		}
 	}
 
 	private _set(assets: Product[]) {
 		this._assets.set(assets);
-		this._changed.set(true);
 
 		if (this._isBrowser) {
 			void this._store.setJson(STORE_KEY, assets);
