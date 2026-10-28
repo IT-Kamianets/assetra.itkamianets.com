@@ -4,5 +4,8 @@
   "title": "Assetra — маркетплейс 3D-моделей",
   "description": "3D-моделі для ігор, візуалізації, AR/VR та анімації: персонажі, транспорт, техніка, ігрові предмети, меблі й декор. Перегляд у 3D, усі моделі у форматі GLB.",
   "image": "/logo.png",
-	"siteUrl": "https://assetra.itkamianets.com"
+	"siteUrl": "https://assetra.itkamianets.com",
+	"defaultSeo": {
+		"image": "/og-image.jpg"
+	}
 }

@@ -8,7 +8,7 @@
 			<form class="mt-5 grid gap-4" [formGroup]="emailForm" (ngSubmit)="changeEmail()" novalidate>
 				<div>
 					<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="set-new-email">Новий email</label>
-					<input id="set-new-email" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="email" autocomplete="email" formControlName="email" [attr.aria-invalid]="invalid(emailForm, 'email')" />
+					<input id="set-new-email" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="email" autocomplete="email" inputmode="email" autocapitalize="none" autocorrect="off" spellcheck="false" formControlName="email" [attr.aria-invalid]="invalid(emailForm, 'email')" />
 					@if (invalid(emailForm, 'email')) {
 						<p class="mt-1.5 text-xs text-[var(--c-danger)]">Вкажіть коректний email.</p>
 					}

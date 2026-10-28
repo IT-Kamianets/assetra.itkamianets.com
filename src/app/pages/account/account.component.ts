@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthResult, AuthService } from '../../feature/auth/auth.service';
+import { trimmedEmail } from '../../feature/auth/email-validator';
 import { AccountProfileComponent } from './account-profile/account-profile.component';
 
 type Mode = 'login' | 'register';
@@ -33,7 +34,7 @@ export class AccountComponent {
 	protected readonly minPassword = MIN_PASSWORD;
 	protected readonly mode = signal<Mode>(this._route.snapshot.queryParamMap.get('mode') === 'register' ? 'register' : 'login');
 	protected readonly form = this._fb.group({
-		email: this._fb.control('', [Validators.required, Validators.email]),
+		email: this._fb.control('', [Validators.required, trimmedEmail]),
 		password: this._fb.control('', [Validators.required, Validators.minLength(MIN_PASSWORD)]),
 	});
 	protected readonly ready = signal(false);
@@ -45,6 +46,7 @@ export class AccountComponent {
 
 	constructor() {
 		void this.auth.ready.then(() => this.ready.set(true));
+		void this.auth.prepareGoogle();
 	}
 
 	protected setMode(mode: Mode) {

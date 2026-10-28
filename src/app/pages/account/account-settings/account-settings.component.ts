@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { LanguageService, TranslateService } from '@wawjs/ngx-translate';
 import { ThemeService } from '@wawjs/ngx-ui';
 import { AuthResult, AuthService } from '../../../feature/auth/auth.service';
+import { trimmedEmail } from '../../../feature/auth/email-validator';
 
 type Notice = { tone: 'ok' | 'error'; text: string } | null;
 
@@ -39,7 +40,7 @@ export class AccountSettingsComponent {
 	protected readonly mode = computed(() => this._theme.mode() ?? 'dark');
 
 	protected readonly emailForm = this._fb.group({
-		email: this._fb.control('', [Validators.required, Validators.email]),
+		email: this._fb.control('', [Validators.required, trimmedEmail]),
 		password: this._fb.control('', Validators.required),
 	});
 	protected readonly passwordForm = this._fb.group({

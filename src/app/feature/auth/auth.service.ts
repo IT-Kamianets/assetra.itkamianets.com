@@ -14,6 +14,26 @@ export type AuthResult =
 	| 'weak'
 	| 'error';
 
+/** The slice of Google Identity Services used for sign-in. */
+interface GoogleTokenClient {
+	requestAccessToken(options?: { prompt?: string }): void;
+}
+
+interface GoogleIdentity {
+	accounts: {
+		oauth2: {
+			initTokenClient(config: {
+				client_id: string;
+				scope: string;
+				callback: (response: { access_token?: string; error?: string }) => void;
+				error_callback: (error: { type?: string }) => void;
+			}): GoogleTokenClient;
+		};
+	};
+}
+
+type GoogleOutcome = { token: string } | { error: string };
+
 interface AuthUser {
 	uid: string;
 	email: string;
@@ -32,6 +52,9 @@ export class AuthService {
 	private readonly _isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 	private readonly _user = signal<AuthUser | null>(null);
 	private _auth?: Promise<Auth>;
+	private _googleScript?: Promise<void>;
+	private _googleClient?: GoogleTokenClient;
+	private _googleDone?: (outcome: GoogleOutcome) => void;
 
 	readonly uid = computed(() => this._user()?.uid ?? '');
 	readonly email = computed(() => this._user()?.email ?? '');
@@ -53,10 +76,76 @@ export class AuthService {
 		return this._signIn(() => createUserWithEmailAndPassword(auth, email.trim(), password));
 	}
 
-	async loginWithGoogle(): Promise<AuthResult> {
-		const [auth, { GoogleAuthProvider, signInWithPopup }] = await Promise.all([this._getAuth(), import('firebase/auth')]);
+	/**
+	 * Loads Google Identity Services ahead of the click: the sign-in window must be opened inside the
+	 * click itself, or phone browsers block it. Does nothing without `environment.googleClientId`.
+	 */
+	prepareGoogle(): Promise<void> {
+		if (!this._isBrowser || !environment.googleClientId) {
+			return Promise.resolve();
+		}
 
-		return this._signIn(() => signInWithPopup(auth, new GoogleAuthProvider()));
+		this._googleScript ??= new Promise<void>((resolve) => {
+			const script = document.createElement('script');
+
+			script.src = 'https://accounts.google.com/gsi/client';
+			script.async = true;
+			script.onload = () => {
+				const google = (window as unknown as { google?: GoogleIdentity }).google;
+
+				this._googleClient = google?.accounts.oauth2.initTokenClient({
+					client_id: environment.googleClientId,
+					scope: 'openid email profile',
+					callback: (response) =>
+						this._googleDone?.(response.access_token ? { token: response.access_token } : { error: response.error ?? 'error' }),
+					error_callback: (error) => this._googleDone?.({ error: error.type ?? 'error' }),
+				});
+				resolve();
+			};
+			script.onerror = () => resolve();
+			document.head.append(script);
+		});
+
+		return this._googleScript;
+	}
+
+	async loginWithGoogle(): Promise<AuthResult> {
+		// Google Identity Services path: its window talks to this page directly, which phones allow.
+		if (this._googleClient) {
+			const outcome = new Promise<GoogleOutcome>((resolve) => (this._googleDone = resolve));
+
+			this._googleClient.requestAccessToken({ prompt: 'select_account' });
+
+			const result = await outcome;
+
+			if ('token' in result) {
+				const [auth, { GoogleAuthProvider, signInWithCredential }] = await Promise.all([this._getAuth(), import('firebase/auth')]);
+
+				return this._signIn(() => signInWithCredential(auth, GoogleAuthProvider.credential(null, result.token)));
+			}
+
+			return result.error === 'popup_closed' || result.error === 'access_denied'
+				? 'cancelled'
+				: result.error === 'popup_failed_to_open'
+					? 'popup-blocked'
+					: 'error';
+		}
+
+		const [auth, { GoogleAuthProvider, signInWithPopup, signInWithRedirect }] = await Promise.all([this._getAuth(), import('firebase/auth')]);
+		const provider = new GoogleAuthProvider();
+		const result = await this._signIn(() => signInWithPopup(auth, provider));
+
+		// Phones and in-app browsers often block the popup: continue on a full-page sign-in instead.
+		if (result === 'popup-blocked') {
+			try {
+				await signInWithRedirect(auth, provider);
+				return 'cancelled';
+			} catch (error) {
+				return _result(error);
+			}
+		}
+
+		return result;
 	}
 
 	/** Firebase does not reveal whether the account exists, so a valid email always reports 'ok'. */

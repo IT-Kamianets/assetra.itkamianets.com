@@ -10,6 +10,8 @@ export const environment: {
 	firebase: FirebaseOptions;
 	adminEmails: string[];
 	uploadContainer: string;
+	/** Web client id of the Google sign-in (Firebase console → Authentication → Google). Empty = Firebase popup. */
+	googleClientId: string;
 } = {
 	apiUrl: 'https://it.webart.work',
 	appVersion: '1.0.0',
@@ -30,6 +32,8 @@ export const environment: {
 	adminEmails: ['alina.siruk26@gmail.com', 'ceo@webart.work', 'kristinaolefirenko5@gmail.com'],
 	// Cloudflare container on apiUrl (/api/cloudflare) where users' uploaded models are stored.
 	uploadContainer: 'assetka',
+	// Public OAuth client id (not a secret). With it Google sign-in works on phones, where the Firebase popup fails.
+	googleClientId: '',
 	// The site is Ukrainian-first; English is the only other language.
 	languages: [
 		{
