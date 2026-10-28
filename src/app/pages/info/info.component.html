@@ -1,0 +1,60 @@
+@if (page(); as page) {
+	<div class="mx-auto max-w-[var(--container)] px-4 py-8 sm:px-6 lg:py-10">
+		<app-breadcrumbs [items]="breadcrumbs()" />
+
+		<article class="mt-6 max-w-3xl">
+			<h1 class="text-3xl font-semibold tracking-[-0.02em] text-[var(--c-text-strong)] sm:text-4xl">{{ page.title }}</h1>
+			<p class="mt-4 text-lg leading-8">{{ page.intro }}</p>
+
+			@if (page.slug === 'contacts' && email) {
+				<p class="mt-6 text-base">
+					Електронна пошта:
+					<a class="theme-focus font-semibold text-[var(--c-primary-hover)] underline underline-offset-4" [href]="emailHref">{{ email }}</a>
+				</p>
+			}
+
+			@for (section of page.sections; track section.heading) {
+				<section class="mt-10">
+					<h2 class="text-xl font-semibold text-[var(--c-text-strong)]">{{ section.heading }}</h2>
+					@for (paragraph of section.text ?? []; track paragraph) {
+						<p class="mt-3 leading-7">{{ paragraph }}</p>
+					}
+					@if (section.list; as list) {
+						<ul class="mt-3 grid gap-2 leading-7">
+							@for (item of list; track item) {
+								<li class="flex gap-3">
+									<span class="mt-3 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--c-primary)]" aria-hidden="true"></span>
+									<span>{{ item }}</span>
+								</li>
+							}
+						</ul>
+					}
+				</section>
+			}
+
+			@if (page.cta; as cta) {
+				<a
+					class="theme-interactive theme-focus mt-10 inline-flex min-h-12 items-center rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-6 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)]"
+					[routerLink]="cta.path"
+				>
+					{{ cta.label }}
+				</a>
+			}
+		</article>
+
+		<nav class="mt-14 border-t border-[var(--c-border)] pt-6" aria-label="Інші сторінки">
+			<ul class="flex flex-wrap gap-2">
+				@for (item of others(); track item.slug) {
+					<li>
+						<a
+							class="theme-interactive theme-focus inline-flex rounded-full border border-[var(--c-border)] px-4 py-2 text-sm text-[var(--c-text-strong)] hover:border-[var(--c-primary-hover)] hover:text-[var(--c-primary-hover)]"
+							[routerLink]="['/info', item.slug]"
+						>
+							{{ item.title }}
+						</a>
+					</li>
+				}
+			</ul>
+		</nav>
+	</div>
+}

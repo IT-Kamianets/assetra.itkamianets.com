@@ -5,7 +5,7 @@ import { ScrollService } from '../../services/scroll.service';
 	selector: 'app-scroll-top',
 	template: `
 		<button
-			class="theme-focus fixed bottom-5 right-5 z-40 inline-flex h-12 w-12 items-center justify-center rounded-full border border-[var(--c-topbar-border)] bg-[var(--c-topbar-bg)] text-[var(--c-topbar-text)] shadow-[var(--shadow-md)] backdrop-blur-md transition-[opacity,transform] duration-300 hover:-translate-y-0.5 sm:bottom-8 sm:right-8"
+			class="theme-focus fixed bottom-5 right-5 z-40 inline-flex h-12 w-12 items-center justify-center rounded-full border border-[var(--c-border)] bg-[var(--c-bg-secondary)] text-[var(--c-text-strong)] shadow-[var(--shadow-md)] backdrop-blur-md transition-[opacity,transform] duration-300 hover:-translate-y-0.5 sm:bottom-8 sm:right-8"
 			[class.opacity-0]="!visible()"
 			[class.pointer-events-none]="!visible()"
 			[class.translate-y-4]="!visible()"
