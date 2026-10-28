@@ -9,7 +9,7 @@
 		<div class="mt-8 rounded-[calc(var(--radius-card)*1.6)] border border-dashed border-[var(--c-border)] px-6 py-14 text-center">
 			<p class="text-xl font-semibold text-[var(--c-text-strong)]">Колекцію не знайдено</p>
 			<p class="mt-2">Можливо, її видалили або змінили slug.</p>
-			<a class="theme-focus mt-4 inline-block rounded font-medium text-[var(--c-primary)] hover:underline" routerLink="/admin/collections">До списку колекцій</a>
+			<a class="theme-focus mt-4 inline-block rounded font-medium text-[var(--c-link)] hover:underline" routerLink="/admin/collections">До списку колекцій</a>
 		</div>
 	}
 	@case ('ready') {
@@ -21,7 +21,7 @@
 					</h1>
 					@if (isPublished()) {
 						<a
-							class="theme-focus mt-2 inline-flex items-center gap-1 rounded text-sm font-medium text-[var(--c-primary)] hover:underline"
+							class="theme-focus mt-2 inline-flex items-center gap-1 rounded text-sm font-medium text-[var(--c-link)] hover:underline"
 							routerLink="/collections"
 							[queryParams]="{ collection: originalSlug() }"
 							target="_blank"
@@ -33,14 +33,14 @@
 				</div>
 				<div class="flex flex-wrap items-center gap-3">
 					@if (saved() && form.pristine) {
-						<span class="inline-flex items-center gap-1 text-sm font-medium text-[var(--c-primary)]" role="status">
+						<span class="inline-flex items-center gap-1 text-sm font-medium text-[var(--c-link)]" role="status">
 							<span class="material-symbols-outlined text-[18px]" aria-hidden="true">check</span>
 							Збережено
 						</span>
 					}
 					@if (originalSlug()) {
 						<button
-							class="theme-interactive theme-focus inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-btn)] px-4 font-semibold text-[var(--c-text-muted)] hover:bg-[#a23b2a]/10 hover:text-[#a23b2a]"
+							class="theme-interactive theme-focus inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-btn)] px-4 font-semibold text-[var(--c-text-muted)] hover:bg-[var(--c-danger)]/10 hover:text-[var(--c-danger)]"
 							type="button"
 							(click)="remove()"
 						>
@@ -75,7 +75,7 @@
 									[attr.aria-invalid]="showError(form.controls.title)"
 								/>
 								@if (showError(form.controls.title)) {
-									<p class="mt-1.5 text-sm text-[#a23b2a]">Вкажіть назву.</p>
+									<p class="mt-1.5 text-sm text-[var(--c-danger)]">Вкажіть назву.</p>
 								}
 							</div>
 							<div>
@@ -89,9 +89,9 @@
 									[attr.aria-invalid]="showError(form.controls.slug)"
 								/>
 								@if (form.controls.slug.hasError('taken')) {
-									<p class="mt-1.5 text-sm text-[#a23b2a]">Такий slug уже є.</p>
+									<p class="mt-1.5 text-sm text-[var(--c-danger)]">Такий slug уже є.</p>
 								} @else if (showError(form.controls.slug)) {
-									<p class="mt-1.5 text-sm text-[#a23b2a]">Латиниця в нижньому регістрі, цифри й дефіси.</p>
+									<p class="mt-1.5 text-sm text-[var(--c-danger)]">Латиниця в нижньому регістрі, цифри й дефіси.</p>
 								} @else {
 									<p class="mt-1 text-xs text-[var(--c-text-muted)]">Адреса сторінки: /collections?collection={{ form.controls.slug.value || '…' }}</p>
 								}
@@ -125,7 +125,7 @@
 							<span class="text-xs text-[var(--c-text-muted)]">Квадрат {{ coverSize }}×{{ coverSize }}, JPEG. Кадр обираєте в редакторі.</span>
 						</div>
 						@if (uploadError()) {
-							<p class="mt-1.5 text-sm text-[#a23b2a]" role="alert">{{ uploadError() }}</p>
+							<p class="mt-1.5 text-sm text-[var(--c-danger)]" role="alert">{{ uploadError() }}</p>
 						}
 					</section>
 				</div>
@@ -150,7 +150,7 @@
 								<ul class="mt-4 grid gap-2">
 									@for (asset of members(); track asset.slug) {
 										<li>
-											<a class="theme-focus flex items-center gap-2 rounded text-sm font-medium text-[var(--c-text-strong)] hover:text-[var(--c-primary)]" [routerLink]="['/admin/assets', asset.slug]">
+											<a class="theme-focus flex items-center gap-2 rounded text-sm font-medium text-[var(--c-text-strong)] hover:text-[var(--c-link)]" [routerLink]="['/admin/assets', asset.slug]">
 												<span class="material-symbols-outlined text-[18px] text-[var(--c-text-muted)]" aria-hidden="true">deployed_code</span>
 												<span class="truncate">{{ asset.title }}</span>
 											</a>

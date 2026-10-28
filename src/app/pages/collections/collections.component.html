@@ -11,7 +11,7 @@
 				}
 			</div>
 			<div>
-				<p class="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--c-primary)]">Колекція Assetra</p>
+				<p class="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--c-link)]">Колекція Assetra</p>
 				<h1 class="mt-2 text-3xl font-semibold tracking-[-0.02em] text-[var(--c-text-strong)] sm:text-4xl">{{ current.title }}</h1>
 				@if (current.description) {
 					<p class="mt-4 text-lg leading-8">{{ current.description }}</p>
@@ -35,7 +35,7 @@
 		@if (state() === 'loading') {
 			<p class="mt-10 text-[var(--c-text-muted)]" role="status">Завантажуємо колекцію…</p>
 		} @else if (state() === 'error') {
-			<p class="mt-10 rounded-[var(--radius-btn)] bg-[#a23b2a]/10 px-4 py-3 text-[#a23b2a]" role="alert">
+			<p class="mt-10 rounded-[var(--radius-btn)] bg-[var(--c-danger)]/10 px-4 py-3 text-[var(--c-danger)]" role="alert">
 				Не вдалося завантажити колекцію. Оновіть сторінку трохи пізніше.
 			</p>
 		} @else if (collection(); as current) {
@@ -48,7 +48,7 @@
 					}
 				</div>
 				<div>
-					<p class="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--c-primary)]">Колекція</p>
+					<p class="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--c-link)]">Колекція</p>
 					<h1 class="mt-2 text-3xl font-semibold tracking-[-0.02em] text-[var(--c-text-strong)] sm:text-4xl">{{ current.title }}</h1>
 					@if (current.description) {
 						<p class="mt-4 text-lg leading-8">{{ current.description }}</p>
@@ -82,7 +82,7 @@
 											target="_blank"
 											rel="noopener"
 										>
-											<span class="material-symbols-outlined text-[18px] text-[var(--c-primary)]" aria-hidden="true">download</span>
+											<span class="material-symbols-outlined text-[18px] text-[var(--c-link)]" aria-hidden="true">download</span>
 											Завантажити GLB
 										</a>
 									} @else {
@@ -109,7 +109,7 @@
 			<div class="mt-10 text-center">
 				<h1 class="text-2xl font-semibold text-[var(--c-text-strong)]">Колекцію не знайдено</h1>
 				<p class="mt-2 text-[var(--c-text-muted)]">Можливо, автор її видалив.</p>
-				<a class="theme-focus mt-6 inline-block rounded font-semibold text-[var(--c-primary)] hover:underline" routerLink="/collections">Усі колекції</a>
+				<a class="theme-focus mt-6 inline-block rounded font-semibold text-[var(--c-link)] hover:underline" routerLink="/collections">Усі колекції</a>
 			</div>
 		}
 	} @else {
@@ -146,7 +146,7 @@
 								}
 							</div>
 							<div class="p-4">
-								<h3 class="text-lg font-semibold text-[var(--c-text-strong)] group-hover:text-[var(--c-primary)]">{{ item.title }}</h3>
+								<h3 class="text-lg font-semibold text-[var(--c-text-strong)] group-hover:text-[var(--c-link)]">{{ item.title }}</h3>
 								<p class="mt-1 text-sm text-[var(--c-text-muted)]">{{ modelCount(catalogCount(item.slug)) }}</p>
 							</div>
 						</a>
@@ -159,7 +159,7 @@
 		@if (state() === 'loading') {
 			<p class="mt-5 text-[var(--c-text-muted)]" role="status">Завантажуємо колекції авторів…</p>
 		} @else if (state() === 'error') {
-			<p class="mt-5 rounded-[var(--radius-btn)] bg-[#a23b2a]/10 px-4 py-3 text-[#a23b2a]" role="alert">
+			<p class="mt-5 rounded-[var(--radius-btn)] bg-[var(--c-danger)]/10 px-4 py-3 text-[var(--c-danger)]" role="alert">
 				Не вдалося завантажити колекції авторів. Оновіть сторінку трохи пізніше.
 			</p>
 		} @else if (all().length) {
@@ -179,7 +179,7 @@
 								}
 							</div>
 							<div class="p-4">
-								<h3 class="text-lg font-semibold text-[var(--c-text-strong)] group-hover:text-[var(--c-primary)]">{{ item.title }}</h3>
+								<h3 class="text-lg font-semibold text-[var(--c-text-strong)] group-hover:text-[var(--c-link)]">{{ item.title }}</h3>
 								@if (item.description) {
 									<p class="mt-1 line-clamp-2 text-sm text-[var(--c-text-muted)]">{{ item.description }}</p>
 								}

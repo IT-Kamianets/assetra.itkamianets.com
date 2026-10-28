@@ -13,7 +13,7 @@
 				@if (notice(); as notice) {
 					<p
 						class="rounded-[var(--radius-btn)] px-3 py-2.5 text-sm"
-						[class]="notice.tone === 'ok' ? 'bg-[var(--c-bg-tertiary)] text-[var(--c-text-strong)]' : 'bg-[#a23b2a]/10 text-[#a23b2a]'"
+						[class]="notice.tone === 'ok' ? 'bg-[var(--c-bg-tertiary)] text-[var(--c-text-strong)]' : 'bg-[var(--c-danger)]/10 text-[var(--c-danger)]'"
 						role="alert"
 					>
 						{{ notice.text }}
@@ -32,14 +32,14 @@
 						[attr.aria-describedby]="showError('email') ? 'login-email-error' : null"
 					/>
 					@if (showError('email')) {
-						<p id="login-email-error" class="mt-1.5 text-sm text-[#a23b2a]">Вкажіть коректний email.</p>
+						<p id="login-email-error" class="mt-1.5 text-sm text-[var(--c-danger)]">Вкажіть коректний email.</p>
 					}
 				</div>
 
 				<div>
 					<div class="mb-1.5 flex items-center justify-between gap-3">
 						<label class="block text-sm font-semibold text-[var(--c-text-strong)]" for="login-password">Пароль</label>
-						<button class="theme-focus rounded text-sm font-medium text-[var(--c-primary)] hover:underline" type="button" [disabled]="sending()" (click)="resetPassword()">
+						<button class="theme-focus rounded text-sm font-medium text-[var(--c-link)] hover:underline" type="button" [disabled]="sending()" (click)="resetPassword()">
 							Забули пароль?
 						</button>
 					</div>
@@ -64,7 +64,7 @@
 						</button>
 					</div>
 					@if (showError('password')) {
-						<p id="login-password-error" class="mt-1.5 text-sm text-[#a23b2a]">Введіть пароль.</p>
+						<p id="login-password-error" class="mt-1.5 text-sm text-[var(--c-danger)]">Введіть пароль.</p>
 					}
 				</div>
 
@@ -99,7 +99,7 @@
 			</button>
 		</section>
 
-		<a class="theme-focus mx-auto mt-6 block w-fit rounded text-sm font-medium text-[var(--c-primary)] hover:underline" routerLink="/">
+		<a class="theme-focus mx-auto mt-6 block w-fit rounded text-sm font-medium text-[var(--c-link)] hover:underline" routerLink="/">
 			← Повернутися на сайт
 		</a>
 	</div>

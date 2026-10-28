@@ -10,7 +10,7 @@
 		</div>
 		@if (cart.count()) {
 			<button
-				class="theme-focus inline-flex items-center gap-1.5 rounded text-sm font-medium text-[var(--c-text-muted)] hover:text-[#a23b2a]"
+				class="theme-focus inline-flex items-center gap-1.5 rounded text-sm font-medium text-[var(--c-text-muted)] hover:text-[var(--c-danger)]"
 				type="button"
 				(click)="cart.clear()"
 			>
@@ -31,13 +31,13 @@
 						<div class="min-w-0 flex-1">
 							<p class="text-xs font-medium uppercase tracking-[0.14em] text-[var(--c-text-muted)]">{{ row.category }}</p>
 							<a
-								class="theme-focus mt-1 block rounded font-semibold text-[var(--c-text-strong)] hover:text-[var(--c-primary)]"
+								class="theme-focus mt-1 block rounded font-semibold text-[var(--c-text-strong)] hover:text-[var(--c-link)]"
 								[routerLink]="['/product', row.product.slug]"
 							>
 								{{ row.product.title }}
 							</a>
 							@if (row.seller) {
-								<a class="theme-focus mt-0.5 block w-fit rounded text-sm text-[var(--c-text-muted)] hover:text-[var(--c-primary)]" [routerLink]="['/seller', row.seller.slug]">
+								<a class="theme-focus mt-0.5 block w-fit rounded text-sm text-[var(--c-text-muted)] hover:text-[var(--c-link)]" [routerLink]="['/seller', row.seller.slug]">
 									від {{ row.seller.name }}
 								</a>
 							}
@@ -46,7 +46,7 @@
 						<div class="flex shrink-0 flex-col items-end gap-3">
 							<span class="font-semibold text-[var(--c-text-strong)]">{{ row.price }}</span>
 							<button
-								class="theme-interactive theme-focus inline-flex h-9 w-9 items-center justify-center rounded-full text-[var(--c-text-muted)] hover:bg-[var(--c-bg-tertiary)] hover:text-[#a23b2a]"
+								class="theme-interactive theme-focus inline-flex h-9 w-9 items-center justify-center rounded-full text-[var(--c-text-muted)] hover:bg-[var(--c-bg-tertiary)] hover:text-[var(--c-danger)]"
 								type="button"
 								[attr.aria-label]="'Видалити з кошика: ' + row.product.title"
 								(click)="cart.remove(row.product.slug)"
@@ -84,14 +84,14 @@
 					Оформити замовлення
 					<span class="material-symbols-outlined text-[20px]" aria-hidden="true">arrow_forward</span>
 				</a>
-				<a class="theme-focus mt-3 block rounded text-center text-sm font-medium text-[var(--c-primary)] hover:underline" routerLink="/catalog">
+				<a class="theme-focus mt-3 block rounded text-center text-sm font-medium text-[var(--c-link)] hover:underline" routerLink="/catalog">
 					Продовжити покупки
 				</a>
 			</aside>
 		</div>
 	} @else {
 		<div class="mt-8 flex flex-col items-center rounded-[calc(var(--radius-card)*1.6)] border border-dashed border-[var(--c-border)] px-6 py-16 text-center">
-			<span class="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--c-bg-tertiary)] text-[var(--c-primary)]" aria-hidden="true">
+			<span class="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--c-bg-tertiary)] text-[var(--c-link)]" aria-hidden="true">
 				<span class="material-symbols-outlined text-[32px]">shopping_bag</span>
 			</span>
 			<p class="mt-5 text-xl font-semibold text-[var(--c-text-strong)]">Кошик порожній</p>

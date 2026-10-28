@@ -11,7 +11,7 @@ import { Breadcrumb } from '../catalog.interface';
 				@for (item of items(); track item.label; let last = $last) {
 					<li class="flex items-center gap-2">
 						@if (item.path && !last) {
-							<a class="theme-focus rounded hover:text-[var(--c-primary)]" [routerLink]="item.path">
+							<a class="theme-focus rounded hover:text-[var(--c-link)]" [routerLink]="item.path">
 								{{ item.label }}
 							</a>
 						} @else {
