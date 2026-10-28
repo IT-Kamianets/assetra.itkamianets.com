@@ -1,0 +1,247 @@
+<dialog
+	#dialog
+	class="m-0 h-full max-h-none w-full max-w-none overflow-y-auto bg-[var(--c-bg-secondary)] p-0 text-[var(--c-text)] backdrop:bg-black/60 sm:m-auto sm:h-auto sm:max-h-[92vh] sm:max-w-2xl sm:rounded-[calc(var(--radius-card)*1.6)] sm:border sm:border-[var(--c-border)] sm:shadow-[var(--shadow-md)]"
+	aria-labelledby="profile-edit-title"
+	(click)="onBackdrop($event)"
+	(cancel)="close()"
+>
+	<form class="flex min-h-full flex-col" [formGroup]="form" (ngSubmit)="save()" novalidate>
+		<header class="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-[var(--c-border)] bg-[var(--c-bg-secondary)] px-5 py-4 sm:px-7">
+			<h2 id="profile-edit-title" class="text-xl font-semibold text-[var(--c-text-strong)]">Редагувати профіль</h2>
+			<button
+				class="theme-interactive theme-focus inline-flex h-10 w-10 items-center justify-center rounded-full text-[var(--c-text-muted)] hover:bg-[var(--c-bg-tertiary)] hover:text-[var(--c-text-strong)]"
+				type="button"
+				aria-label="Закрити"
+				(click)="close()"
+			>
+				<span class="material-symbols-outlined" aria-hidden="true">close</span>
+			</button>
+		</header>
+
+		<div class="grid flex-1 gap-7 px-5 py-6 sm:px-7">
+			<!-- Cover and photo -->
+			<div>
+				<p class="mb-2 text-sm font-semibold text-[var(--c-text-strong)]">Обкладинка профілю</p>
+				<div class="relative overflow-hidden rounded-[var(--radius-card)] border border-[var(--c-border)] bg-[var(--c-bg-tertiary)]">
+					<div class="aspect-[16/5] w-full">
+						@if (coverPreview()) {
+							<img class="h-full w-full object-cover" [src]="coverPreview()" alt="Попередній перегляд обкладинки" />
+						} @else {
+							<div class="flex h-full items-center justify-center text-sm text-[var(--c-text-muted)]">Обкладинки немає</div>
+						}
+					</div>
+				</div>
+				<div class="mt-2 flex flex-wrap gap-2">
+					<label class="theme-interactive inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-full border border-[var(--c-border)] px-4 text-sm font-semibold text-[var(--c-text-strong)] focus-within:shadow-[var(--focus-ring)] hover:border-[var(--c-primary-hover)]">
+						<span class="material-symbols-outlined text-[18px]" aria-hidden="true">image</span>
+						{{ coverPreview() ? 'Змінити' : 'Завантажити' }}
+						<input class="sr-only" type="file" [accept]="accept" (change)="pick('cover', $event)" />
+					</label>
+					@if (coverPreview()) {
+						<button class="theme-interactive theme-focus inline-flex min-h-10 items-center gap-2 rounded-full px-4 text-sm font-semibold text-[var(--c-text-muted)] hover:text-[var(--c-danger)]" type="button" (click)="remove('cover')">
+							<span class="material-symbols-outlined text-[18px]" aria-hidden="true">delete</span>
+							Видалити
+						</button>
+					}
+				</div>
+			</div>
+
+			<div class="flex items-center gap-5">
+				<span class="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--c-border)] bg-[var(--c-bg-tertiary)]">
+					@if (avatarPreview()) {
+						<img class="h-full w-full object-cover" [src]="avatarPreview()" alt="Попередній перегляд фото" />
+					} @else {
+						<span class="material-symbols-outlined text-[40px] text-[var(--c-text-muted)]" aria-hidden="true">person</span>
+					}
+				</span>
+				<div>
+					<p class="text-sm font-semibold text-[var(--c-text-strong)]">Фото профілю</p>
+					<p class="mt-0.5 text-xs text-[var(--c-text-muted)]">JPG, PNG або WebP до {{ maxMb }} МБ. Показується в колі.</p>
+					<div class="mt-2 flex flex-wrap gap-2">
+						<label class="theme-interactive inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-full border border-[var(--c-border)] px-4 text-sm font-semibold text-[var(--c-text-strong)] focus-within:shadow-[var(--focus-ring)] hover:border-[var(--c-primary-hover)]">
+							<span class="material-symbols-outlined text-[18px]" aria-hidden="true">photo_camera</span>
+							{{ avatarPreview() ? 'Змінити' : 'Завантажити' }}
+							<input class="sr-only" type="file" [accept]="accept" (change)="pick('avatar', $event)" />
+						</label>
+						@if (avatarPreview()) {
+							<button class="theme-interactive theme-focus inline-flex min-h-10 items-center gap-2 rounded-full px-4 text-sm font-semibold text-[var(--c-text-muted)] hover:text-[var(--c-danger)]" type="button" (click)="remove('avatar')">
+								<span class="material-symbols-outlined text-[18px]" aria-hidden="true">delete</span>
+								Видалити
+							</button>
+						}
+					</div>
+				</div>
+			</div>
+
+			@if (imageError()) {
+				<p class="rounded-[var(--radius-btn)] bg-[var(--c-danger)]/10 px-3 py-2.5 text-sm text-[var(--c-danger)]" role="alert">{{ imageError() }}</p>
+			}
+
+			<!-- Identity -->
+			<div class="grid gap-5 sm:grid-cols-2">
+				<div class="sm:col-span-2">
+					<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="pe-nickname">Нікнейм</label>
+					<div class="relative">
+						<span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--c-text-muted)]">@</span>
+						<input
+							id="pe-nickname"
+							class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] pl-8 pr-10 text-[var(--c-text-strong)]"
+							type="text"
+							maxlength="20"
+							autocomplete="off"
+							autocapitalize="off"
+							spellcheck="false"
+							placeholder="mynickname"
+							formControlName="nickname"
+							[attr.aria-invalid]="showError('nickname') || nickState() === 'taken'"
+							aria-describedby="pe-nickname-hint"
+						/>
+						<span class="absolute right-3 top-1/2 -translate-y-1/2" aria-hidden="true">
+							@switch (nickState()) {
+								@case ('checking') {
+									<span class="material-symbols-outlined animate-spin text-[20px] text-[var(--c-text-muted)]">progress_activity</span>
+								}
+								@case ('free') {
+									<span class="material-symbols-outlined text-[20px] text-[var(--c-primary-hover)]">check_circle</span>
+								}
+								@case ('mine') {
+									<span class="material-symbols-outlined text-[20px] text-[var(--c-primary-hover)]">check_circle</span>
+								}
+								@case ('taken') {
+									<span class="material-symbols-outlined text-[20px] text-[var(--c-danger)]">cancel</span>
+								}
+							}
+						</span>
+					</div>
+					<p id="pe-nickname-hint" class="mt-1.5 text-xs" [class]="nickState() === 'taken' || showError('nickname') ? 'text-[var(--c-danger)]' : 'text-[var(--c-text-muted)]'" aria-live="polite">
+						@if (nickState() === 'taken') {
+							Цей нікнейм уже зайнятий.
+						} @else if (nickState() === 'free') {
+							Нікнейм вільний.
+						} @else if (nickState() === 'error') {
+							Не вдалося перевірити нікнейм. Це можна зробити під час збереження.
+						} @else if (showError('nickname')) {
+							3–20 символів: латинські літери, цифри та «_».
+						} @else {
+							Унікальний, 3–20 символів: латинські літери, цифри та «_». Email публічно не показується.
+						}
+					</p>
+				</div>
+
+				<div>
+					<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="pe-name">Ім'я</label>
+					<input
+						id="pe-name"
+						class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]"
+						type="text"
+						maxlength="60"
+						autocomplete="name"
+						placeholder="Ім'я та прізвище або студія"
+						formControlName="name"
+					/>
+				</div>
+
+				<div>
+					<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="pe-role">Роль</label>
+					<select
+						id="pe-role"
+						class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]"
+						formControlName="role"
+					>
+						@for (role of roles; track role.value) {
+							<option [value]="role.value">{{ role.label }}</option>
+						}
+					</select>
+				</div>
+
+				<div class="sm:col-span-2">
+					<div class="mb-1.5 flex items-center justify-between gap-3">
+						<label class="text-sm font-semibold text-[var(--c-text-strong)]" for="pe-bio">Про себе</label>
+						<span class="text-xs" [class]="form.controls.bio.value.length > bioMax ? 'text-[var(--c-danger)]' : 'text-[var(--c-text-muted)]'">
+							{{ form.controls.bio.value.length }} / {{ bioMax }}
+						</span>
+					</div>
+					<textarea
+						id="pe-bio"
+						class="theme-focus w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 py-3 text-[var(--c-text-strong)]"
+						rows="4"
+						placeholder="Коротко розкажіть, чим ви займаєтесь і які моделі створюєте"
+						formControlName="bio"
+						[attr.aria-invalid]="showError('bio')"
+					></textarea>
+				</div>
+
+				<div class="sm:col-span-2">
+					<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="pe-city">Місто <span class="font-normal text-[var(--c-text-muted)]">(необов'язково)</span></label>
+					<input
+						id="pe-city"
+						class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]"
+						type="text"
+						maxlength="60"
+						autocomplete="address-level2"
+						formControlName="city"
+					/>
+				</div>
+			</div>
+
+			<!-- Links -->
+			<fieldset class="grid gap-5 sm:grid-cols-2">
+				<legend class="mb-3 text-sm font-semibold text-[var(--c-text-strong)]">Посилання <span class="font-normal text-[var(--c-text-muted)]">(необов'язково)</span></legend>
+				@for (link of [
+					{ id: 'portfolio', label: 'Портфоліо', placeholder: 'https://myportfolio.com' },
+					{ id: 'instagram', label: 'Instagram', placeholder: 'https://instagram.com/…' },
+					{ id: 'behance', label: 'Behance', placeholder: 'https://behance.net/…' },
+					{ id: 'artstation', label: 'ArtStation', placeholder: 'https://artstation.com/…' },
+				]; track link.id) {
+					<div>
+						<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" [for]="'pe-' + link.id">{{ link.label }}</label>
+						<input
+							[id]="'pe-' + link.id"
+							class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]"
+							type="url"
+							inputmode="url"
+							[placeholder]="link.placeholder"
+							[formControlName]="link.id"
+							[attr.aria-invalid]="showError($any(link.id))"
+						/>
+						@if (showError($any(link.id))) {
+							<p class="mt-1.5 text-xs text-[var(--c-danger)]">Вкажіть повне посилання, що починається з https://</p>
+						}
+					</div>
+				}
+			</fieldset>
+
+		</div>
+
+		<footer class="sticky bottom-0 flex flex-wrap items-center justify-end gap-3 border-t border-[var(--c-border)] bg-[var(--c-bg-secondary)] px-5 py-4 sm:px-7">
+			@if (notice(); as notice) {
+				<p
+					class="w-full rounded-[var(--radius-btn)] px-3 py-2.5 text-sm"
+					[class]="notice.tone === 'ok' ? 'bg-[var(--c-accent-soft)] text-[var(--c-text-strong)]' : 'bg-[var(--c-danger)]/10 text-[var(--c-danger)]'"
+					role="alert"
+				>
+					{{ notice.text }}
+				</p>
+			}
+			<button
+				class="theme-interactive theme-focus inline-flex min-h-12 items-center justify-center rounded-[var(--radius-btn)] border border-[var(--c-border)] px-5 font-semibold text-[var(--c-text-strong)] hover:border-[var(--c-primary-hover)]"
+				type="button"
+				(click)="close()"
+			>
+				Скасувати
+			</button>
+			<button
+				class="theme-interactive theme-focus inline-flex min-h-12 items-center justify-center gap-2 rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-6 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)] disabled:opacity-60"
+				type="submit"
+				[disabled]="saving() || saved()"
+			>
+				@if (saved()) {
+					<span class="material-symbols-outlined text-[20px]" aria-hidden="true">check</span>
+					Збережено
+				} @else {
+					{{ saving() ? 'Зберігаємо…' : 'Зберегти зміни' }}
+				}
+			</button>
+		</footer>
+	</form>
+</dialog>

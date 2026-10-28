@@ -19,6 +19,8 @@ interface AuthUser {
 	email: string;
 	/** Only email/password accounts can change their password here; Google ones do it at Google. */
 	hasPassword: boolean;
+	/** Registration time (ms), from Firebase account metadata. */
+	createdAt: number;
 }
 
 /**
@@ -34,6 +36,7 @@ export class AuthService {
 	readonly uid = computed(() => this._user()?.uid ?? '');
 	readonly email = computed(() => this._user()?.email ?? '');
 	readonly hasPassword = computed(() => !!this._user()?.hasPassword);
+	readonly createdAt = computed(() => this._user()?.createdAt ?? 0);
 	readonly isLoggedIn = computed(() => !!this._user());
 	/** Resolves once Firebase has restored (or not) the previous session. */
 	readonly ready: Promise<void> = this._isBrowser ? this._watch() : Promise.resolve();
@@ -88,6 +91,30 @@ export class AuthService {
 		}
 	}
 
+	/**
+	 * Sends a confirmation link to the new address; the email changes once it is opened.
+	 * Only for email/password accounts (the current password is asked again for safety).
+	 */
+	async changeEmail(currentPassword: string, newEmail: string): Promise<AuthResult> {
+		const [auth, { EmailAuthProvider, reauthenticateWithCredential, verifyBeforeUpdateEmail }] = await Promise.all([
+			this._getAuth(),
+			import('firebase/auth'),
+		]);
+		const user = auth.currentUser;
+
+		if (!user?.email) {
+			return 'error';
+		}
+
+		try {
+			await reauthenticateWithCredential(user, EmailAuthProvider.credential(user.email, currentPassword));
+			await verifyBeforeUpdateEmail(user, newEmail.trim());
+			return 'ok';
+		} catch (error) {
+			return _result(error);
+		}
+	}
+
 	async logout() {
 		const [auth, { signOut }] = await Promise.all([this._getAuth(), import('firebase/auth')]);
 
@@ -136,6 +163,7 @@ function _toAuthUser(user: User): AuthUser {
 		uid: user.uid,
 		email: user.email ?? '',
 		hasPassword: user.providerData.some((provider) => provider.providerId === 'password'),
+		createdAt: Date.parse(user.metadata.creationTime ?? '') || Date.now(),
 	};
 }
 

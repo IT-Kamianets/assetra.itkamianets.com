@@ -1,0 +1,96 @@
+<div class="grid gap-6 lg:grid-cols-2">
+	<section class="rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-6 sm:p-7" aria-labelledby="set-email-title">
+		<h2 id="set-email-title" class="text-xl font-semibold text-[var(--c-text-strong)]">Email</h2>
+		<p class="mt-1 text-sm text-[var(--c-text-muted)]">Приватні дані акаунта: email ніде не показується публічно.</p>
+		<p class="mt-4 break-all rounded-[var(--radius-btn)] bg-[var(--c-bg-tertiary)] px-4 py-3 text-[var(--c-text-strong)]">{{ auth.email() }}</p>
+
+		@if (auth.hasPassword()) {
+			<form class="mt-5 grid gap-4" [formGroup]="emailForm" (ngSubmit)="changeEmail()" novalidate>
+				<div>
+					<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="set-new-email">Новий email</label>
+					<input id="set-new-email" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="email" autocomplete="email" formControlName="email" [attr.aria-invalid]="invalid(emailForm, 'email')" />
+					@if (invalid(emailForm, 'email')) {
+						<p class="mt-1.5 text-xs text-[var(--c-danger)]">Вкажіть коректний email.</p>
+					}
+				</div>
+				<div>
+					<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="set-email-password">Поточний пароль</label>
+					<input id="set-email-password" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="password" autocomplete="current-password" formControlName="password" [attr.aria-invalid]="invalid(emailForm, 'password')" />
+					@if (invalid(emailForm, 'password')) {
+						<p class="mt-1.5 text-xs text-[var(--c-danger)]">Введіть поточний пароль.</p>
+					}
+				</div>
+				@if (emailNotice(); as notice) {
+					<p class="rounded-[var(--radius-btn)] px-3 py-2.5 text-sm" [class]="notice.tone === 'ok' ? 'bg-[var(--c-accent-soft)] text-[var(--c-text-strong)]' : 'bg-[var(--c-danger)]/10 text-[var(--c-danger)]'" role="alert">{{ notice.text }}</p>
+				}
+				<button class="theme-interactive theme-focus inline-flex min-h-12 items-center justify-center rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-6 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)] disabled:opacity-60" type="submit" [disabled]="emailSending()">
+					{{ emailSending() ? 'Надсилаємо…' : 'Змінити email' }}
+				</button>
+			</form>
+		} @else {
+			<p class="mt-5 flex gap-3 rounded-[var(--radius-btn)] bg-[var(--c-bg-tertiary)] p-4 text-sm leading-6 text-[var(--c-text-strong)]">
+				<span class="material-symbols-outlined text-[20px] text-[var(--c-primary-hover)]" aria-hidden="true">info</span>
+				Ви увійшли через Google, тому email і пароль змінюються в налаштуваннях вашого облікового запису Google.
+			</p>
+		}
+	</section>
+
+	<div class="grid content-start gap-6">
+		@if (auth.hasPassword()) {
+			<section class="rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-6 sm:p-7" aria-labelledby="set-password-title">
+				<h2 id="set-password-title" class="text-xl font-semibold text-[var(--c-text-strong)]">Пароль</h2>
+				<form class="mt-4 grid gap-4" [formGroup]="passwordForm" (ngSubmit)="changePassword()" novalidate>
+					<div>
+						<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="set-current">Поточний пароль</label>
+						<input id="set-current" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="password" autocomplete="current-password" formControlName="current" [attr.aria-invalid]="invalid(passwordForm, 'current')" />
+					</div>
+					<div>
+						<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="set-next">Новий пароль</label>
+						<input id="set-next" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="password" autocomplete="new-password" formControlName="next" [attr.aria-invalid]="invalid(passwordForm, 'next')" />
+						@if (invalid(passwordForm, 'next')) {
+							<p class="mt-1.5 text-xs text-[var(--c-danger)]">Пароль — щонайменше {{ minPassword }} символів.</p>
+						}
+					</div>
+					@if (passwordNotice(); as notice) {
+						<p class="rounded-[var(--radius-btn)] px-3 py-2.5 text-sm" [class]="notice.tone === 'ok' ? 'bg-[var(--c-accent-soft)] text-[var(--c-text-strong)]' : 'bg-[var(--c-danger)]/10 text-[var(--c-danger)]'" role="alert">{{ notice.text }}</p>
+					}
+					<button class="theme-interactive theme-focus inline-flex min-h-12 items-center justify-center rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-6 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)] disabled:opacity-60" type="submit" [disabled]="passwordSending()">
+						{{ passwordSending() ? 'Зберігаємо…' : 'Змінити пароль' }}
+					</button>
+				</form>
+			</section>
+		}
+
+		<section class="rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-6 sm:p-7" aria-labelledby="set-look-title">
+			<h2 id="set-look-title" class="text-xl font-semibold text-[var(--c-text-strong)]">Мова та вигляд</h2>
+
+			<label class="mt-4 mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="set-language">Мова сайту</label>
+			<select id="set-language" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" (change)="setLanguage($any($event.target).value)">
+				@for (language of languages(); track language.code) {
+					<option [value]="language.code" [selected]="language.code === activeLanguage()">{{ $any(language).nativeName ?? language.name }}</option>
+				}
+			</select>
+
+			<p class="mt-5 mb-1.5 text-sm font-semibold text-[var(--c-text-strong)]">Тема</p>
+			<div class="grid grid-cols-2 rounded-full border border-[var(--c-border)] bg-[var(--c-bg-primary)] p-1" role="group" aria-label="Тема оформлення">
+				<button class="theme-interactive theme-focus inline-flex min-h-10 items-center justify-center gap-2 rounded-full px-4 text-sm font-semibold" [class]="mode() === 'dark' ? 'bg-[var(--c-primary)] text-[var(--c-on-primary)]' : 'text-[var(--c-text-strong)]'" type="button" [attr.aria-pressed]="mode() === 'dark'" (click)="setMode('dark')">
+					<span class="material-symbols-outlined text-[18px]" aria-hidden="true">dark_mode</span>
+					Графіт
+				</button>
+				<button class="theme-interactive theme-focus inline-flex min-h-10 items-center justify-center gap-2 rounded-full px-4 text-sm font-semibold" [class]="mode() === 'light' ? 'bg-[var(--c-primary)] text-[var(--c-on-primary)]' : 'text-[var(--c-text-strong)]'" type="button" [attr.aria-pressed]="mode() === 'light'" (click)="setMode('light')">
+					<span class="material-symbols-outlined text-[18px]" aria-hidden="true">light_mode</span>
+					Айворі
+				</button>
+			</div>
+		</section>
+
+		<section class="rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-6 sm:p-7" aria-labelledby="set-session-title">
+			<h2 id="set-session-title" class="text-xl font-semibold text-[var(--c-text-strong)]">Сеанс</h2>
+			<p class="mt-1 text-sm text-[var(--c-text-muted)]">Вийдіть, якщо користуєтесь чужим пристроєм.</p>
+			<button class="theme-interactive theme-focus mt-4 inline-flex min-h-12 items-center justify-center gap-2 rounded-[var(--radius-btn)] border border-[var(--c-border)] px-6 font-semibold text-[var(--c-text-strong)] hover:border-[var(--c-danger)] hover:text-[var(--c-danger)]" type="button" (click)="logout()">
+				<span class="material-symbols-outlined text-[20px]" aria-hidden="true">logout</span>
+				Вийти з акаунта
+			</button>
+		</section>
+	</div>
+</div>

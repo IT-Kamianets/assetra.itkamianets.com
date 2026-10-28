@@ -87,7 +87,48 @@ service cloud.firestore {
         && text('title', 80) && request.resource.data.title.size() > 0
         && text('description', 1000);
 
+      // The owner may edit text and the cover; uid and createdAt stay as they were.
+      allow update: if ownsExisting()
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.createdAt == resource.data.createdAt
+        && text('title', 80) && request.resource.data.title.size() > 0
+        && text('description', 1000);
+
       allow delete: if ownsExisting();
+    }
+
+    // Public profile of a signed-in user (/account). The document id is the user's uid and it holds
+    // no email. Anyone may read it; only its owner writes it.
+    match /profiles/{uid} {
+      allow read: if true;
+
+      allow create, update: if signedIn() && request.auth.uid == uid
+        && request.resource.data.uid == uid
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.matches('^[a-z0-9_]{3,20}$')
+        && text('name', 60)
+        && text('bio', 280)
+        && text('role', 20)
+        && text('city', 60)
+        && text('portfolio', 300)
+        && text('instagram', 300)
+        && text('behance', 300)
+        && text('artstation', 300);
+
+      allow delete: if signedIn() && request.auth.uid == uid;
+    }
+
+    // Nickname registry: the id is the lowercase nickname, so a nickname can be claimed only once.
+    // Creating over an existing id counts as an update, which is not allowed.
+    match /nicknames/{nickname} {
+      allow read: if true;
+
+      allow create: if signedIn()
+        && nickname.matches('^[a-z0-9_]{3,20}$')
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['uid']);
+
+      allow delete: if signedIn() && resource.data.uid == request.auth.uid;
     }
   }
 }

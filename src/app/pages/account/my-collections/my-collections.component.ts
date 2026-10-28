@@ -10,7 +10,7 @@ const ERRORS: Record<Exclude<CollectionResult, 'ok'>, string> = {
 	'too-large': `Обкладинка завелика: до ${MAX_IMAGE_MB} МБ.`,
 	'bad-file': 'Обкладинка має бути зображенням (JPG, PNG або WebP).',
 	storage: 'Не вдалося завантажити обкладинку. Спробуйте ще раз трохи пізніше.',
-	database: 'Не вдалося створити колекцію. Спробуйте ще раз.',
+	database: 'Не вдалося зберегти колекцію. Спробуйте ще раз; якщо помилка повторюється, правила бази даних, ймовірно, ще не оновлені.',
 	'signed-out': 'Увійдіть в акаунт, щоб створювати колекції.',
 };
 
@@ -31,6 +31,9 @@ export class MyCollectionsComponent {
 		description: this._fb.control('', Validators.maxLength(1000)),
 	});
 	protected readonly imageFile = signal<File | null>(null);
+	/** The collection being edited, or null while the form creates a new one. */
+	protected readonly editing = signal<ModelCollection | null>(null);
+	protected readonly removeImage = signal(false);
 	protected readonly formOpen = signal(false);
 	protected readonly sending = signal(false);
 	protected readonly removing = signal('');
@@ -40,6 +43,29 @@ export class MyCollectionsComponent {
 		const field = this.form.controls.title;
 
 		return field.invalid && (field.touched || field.dirty);
+	}
+
+	protected startCreate() {
+		this.editing.set(null);
+		this.removeImage.set(false);
+		this.form.reset();
+		this.imageFile.set(null);
+		this.notice.set(null);
+		this.formOpen.set(true);
+	}
+
+	protected startEdit(collection: ModelCollection) {
+		this.editing.set(collection);
+		this.removeImage.set(false);
+		this.form.reset({ title: collection.title, description: collection.description });
+		this.imageFile.set(null);
+		this.notice.set(null);
+		this.formOpen.set(true);
+	}
+
+	protected cancel() {
+		this.formOpen.set(false);
+		this.editing.set(null);
 	}
 
 	protected pickImage(event: Event) {
@@ -59,7 +85,11 @@ export class MyCollectionsComponent {
 		this.sending.set(true);
 		this.notice.set(null);
 
-		const result = await this.collections.create({ ...this.form.getRawValue(), image: this.imageFile() });
+		const editing = this.editing();
+		const values = this.form.getRawValue();
+		const result = editing
+			? await this.collections.update(editing, { ...values, image: this.imageFile() ?? (this.removeImage() ? 'remove' : null) })
+			: await this.collections.create({ ...values, image: this.imageFile() });
 
 		this.sending.set(false);
 
@@ -68,7 +98,12 @@ export class MyCollectionsComponent {
 			return;
 		}
 
-		this.notice.set({ tone: 'ok', text: 'Колекцію створено. Додавайте до неї моделі в розділі «Мої моделі».' });
+		this.notice.set({
+			tone: 'ok',
+			text: editing ? 'Зміни збережено.' : 'Колекцію створено. Додавайте до неї моделі в розділі «Мої моделі».',
+		});
+		this.editing.set(null);
+		this.removeImage.set(false);
 		this.form.reset();
 		this.imageFile.set(null);
 		imageInput.value = '';

@@ -1,9 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthResult, AuthService } from '../../feature/auth/auth.service';
-import { MyModelsComponent } from './my-models/my-models.component';
-import { MyCollectionsComponent } from './my-collections/my-collections.component';
+import { AccountProfileComponent } from './account-profile/account-profile.component';
 
 type Mode = 'login' | 'register';
 type Notice = { tone: 'ok' | 'error'; text: string } | null;
@@ -21,7 +20,7 @@ const ERRORS: Partial<Record<AuthResult, string>> = {
 };
 
 @Component({
-	imports: [ReactiveFormsModule, RouterLink, MyModelsComponent, MyCollectionsComponent],
+	imports: [ReactiveFormsModule, AccountProfileComponent],
 	host: { ngSkipHydration: 'true' },
 	templateUrl: './account.component.html',
 })

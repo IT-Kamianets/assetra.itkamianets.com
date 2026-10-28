@@ -98,6 +98,58 @@ export class CollectionsService {
 		}
 	}
 
+	/** Edits title, description and cover of one of the user's collections; `image` null keeps the cover. */
+	async update(
+		collection: ModelCollection,
+		draft: { title: string; description: string; image: File | 'remove' | null },
+	): Promise<CollectionResult> {
+		const file = draft.image instanceof File ? draft.image : null;
+
+		if (file && !file.type.startsWith('image/')) {
+			return 'bad-file';
+		}
+
+		if ((file?.size ?? 0) > MAX_IMAGE_MB * 1024 * 1024) {
+			return 'too-large';
+		}
+
+		let image: Awaited<ReturnType<typeof uploadFile>> | null = null;
+
+		try {
+			image = file ? await uploadFile(file, file.type, file.name) : null;
+		} catch (error) {
+			console.error(error);
+			return 'storage';
+		}
+
+		const keepsCover = draft.image === null;
+		const patch = {
+			title: draft.title.trim(),
+			description: draft.description.trim(),
+			imageUrl: keepsCover ? collection.imageUrl : (image?.publicUrl ?? ''),
+			imageFileId: keepsCover ? collection.imageFileId : (image?.id ?? ''),
+		};
+
+		try {
+			const [db, { doc, updateDoc }] = await Promise.all([getDb(), import('firebase/firestore')]);
+
+			await updateDoc(doc(db, COLLECTION, collection.id), patch);
+		} catch (error) {
+			console.error(error);
+			if (image) {
+				void deleteFile(image.id);
+			}
+			return 'database';
+		}
+
+		if (!keepsCover && collection.imageFileId) {
+			void deleteFile(collection.imageFileId);
+		}
+
+		this._mine.update((collections) => collections.map((item) => (item.id === collection.id ? { ...item, ...patch } : item)));
+		return 'ok';
+	}
+
 	/** Deletes the collection only; the caller moves its models out first (UserModelsService.clearCollection). */
 	async remove(collection: ModelCollection): Promise<boolean> {
 		try {

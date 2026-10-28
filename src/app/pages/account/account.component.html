@@ -1,57 +1,16 @@
-<div class="mx-auto flex max-w-[var(--container)] justify-center px-4 py-10 sm:px-6 lg:py-16">
-	<div class="w-full space-y-6" [class]="ready() && auth.isLoggedIn() ? 'max-w-4xl' : 'max-w-md'">
-		<section
-			class="rounded-[calc(var(--radius-card)*2)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-6 sm:p-8"
-		>
-			@if (!ready()) {
-				<p class="py-10 text-center text-sm text-[var(--c-text-muted)]" role="status">
-					Перевіряємо вхід…
-				</p>
-			} @else if (auth.isLoggedIn()) {
-				<span
-					class="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--c-primary)] text-2xl font-semibold uppercase text-[var(--c-on-primary)]"
-					aria-hidden="true"
-				>
-					{{ auth.email().charAt(0) }}
-				</span>
-				<h1
-					class="mt-5 text-2xl font-semibold tracking-[-0.02em] text-[var(--c-text-strong)]"
-				>
-					Мій акаунт
-				</h1>
-				<p class="mt-2 break-all text-[var(--c-text-muted)]">{{ auth.email() }}</p>
-
-				<p
-					class="mt-6 flex gap-3 rounded-[var(--radius-card)] bg-[var(--c-bg-tertiary)] p-4 text-sm leading-6 text-[var(--c-text-strong)]"
-				>
-					<span
-						class="material-symbols-outlined text-[20px] text-[var(--c-primary)]"
-						aria-hidden="true"
-						>download</span
-					>
-					Ви можете завантажувати моделі з каталогу (кнопка «Завантажити GLB» на сторінці
-					моделі) і додавати власні в розділі «Мої моделі» нижче.
-				</p>
-
-				<div class="mt-6 flex flex-wrap gap-3">
-					<a
-						class="theme-interactive theme-focus inline-flex min-h-12 flex-1 items-center justify-center rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-6 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)]"
-						[routerLink]="next ?? '/catalog'"
-					>
-						{{ next ? 'Повернутися до моделі' : 'До каталогу' }}
-					</a>
-					<button
-						class="theme-interactive theme-focus inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-6 font-semibold text-[var(--c-text-strong)] hover:border-[var(--c-primary)]"
-						type="button"
-						(click)="logout()"
-					>
-						<span class="material-symbols-outlined text-[20px]" aria-hidden="true"
-							>logout</span
-						>
-						Вийти
-					</button>
-				</div>
-			} @else {
+@if (ready() && auth.isLoggedIn()) {
+	<app-account-profile [next]="next" />
+} @else {
+	<div class="mx-auto flex max-w-[var(--container)] justify-center px-4 py-10 sm:px-6 lg:py-16">
+		<div class="w-full max-w-md space-y-6">
+			<section
+				class="rounded-[calc(var(--radius-card)*2)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-6 sm:p-8"
+			>
+				@if (!ready()) {
+					<p class="py-10 text-center text-sm text-[var(--c-text-muted)]" role="status">
+						Перевіряємо вхід…
+					</p>
+				} @else {
 				<h1 class="text-2xl font-semibold tracking-[-0.02em] text-[var(--c-text-strong)]">
 					{{ mode() === 'register' ? 'Реєстрація' : 'Вхід' }}
 				</h1>
@@ -104,7 +63,7 @@
 							[class]="
 								notice.tone === 'ok'
 									? 'bg-[var(--c-bg-tertiary)] text-[var(--c-text-strong)]'
-									: 'bg-[#a23b2a]/10 text-[#a23b2a]'
+									: 'bg-[var(--c-danger)]/10 text-[var(--c-danger)]'
 							"
 							role="alert"
 						>
@@ -130,7 +89,7 @@
 							"
 						/>
 						@if (showError('email')) {
-							<p id="account-email-error" class="mt-1.5 text-sm text-[#a23b2a]">
+							<p id="account-email-error" class="mt-1.5 text-sm text-[var(--c-danger)]">
 								Вкажіть коректний email.
 							</p>
 						}
@@ -145,7 +104,7 @@
 							>
 							@if (mode() === 'login') {
 								<button
-									class="theme-focus rounded text-sm font-medium text-[var(--c-primary)] hover:underline"
+									class="theme-focus rounded text-sm font-medium text-[var(--c-link)] hover:underline"
 									type="button"
 									[disabled]="sending()"
 									(click)="resetPassword()"
@@ -185,7 +144,7 @@
 							</button>
 						</div>
 						@if (showError('password')) {
-							<p id="account-password-error" class="mt-1.5 text-sm text-[#a23b2a]">
+							<p id="account-password-error" class="mt-1.5 text-sm text-[var(--c-danger)]">
 								Пароль має містити щонайменше {{ minPassword }} символів.
 							</p>
 						}
@@ -239,12 +198,8 @@
 					</svg>
 					Продовжити з Google
 				</button>
-			}
-		</section>
-
-		@if (ready() && auth.isLoggedIn()) {
-			<app-my-collections />
-			<app-my-models />
-		}
+				}
+			</section>
+		</div>
 	</div>
-</div>
+}
