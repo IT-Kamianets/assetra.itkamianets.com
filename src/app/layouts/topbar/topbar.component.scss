@@ -1,20 +1,89 @@
+/* Premium dark glass: nearly invisible over the home hero, frosted once the page scrolls or on inner pages. */
 :host {
+	/* Graphite glass that follows the page background, so it reads in dark and ivory modes alike. */
+	--tb-glass: color-mix(in srgb, var(--c-bg-primary) 62%, transparent);
+	--tb-border: color-mix(in srgb, var(--c-border) 70%, transparent);
+	--tb-blur: blur(16px) saturate(140%);
+	--tb-link: var(--c-text-muted);
+	--tb-text: var(--c-text-strong);
+	--tb-accent: var(--c-primary-hover);
+	--tb-field-bg: color-mix(in srgb, var(--c-bg-secondary) 88%, transparent);
+	--tb-field-border: var(--c-border);
+
 	display: block;
 	position: fixed;
 	top: 0;
 	left: 0;
-	right: 0;
-	z-index: 50;
+	width: 100%;
+	z-index: 1000;
 	overflow: visible;
+	color: var(--tb-link);
 	transition: transform var(--motion-slow) var(--easing);
 }
 
 :host(.is-hidden) {
-	transform: translateY(calc(-100% - 48px));
+	transform: translateY(-100%);
+}
+
+/* Inner pages have content right behind the bar, so the glass is denser to keep the links readable. */
+:host(.is-page) {
+	--tb-glass: color-mix(in srgb, var(--c-bg-primary) 86%, transparent);
+}
+
+:host(.is-menu-open) {
+	--tb-glass: color-mix(in srgb, var(--c-bg-primary) 94%, transparent);
+}
+
+/* Over the always-dark home hero the bar is nearly invisible and keeps ivory text in either mode. */
+:host(.is-top) {
+	--tb-glass: transparent;
+	--tb-border: transparent;
+	--tb-blur: blur(0px) saturate(100%);
+	--tb-link: #d4d2c6;
+	--tb-text: #f3f0e7;
+	--tb-accent: #a0a586;
+	/* Translucent field that stays dark-on-dark whatever the page theme is. */
+	--tb-field-bg: rgba(255, 255, 255, 0.1);
+	--tb-field-border: rgba(255, 255, 255, 0.22);
+}
+
+:host(.is-top) .topbar-inner {
+	text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
+}
+
+.topbar-glass {
+	background: var(--tb-glass);
+	border-bottom: 1px solid var(--tb-border);
+	-webkit-backdrop-filter: var(--tb-blur);
+	backdrop-filter: var(--tb-blur);
+	transition:
+		background-color 0.35s var(--easing),
+		border-color 0.35s var(--easing),
+		backdrop-filter 0.35s var(--easing),
+		-webkit-backdrop-filter 0.35s var(--easing);
+}
+
+.topbar-menu {
+	background: var(--c-bg-secondary);
+	border: 1px solid var(--c-border);
+	box-shadow: var(--shadow-md);
+	animation: topbar-menu-in 0.2s var(--easing);
+}
+
+@keyframes topbar-menu-in {
+	from {
+		opacity: 0;
+		transform: translateY(-6px);
+	}
 }
 
 @media (prefers-reduced-motion: reduce) {
-	:host {
+	:host,
+	.topbar-glass {
 		transition: none;
+	}
+
+	.topbar-menu {
+		animation: none;
 	}
 }

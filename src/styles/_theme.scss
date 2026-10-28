@@ -1,46 +1,65 @@
-/* Design tokens (CSS variables). Runtime-themable; keep SCSS using var(--token) */
+/* Design tokens (CSS variables). Graphite & Ivory: the default (dark) look is graphite, light mode is the ivory inversion.
+   ThemeService writes a subset of these inline at runtime; keep src/app/app.config.ts in sync. */
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 
-  /* brand / actions */
-  --c-primary: #6b7259;
-  --c-primary-hover: #414638;
-  --c-on-primary: #ffffff;
-  --c-secondary: #c53d3d;
-  --c-secondary-hover: #962a2a;
+  /* brand / actions: olive accent */
+  --c-primary: #858a69;
+  --c-primary-hover: #a0a586;
+  --c-on-primary: #141612;
+  /* Accent for text links: lighter than the button olive so it passes contrast on graphite. */
+  --c-link: #a0a586;
+  --c-secondary: #c8a77a;
+  --c-secondary-hover: #d6b98f;
+  --c-accent: #858a69;
+  --c-accent-hover: #a0a586;
+  --c-accent-soft: rgba(133, 138, 105, 0.18);
+  /* Premium, new releases and special offers */
+  --c-premium: #c8a77a;
+  --c-on-premium: #20221d;
+  --c-danger: #e58f7f;
+  --c-on-danger: #20221d;
 
-  /* topbar & footer: frosted translucent dark green (the home hero drops the topbar background) */
-  --c-topbar-bg: rgba(38, 44, 32, 0.74);
-  --c-topbar-text: #f7f5ef;
-  --c-topbar-hover: rgba(247, 245, 239, 0.12);
-  --c-accent: #b98a69;
-  --c-topbar-border: rgba(247, 245, 239, 0.16);
+  /* surfaces: page graphite, cards a step lighter */
+  --c-bg-primary: #20221d;
+  --c-bg-secondary: #353830;
+  --c-bg-tertiary: #2b2d26;
 
-  /* surfaces */
-  --c-bg-primary: #f7f5ef;
-  --c-bg-secondary: #fffefa;
-  --c-bg-tertiary: #edeadf;
-
-  /* content */
-  --c-text: #565a4d;
-  --c-text-strong: #2f3328;
-  --c-text-muted: #707565;
-  --c-placeholder: #313335ab;
+  /* content: ivory text, muted stone */
+  --c-text: #f3f0e7;
+  --c-text-strong: #f3f0e7;
+  --c-text-muted: #b8b8ad;
+  --c-placeholder: #9a9b90;
 
   /* borders & elevation */
-  --c-border: #d9d5c7;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.08);
+  --c-border: #494b43;
+  --c-divider: #494b43;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.35);
 
-  /* typography */
-  --ff-base: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  /* topbar & footer share the page graphite */
+  --c-topbar-bg: rgba(32, 34, 29, 0.78);
+  --c-topbar-text: #f3f0e7;
+  --c-topbar-hover: rgba(243, 240, 231, 0.08);
+  --c-topbar-border: #494b43;
+
+  /* footer card: ivory on graphite */
+  --c-footer-bg: #f3f0e7;
+  --c-footer-text: #20221d;
+  --c-footer-muted: #5e6054;
+  --c-footer-border: #d6d1c2;
+  --c-footer-hover: #5f644a;
+
+  /* typography: Manrope for headings, buttons, navigation and model names; Inter for everything else */
+  --ff-base: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --ff-heading: 'Manrope', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
   --fs: 16px;
-  --letter-spacing: 0.3px;
+  --letter-spacing: 0;
 
   /* radius (default rounded) */
-  --radius: 8px;
-  --radius-card: 10px;
-  --radius-btn: 10px;
+  --radius: 10px;
+  --radius-card: 16px;
+  --radius-btn: 12px;
 
   /* spacing (default comfortable) */
   --sp-0: 0px;
@@ -58,7 +77,7 @@
   --sp-20: 96px;
 
   /* layout */
-  --topbar-space: 5rem; /* fixed floating topbar height + its top offset */
+  --topbar-space: 4rem; /* fixed topbar height */
   --container: 1210px;
   --gutter: 10px;
 
@@ -69,76 +88,181 @@
   --motion-slow: 0.4s;
 
   /* focus */
-  --focus-ring: 0 0 0 3px rgba(107, 114, 89, 0.4);
+  --focus-ring: 0 0 0 3px rgba(160, 165, 134, 0.5);
 }
 
 /* ========= modes ========= */
 html[data-mode='dark'] {
   color-scheme: dark;
-
-  --c-topbar-bg: rgba(24, 28, 20, 0.72);
-
-  /* surfaces */
-  --c-bg-primary: #1e201b;
-  --c-bg-secondary: #282b24;
-  --c-bg-tertiary: #33372e;
-
-  /* borders & elevation */
-  --c-border: #41463a;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
-  --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.45);
-
-  /* content */
-  --c-text: #d9d5c7;
-  --c-text-strong: #f7f5ef;
-  --c-text-muted: #a3a796;
-  --c-placeholder: #a3a796;
-
-  --c-primary: #9aa286;
-  --c-primary-hover: #b0b79c;
-  --c-on-primary: #1e201b;
-
-  /* focus (keeps using primary) */
-  --focus-ring: 0 0 0 3px rgba(154, 162, 134, 0.45);
 }
 
-/* ========= home page keeps the lighter olive topbar (below the hero) and footer ========= */
-html.route-home {
-  --c-topbar-bg: rgba(72, 78, 60, 0.6);
-  --c-topbar-hover: rgba(247, 245, 239, 0.16);
-  --c-topbar-border: rgba(247, 245, 239, 0.28);
+html[data-mode='light'] {
+  color-scheme: light;
+
+  --c-primary: #5f644a;
+  --c-primary-hover: #4a4f39;
+  --c-on-primary: #f3f0e7;
+  --c-link: #5f644a;
+  --c-secondary: #8f6f3f;
+  --c-secondary-hover: #755830;
+  --c-accent: #5f644a;
+  --c-accent-hover: #4a4f39;
+  --c-accent-soft: rgba(95, 100, 74, 0.12);
+  --c-premium: #c8a77a;
+  --c-on-premium: #20221d;
+  --c-danger: #a23b2a;
+  --c-on-danger: #ffffff;
+
+  --c-bg-primary: #f3f0e7;
+  --c-bg-secondary: #fbf9f3;
+  --c-bg-tertiary: #e9e5d8;
+
+  --c-text: #20221d;
+  --c-text-strong: #20221d;
+  --c-text-muted: #5e6054;
+  --c-placeholder: #7a7c70;
+
+  --c-border: #d6d1c2;
+  --c-divider: #d6d1c2;
+  --shadow-sm: 0 1px 2px rgba(32, 34, 29, 0.08);
+  --shadow-md: 0 10px 30px rgba(32, 34, 29, 0.1);
+
+  --c-topbar-bg: rgba(243, 240, 231, 0.82);
+  --c-topbar-text: #20221d;
+  --c-topbar-hover: rgba(32, 34, 29, 0.06);
+  --c-topbar-border: #d6d1c2;
+
+  --c-footer-bg: #e9e5d8;
+  --c-footer-border: #cfc9b8;
+
+  --focus-ring: 0 0 0 3px rgba(95, 100, 74, 0.4);
 }
 
-html.route-home[data-mode='dark'] {
-  --c-topbar-bg: rgba(65, 70, 56, 0.55);
-}
+/* ========= footer links and social icons ========= */
+app-footer {
+  .footer-link {
+    color: var(--c-footer-muted);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    transition: color 0.2s var(--easing);
 
-/* ========= home topbar: bare text links floating over the hero photo ========= */
-app-topbar.is-glass {
-  --c-topbar-bg: transparent;
-  --c-topbar-text: #f7f5ef;
-  --c-topbar-hover: rgba(247, 245, 239, 0.14);
-  --c-topbar-border: transparent;
-
-  header > div {
-    box-shadow: none;
-    backdrop-filter: none;
-    text-shadow: 0 1px 10px rgba(20, 22, 18, 0.45);
+    &:hover {
+      color: var(--c-footer-hover);
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
   }
 
+  .footer-social {
+    display: inline-flex;
+    border-radius: 0.5rem;
+    color: var(--c-footer-text);
+    transition:
+      color 0.2s var(--easing),
+      transform 0.2s var(--easing);
+
+    &:hover {
+      color: var(--c-footer-hover);
+      transform: translateY(-2px);
+    }
+  }
+}
+
+/* ========= topbar links and icon buttons (shared with the search child component) ========= */
+/* In the components layer so Tailwind utilities (lg:hidden, md:!hidden ...) still override them. */
+@layer components {
+app-topbar {
+  .topbar-link,
+  .topbar-icon {
+    color: var(--tb-link);
+    transition:
+      color 0.2s var(--easing),
+      background-color 0.2s var(--easing),
+      opacity 0.2s var(--easing),
+      transform 0.2s var(--easing);
+
+    &:hover,
+    &.is-active {
+      color: var(--tb-accent);
+    }
+  }
+
+  .topbar-link:hover {
+    background-color: var(--c-topbar-hover);
+  }
+
+  .topbar-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.5rem;
+    width: 2.5rem;
+    border-radius: 9999px;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--c-topbar-hover);
+    }
+  }
+
+  .topbar-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 1.25rem;
+    min-width: 1.25rem;
+    padding: 0 0.25rem;
+    border-radius: 9999px;
+    background: var(--tb-accent);
+    color: #151515;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+    text-shadow: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .topbar-link,
+    .topbar-icon {
+      transition: none;
+    }
+  }
+}
+}
+
+/* ========= topbar search: graphite field with rounded corners ========= */
+app-topbar app-topbar-search {
   @media (min-width: 1024px) {
-    app-topbar-search input {
-      border-color: rgba(247, 245, 239, 0.45);
-      background: rgba(247, 245, 239, 0.12);
-      color: #f7f5ef;
+    input {
+      border-color: var(--tb-field-border);
+      background: var(--tb-field-bg);
+      color: var(--tb-text);
+      transition:
+        border-color 0.2s var(--easing),
+        background-color 0.2s var(--easing);
 
       &::placeholder {
-        color: rgba(247, 245, 239, 0.8);
+        color: var(--tb-link);
+        opacity: 0.85;
+      }
+
+      &:hover {
+        border-color: var(--c-primary-hover);
+      }
+
+      &:focus {
+        border-color: var(--tb-accent);
+        background: var(--tb-field-bg);
       }
     }
 
-    app-topbar-search .material-symbols-outlined {
-      color: #f7f5ef;
+    .material-symbols-outlined {
+      color: var(--tb-link);
     }
   }
 }

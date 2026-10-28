@@ -28,31 +28,58 @@ body {
 	}
 }
 
-/* Soft cream halo with a warm terracotta edge so the logo mark stands out on photos and the olive topbar. */
-.logo-glow {
-	filter: drop-shadow(0 0 4px rgba(247, 245, 239, 0.95)) drop-shadow(0 0 12px rgba(247, 245, 239, 0.6))
-		drop-shadow(0 0 22px rgba(185, 138, 105, 0.45));
-	transition: filter var(--motion) var(--easing), transform var(--motion) var(--easing);
-}
-
-a:hover .logo-glow,
-a:focus-visible .logo-glow {
-	filter: drop-shadow(0 0 5px rgba(247, 245, 239, 1)) drop-shadow(0 0 16px rgba(247, 245, 239, 0.75))
-		drop-shadow(0 0 30px rgba(185, 138, 105, 0.6));
-	transform: scale(1.05);
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.logo-glow {
-		transition: none;
-	}
-
-	a:hover .logo-glow {
-		transform: none;
-	}
-}
-
 /* Solid Material Symbol, e.g. a heart for a favorited model (needs the FILL axis in index.html). */
 .icon-filled {
 	font-variation-settings: 'FILL' 1;
+}
+
+/* Typography: Manrope for headings, buttons, navigation and model names; Inter (the base) for everything else. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+button,
+nav a,
+a[class*='rounded-[var(--radius-btn)]'],
+.font-heading {
+	font-family: var(--ff-heading);
+}
+
+h1,
+h2,
+h3,
+h4 {
+	font-weight: 700;
+	letter-spacing: -0.02em;
+}
+
+h5,
+h6 {
+	font-weight: 600;
+}
+
+button,
+nav a {
+	letter-spacing: 0;
+}
+
+::selection {
+	background: var(--c-accent-soft);
+	color: var(--c-text-strong);
+}
+
+/* The logo mark is ivory: inverted to graphite on the ivory footer card and on the ivory light-mode topbar. */
+app-footer img[src*='logo'] {
+  filter: invert(1) grayscale(1);
+}
+
+html[data-mode='light'] app-topbar:not(.is-top) img[src*='logo'] {
+  filter: invert(1) grayscale(1);
+}
+
+/* The hero 3D viewer is a pointer-driven canvas: no focus box after a mouse click (keyboard focus keeps its ring). */
+model-viewer:focus:not(:focus-visible) {
+  outline: none;
 }

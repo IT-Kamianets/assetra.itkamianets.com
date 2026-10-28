@@ -10,7 +10,7 @@
 		</div>
 		@if (favorites.count()) {
 			<button
-				class="theme-focus inline-flex items-center gap-1.5 rounded text-sm font-medium text-[var(--c-text-muted)] hover:text-[#a23b2a]"
+				class="theme-focus inline-flex items-center gap-1.5 rounded text-sm font-medium text-[var(--c-text-muted)] hover:text-[var(--c-danger)]"
 				type="button"
 				(click)="favorites.clear()"
 			>
@@ -22,10 +22,10 @@
 
 	@if (!auth.isLoggedIn()) {
 		<div class="mt-6 flex gap-3 rounded-[var(--radius-card)] bg-[var(--c-bg-tertiary)] px-4 py-3 text-sm leading-6 text-[var(--c-text-strong)]">
-			<span class="material-symbols-outlined text-[20px] text-[var(--c-primary)]" aria-hidden="true">info</span>
+			<span class="material-symbols-outlined text-[20px] text-[var(--c-link)]" aria-hidden="true">info</span>
 			<p>
 				Обране зберігається в цьому браузері.
-				<a class="theme-focus rounded font-semibold text-[var(--c-primary)] hover:underline" routerLink="/account" [queryParams]="{ mode: 'register', next: '/favorites' }">Зареєструйтеся</a>,
+				<a class="theme-focus rounded font-semibold text-[var(--c-link)] hover:underline" routerLink="/account" [queryParams]="{ mode: 'register', next: '/favorites' }">Зареєструйтеся</a>,
 				щоб завантажувати моделі з каталогу й додавати власні.
 			</p>
 		</div>

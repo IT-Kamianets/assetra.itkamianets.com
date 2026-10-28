@@ -17,7 +17,7 @@ export interface JsonSyncCheck {
 	template: `
 		<dialog
 			#dialog
-			class="m-auto w-[min(72rem,calc(100vw-2rem))] max-w-none rounded-[calc(var(--radius-card)*2)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-0 text-[var(--c-text)] shadow-[var(--shadow-md)] backdrop:bg-[#1e201b]/60"
+			class="m-auto w-[min(72rem,calc(100vw-2rem))] max-w-none rounded-[calc(var(--radius-card)*2)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-0 text-[var(--c-text)] shadow-[var(--shadow-md)] backdrop:bg-black/60"
 			aria-labelledby="json-sync-title"
 			(close)="_onClosed()"
 		>
@@ -49,7 +49,7 @@ export interface JsonSyncCheck {
 				@if (check(); as result) {
 					<p
 						class="mt-4 rounded-[var(--radius-btn)] px-3 py-2.5 text-sm"
-						[class]="result.error ? 'bg-[#a23b2a]/10 text-[#a23b2a]' : 'bg-[var(--c-bg-tertiary)] text-[var(--c-text-strong)]'"
+						[class]="result.error ? 'bg-[var(--c-danger)]/10 text-[var(--c-danger)]' : 'bg-[var(--c-bg-tertiary)] text-[var(--c-text-strong)]'"
 						role="status"
 					>
 						{{ result.error ?? result.summary }}
