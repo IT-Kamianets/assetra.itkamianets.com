@@ -33,7 +33,7 @@ export const environment: {
 	// Cloudflare container on apiUrl (/api/cloudflare) where users' uploaded models are stored.
 	uploadContainer: 'assetka',
 	// Public OAuth client id (not a secret). With it Google sign-in works on phones, where the Firebase popup fails.
-	googleClientId: '',
+	googleClientId: '398914265119-78mhkijaso7mo4cs1m4p6iko16s0v139.apps.googleusercontent.com',
 	// The site is Ukrainian-first; English is the only other language.
 	languages: [
 		{
