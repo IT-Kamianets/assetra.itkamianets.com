@@ -10,6 +10,7 @@ const company = await readJson('src/data/company/company.json');
 const categories = await readJson('src/data/category/categories.json');
 const products = await readJson('src/data/product/products.json');
 const sellers = await readJson('src/data/seller/sellers.json');
+const info = await readJson('src/data/info/pages.json');
 
 const staticRoutes = [
 	'/',
@@ -20,6 +21,7 @@ const staticRoutes = [
 	'/collections',
 	'/sellers',
 	...sellers.map(({ slug }) => `/seller/${slug}`),
+	...info.map(({ slug }) => `/info/${slug}`),
 ];
 const siteUrl = trimTrailingSlash(company.siteUrl || 'https://example.com');
 const pageSeo = company.pageSeo ?? {};
