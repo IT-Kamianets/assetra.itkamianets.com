@@ -66,7 +66,7 @@
 				@case ('3d') {
 					<div
 						class="relative aspect-square overflow-hidden rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)]"
-						[class]="darkStage() ? 'bg-[#1e201b]' : 'bg-[var(--c-bg-secondary)]'"
+						[class]="darkStage() ? 'bg-[#20221d]' : 'bg-[var(--c-bg-secondary)]'"
 					>
 						<app-model-viewer [src]="viewerModel()" [alt]="'3D-модель: ' + product().title" />
 
@@ -91,7 +91,7 @@
 		<section class="lg:sticky lg:top-6 lg:self-start" aria-label="Про модель">
 			@if (category(); as current) {
 				<a
-					class="theme-focus rounded text-sm font-semibold uppercase tracking-[0.14em] text-[var(--c-primary)] hover:underline"
+					class="theme-focus rounded text-sm font-semibold uppercase tracking-[0.14em] text-[var(--c-link)] hover:underline"
 					[routerLink]="['/catalog', current.slug]"
 				>
 					{{ current.title }}
@@ -103,7 +103,7 @@
 			@if (collection(); as current) {
 				<p class="mt-2 text-[var(--c-text-muted)]">
 					Колекція
-					<a class="theme-focus rounded font-medium text-[var(--c-primary)] hover:underline" routerLink="/collections" [queryParams]="{ collection: current.slug }">{{ current.title }}</a>
+					<a class="theme-focus rounded font-medium text-[var(--c-link)] hover:underline" routerLink="/collections" [queryParams]="{ collection: current.slug }">{{ current.title }}</a>
 				</p>
 			}
 
@@ -132,7 +132,7 @@
 						class="theme-interactive theme-focus inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-[var(--radius-btn)] border border-[var(--c-primary)] bg-[var(--c-bg-tertiary)] px-6 font-semibold text-[var(--c-text-strong)] sm:flex-none"
 						routerLink="/cart"
 					>
-						<span class="material-symbols-outlined text-[20px] text-[var(--c-primary)]" aria-hidden="true">check_circle</span>
+						<span class="material-symbols-outlined text-[20px] text-[var(--c-link)]" aria-hidden="true">check_circle</span>
 						У кошику
 					</a>
 				} @else {
@@ -147,7 +147,7 @@
 				}
 				<button
 					class="theme-interactive theme-focus inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-[var(--radius-btn)] border bg-[var(--c-bg-secondary)] hover:border-[var(--c-primary)]"
-					[class]="isFavorite() ? 'border-[#c0392b] text-[#c0392b]' : 'border-[var(--c-border)] text-[var(--c-text-strong)]'"
+					[class]="isFavorite() ? 'border-[var(--c-danger)] text-[var(--c-danger)]' : 'border-[var(--c-border)] text-[var(--c-text-strong)]'"
 					type="button"
 					[attr.aria-pressed]="isFavorite()"
 					[attr.aria-label]="isFavorite() ? 'Прибрати з обраного' : 'Додати в обране'"
@@ -176,13 +176,13 @@
 						[disabled]="downloading()"
 						(click)="download()"
 					>
-						<span class="material-symbols-outlined text-[20px] text-[var(--c-primary)]" aria-hidden="true">download</span>
+						<span class="material-symbols-outlined text-[20px] text-[var(--c-link)]" aria-hidden="true">download</span>
 						{{ downloading() ? 'Завантаження…' : 'Завантажити GLB' }}
 					</button>
 					@if (!auth.isLoggedIn()) {
 						<p class="mt-2 text-sm text-[var(--c-text-muted)]">
 							Завантаження доступне після
-							<a class="theme-focus rounded font-medium text-[var(--c-primary)] hover:underline" routerLink="/account" [queryParams]="{ mode: 'register' }">реєстрації</a>.
+							<a class="theme-focus rounded font-medium text-[var(--c-link)] hover:underline" routerLink="/account" [queryParams]="{ mode: 'register' }">реєстрації</a>.
 						</p>
 					}
 				</div>
@@ -251,7 +251,7 @@
 		<section class="mt-16">
 			<div class="flex flex-wrap items-end justify-between gap-4">
 				<h2 class="text-2xl font-semibold text-[var(--c-text-strong)]">Інші моделі від {{ seller()!.name }}</h2>
-				<a class="theme-focus rounded font-semibold text-[var(--c-primary)] hover:underline" [routerLink]="['/seller', seller()!.slug]">
+				<a class="theme-focus rounded font-semibold text-[var(--c-link)] hover:underline" [routerLink]="['/seller', seller()!.slug]">
 					Усі моделі продавця
 				</a>
 			</div>

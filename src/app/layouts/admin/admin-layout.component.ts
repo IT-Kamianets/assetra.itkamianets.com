@@ -22,7 +22,7 @@ const NAV_LINKS = [
 				class="flex items-center gap-2 border-b border-[var(--c-border)] bg-[var(--c-bg-secondary)] px-4 py-3 lg:sticky lg:top-0 lg:h-screen lg:flex-col lg:items-stretch lg:border-r lg:border-b-0 lg:p-5"
 			>
 				<a class="theme-focus flex items-center gap-2.5 rounded" routerLink="/admin/assets">
-					<img class="h-9 w-9 object-contain" src="logo.png" alt="" width="36" height="36" />
+					<img class="h-9 w-9 rounded-xl bg-[#20221d] object-contain p-1" src="logo.png" alt="" width="36" height="36" />
 					<span class="hidden font-semibold text-[var(--c-text-strong)] sm:inline">
 						Assetra <span class="font-normal text-[var(--c-text-muted)]">admin</span>
 					</span>
@@ -34,7 +34,7 @@ const NAV_LINKS = [
 							<li>
 								<a
 									class="theme-interactive theme-focus flex min-h-10 items-center gap-2.5 rounded-[var(--radius-btn)] px-3 text-sm font-medium text-[var(--c-text-strong)] hover:bg-[var(--c-bg-tertiary)]"
-									routerLinkActive="bg-[var(--c-bg-tertiary)] text-[var(--c-primary)]"
+									routerLinkActive="bg-[var(--c-bg-tertiary)] text-[var(--c-link)]"
 									[routerLink]="link.path"
 								>
 									<span class="material-symbols-outlined text-[20px]" aria-hidden="true">{{ link.icon }}</span>
@@ -61,7 +61,7 @@ const NAV_LINKS = [
 						<span class="hidden lg:inline">Відкрити сайт</span>
 					</a>
 					<button
-						class="theme-interactive theme-focus flex min-h-10 items-center gap-2.5 rounded-[var(--radius-btn)] px-3 text-sm font-medium hover:bg-[var(--c-bg-tertiary)] hover:text-[#a23b2a]"
+						class="theme-interactive theme-focus flex min-h-10 items-center gap-2.5 rounded-[var(--radius-btn)] px-3 text-sm font-medium hover:bg-[var(--c-bg-tertiary)] hover:text-[var(--c-danger)]"
 						type="button"
 						aria-label="Вийти"
 						(click)="logout()"

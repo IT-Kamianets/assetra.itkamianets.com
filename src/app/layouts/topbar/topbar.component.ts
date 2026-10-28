@@ -21,9 +21,11 @@ import { TopbarSearchComponent } from './search/topbar-search.component';
 	styleUrl: './topbar.component.scss',
 	host: {
 		'[class.is-hidden]': 'hidden()',
-		'[class.is-glass]': 'overHero()',
+		'[class.is-top]': 'atTop()',
+		'[class.is-page]': '!isHome()',
+		'[class.is-menu-open]': 'menuOpen()',
 		'(document:click)': 'onDocumentClick($event)',
-		'(keydown.escape)': 'languageMenuOpen.set(false)',
+		'(keydown.escape)': 'closeMenus()',
 	},
 })
 export class TopbarComponent {
@@ -40,8 +42,8 @@ export class TopbarComponent {
 
 	protected readonly navLinks = [
 		{ label: 'Каталог', path: '/catalog', query: null, secondary: false },
-		{ label: 'Колекції', path: '/collections', query: null, secondary: true },
-		{ label: 'Продавці', path: '/sellers', query: null, secondary: true },
+		{ label: 'Колекції', path: '/collections', query: null, secondary: false },
+		{ label: 'Продавці', path: '/sellers', query: null, secondary: false },
 	];
 	protected readonly mode = computed(() => this._themeService.mode() ?? 'light');
 	protected readonly languageMenuOpen = signal(false);
@@ -52,18 +54,17 @@ export class TopbarComponent {
 		),
 		{ initialValue: _isHomeUrl(this._router.url) },
 	);
-	/** Frosted glass only while the topbar floats over the home hero photo; olive pill elsewhere. */
-	protected readonly overHero = computed(() => {
-		const viewport = this._scrollService.viewportHeight();
-
-		return this._isHome() && (viewport === 0 || this._scrollService.y() < viewport - 80);
-	});
+	protected readonly isHome = this._isHome;
+	protected readonly menuOpen = signal(false);
+	/** Almost invisible at the very top of the home hero; frosted glass from the first scroll. */
+	protected readonly atTop = computed(() => this._isHome() && this._scrollService.y() < 24 && !this.menuOpen());
 	/** Hide while scrolling down past the hero, reveal on any scroll up. */
 	protected readonly hidden = computed(
 		() =>
 			this._scrollService.direction() === 'down' &&
 			this._scrollService.y() > 120 &&
-			!this.languageMenuOpen(),
+			!this.languageMenuOpen() &&
+			!this.menuOpen(),
 	);
 	protected readonly languages = computed(() =>
 		this._languageService.languages().map((language) => _toAppLanguage(language)),
@@ -100,6 +101,11 @@ export class TopbarComponent {
 		if (this.languageMenuOpen() && !this._host.nativeElement.contains(event.target as Node)) {
 			this.languageMenuOpen.set(false);
 		}
+	}
+
+	protected closeMenus() {
+		this.languageMenuOpen.set(false);
+		this.menuOpen.set(false);
 	}
 
 	protected toggleLanguageMenu() {

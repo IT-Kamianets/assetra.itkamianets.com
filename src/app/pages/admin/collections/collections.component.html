@@ -25,7 +25,7 @@
 
 @if (collections.hasChanges()) {
 	<p class="mt-6 flex items-start gap-2 rounded-[var(--radius-card)] bg-[var(--c-bg-tertiary)] px-4 py-3 text-sm">
-		<span class="material-symbols-outlined text-[20px] text-[var(--c-primary)]" aria-hidden="true">info</span>
+		<span class="material-symbols-outlined text-[20px] text-[var(--c-link)]" aria-hidden="true">info</span>
 		Є зміни, яких ще немає на сайті. Відкрийте синхронізацію (&lt;/&gt;), скопіюйте масив "collections" і замініть ним src/data/collection/collections.json.
 	</p>
 }
@@ -76,14 +76,14 @@
 									</span>
 								}
 								<span class="min-w-0">
-									<span class="block font-semibold text-[var(--c-text-strong)] hover:text-[var(--c-primary)]">{{ row.collection.title }}</span>
+									<span class="block font-semibold text-[var(--c-text-strong)] hover:text-[var(--c-link)]">{{ row.collection.title }}</span>
 									<span class="block text-xs text-[var(--c-text-muted)]">{{ row.collection.slug }}</span>
 								</span>
 							</a>
 						</td>
 						<td class="hidden max-w-md px-4 py-3 lg:table-cell">
 							<a
-								class="theme-focus line-clamp-2 rounded text-[var(--c-text-muted)] hover:text-[var(--c-primary)]"
+								class="theme-focus line-clamp-2 rounded text-[var(--c-text-muted)] hover:text-[var(--c-link)]"
 								routerLink="/admin/assets"
 								[queryParams]="{ collection: row.collection.slug }"
 								[title]="'Ассети колекції ' + row.collection.title"
@@ -93,7 +93,7 @@
 						</td>
 						<td class="px-4 py-3 text-right whitespace-nowrap">
 							<a
-								class="theme-focus rounded tabular-nums font-medium text-[var(--c-primary)] hover:underline"
+								class="theme-focus rounded tabular-nums font-medium text-[var(--c-link)] hover:underline"
 								routerLink="/admin/assets"
 								[queryParams]="{ collection: row.collection.slug }"
 								[attr.aria-label]="'Ассети колекції ' + row.collection.title + ': ' + modelCount(row.count)"
@@ -104,7 +104,7 @@
 						<td class="px-2 py-3">
 							<div class="flex justify-end">
 								<a
-									class="theme-interactive theme-focus inline-flex h-9 w-9 items-center justify-center rounded-full text-[var(--c-text-muted)] hover:bg-[var(--c-bg-tertiary)] hover:text-[var(--c-primary)]"
+									class="theme-interactive theme-focus inline-flex h-9 w-9 items-center justify-center rounded-full text-[var(--c-text-muted)] hover:bg-[var(--c-bg-tertiary)] hover:text-[var(--c-link)]"
 									routerLink="/admin/assets/new"
 									[queryParams]="{ collection: row.collection.slug }"
 									[attr.aria-label]="'Додати ассет у колекцію: ' + row.collection.title"
@@ -113,14 +113,14 @@
 									<span class="material-symbols-outlined text-[20px]" aria-hidden="true">add</span>
 								</a>
 								<a
-									class="theme-interactive theme-focus inline-flex h-9 w-9 items-center justify-center rounded-full text-[var(--c-text-muted)] hover:bg-[var(--c-bg-tertiary)] hover:text-[var(--c-primary)]"
+									class="theme-interactive theme-focus inline-flex h-9 w-9 items-center justify-center rounded-full text-[var(--c-text-muted)] hover:bg-[var(--c-bg-tertiary)] hover:text-[var(--c-link)]"
 									[routerLink]="['/admin/collections', row.collection.slug]"
 									[attr.aria-label]="'Редагувати: ' + row.collection.title"
 								>
 									<span class="material-symbols-outlined text-[20px]" aria-hidden="true">edit</span>
 								</a>
 								<button
-									class="theme-interactive theme-focus inline-flex h-9 w-9 items-center justify-center rounded-full text-[var(--c-text-muted)] hover:bg-[var(--c-bg-tertiary)] hover:text-[#a23b2a]"
+									class="theme-interactive theme-focus inline-flex h-9 w-9 items-center justify-center rounded-full text-[var(--c-text-muted)] hover:bg-[var(--c-bg-tertiary)] hover:text-[var(--c-danger)]"
 									type="button"
 									[attr.aria-label]="'Видалити: ' + row.collection.title"
 									(click)="remove(row.collection.slug, row.collection.title, row.count)"

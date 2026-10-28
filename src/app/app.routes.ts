@@ -6,6 +6,7 @@ import {
 	sellerMetaResolver,
 } from './feature/catalog/catalog.resolver';
 import { companyProfile } from './feature/company/company.data';
+import { infoMetaResolver } from './pages/info/info.resolver';
 import { adminGuard, adminLoginGuard } from './feature/admin/admin.guard';
 
 const ADMIN_ROBOTS = 'noindex, nofollow';
@@ -90,6 +91,11 @@ export const routes: Routes = [
 			},
 		},
 		loadComponent: () => import('./pages/collections/collections.component').then((m) => m.CollectionsComponent),
+	},
+	{
+		path: 'info/:slug',
+		resolve: { meta: infoMetaResolver },
+		loadComponent: () => import('./pages/info/info.component').then((m) => m.InfoComponent),
 	},
 	{
 		path: 'favorites',

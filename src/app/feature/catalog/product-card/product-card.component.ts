@@ -10,12 +10,12 @@ import { Product } from '../catalog.interface';
 	imports: [RouterLink],
 	template: `
 		<a
-			class="theme-focus group flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] transition-shadow duration-200 hover:shadow-[var(--shadow-md)]"
+			class="theme-focus group flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-[var(--c-primary-hover)] hover:shadow-[var(--shadow-md)] motion-reduce:transition-none motion-reduce:hover:translate-y-0"
 			[routerLink]="['/product', product().slug]"
 		>
 			<div class="relative aspect-square overflow-hidden bg-[var(--c-bg-tertiary)]">
 				<img
-					class="absolute inset-0 h-full w-full object-cover transition-opacity duration-300"
+					class="absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-500 group-hover:scale-[1.04] motion-reduce:transition-none"
 					[class.group-hover:opacity-0]="hoverImage()"
 					[src]="mainImage()"
 					[alt]="product().title"
@@ -26,7 +26,7 @@ import { Product } from '../catalog.interface';
 				/>
 				@if (hoverImage(); as hover) {
 					<img
-						class="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+						class="absolute inset-0 h-full w-full object-cover opacity-0 transition-[opacity,transform] duration-500 group-hover:scale-[1.04] group-hover:opacity-100 motion-reduce:transition-none"
 						[src]="hover"
 						alt=""
 						width="600"
@@ -38,7 +38,7 @@ import { Product } from '../catalog.interface';
 
 				<div class="absolute left-3 top-3 flex flex-wrap gap-1.5">
 					@if (product().isNew) {
-						<span class="rounded-full bg-[var(--c-accent)] px-2.5 py-1 text-xs font-semibold text-[#2f3328]">Нове</span>
+						<span class="rounded-full bg-[var(--c-premium)] px-2.5 py-1 text-xs font-semibold text-[var(--c-on-premium)]">Нове</span>
 					}
 					@if (product().isHit) {
 						<span class="rounded-full bg-[var(--c-text-strong)] px-2.5 py-1 text-xs font-semibold text-[var(--c-bg-secondary)]">Хіт</span>
@@ -53,13 +53,13 @@ import { Product } from '../catalog.interface';
 				<p class="text-xs font-medium uppercase tracking-[0.14em] text-[var(--c-text-muted)]">
 					{{ categoryTitle() }}
 				</p>
-				<h3 class="text-base font-semibold leading-snug text-[var(--c-text-strong)] group-hover:text-[var(--c-primary)]">
+				<h3 class="text-base font-semibold leading-snug text-[var(--c-text-strong)] group-hover:text-[var(--c-link)]">
 					{{ product().title }}
 				</h3>
 				<p class="truncate text-xs text-[var(--c-text-muted)]">від {{ sellerName() }}</p>
 				<p class="text-sm text-[var(--c-text-muted)]">{{ summary() }}</p>
 				<div class="mt-auto flex items-end justify-between gap-3 pt-2">
-					<span class="text-lg font-semibold text-[var(--c-text-strong)]">{{ price() }}</span>
+					<span class="text-xl font-bold text-[var(--c-text-strong)]">{{ price() }}</span>
 					<span class="text-right text-xs text-[var(--c-text-muted)]">{{ software() }}</span>
 				</div>
 			</div>
@@ -78,7 +78,7 @@ import { Product } from '../catalog.interface';
 
 		<button
 			class="theme-interactive theme-focus absolute right-3 top-14 inline-flex h-9 w-9 items-center justify-center rounded-full bg-[var(--c-bg-secondary)]/90 shadow-[var(--shadow-sm)] hover:bg-[var(--c-bg-secondary)]"
-			[class]="isFavorite() ? 'text-[#c0392b]' : 'text-[var(--c-text-strong)]'"
+			[class]="isFavorite() ? 'text-[var(--c-danger)]' : 'text-[var(--c-text-strong)]'"
 			type="button"
 			[attr.aria-pressed]="isFavorite()"
 			[attr.aria-label]="(isFavorite() ? 'Прибрати з обраного: ' : 'Додати в обране: ') + product().title"

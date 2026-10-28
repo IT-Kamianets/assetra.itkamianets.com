@@ -25,7 +25,7 @@
 							[attr.aria-invalid]="showError(storeForm.controls[field.key])"
 						/>
 						@if (showError(storeForm.controls[field.key])) {
-							<p class="mt-1.5 text-sm text-[#a23b2a]">
+							<p class="mt-1.5 text-sm text-[var(--c-danger)]">
 								@switch (field.key) {
 									@case ('siteUrl') { Вкажіть адресу, що починається з https://. }
 									@case ('email') { Вкажіть коректний email. }
@@ -47,7 +47,7 @@
 			</div>
 
 			@if (storeNotice(); as notice) {
-				<p class="text-sm" [class]="notice.tone === 'ok' ? 'text-[var(--c-primary)]' : 'text-[#a23b2a]'" role="status">{{ notice.text }}</p>
+				<p class="text-sm" [class]="notice.tone === 'ok' ? 'text-[var(--c-link)]' : 'text-[var(--c-danger)]'" role="status">{{ notice.text }}</p>
 			}
 
 			<div class="flex flex-wrap gap-3">
@@ -65,7 +65,7 @@
 					<span class="material-symbols-outlined text-[20px]" aria-hidden="true">download</span>
 					company.json
 				</button>
-				<button class="theme-focus ml-auto rounded px-2 text-sm font-medium text-[var(--c-text-muted)] hover:text-[#a23b2a]" type="button" (click)="resetStore()">
+				<button class="theme-focus ml-auto rounded px-2 text-sm font-medium text-[var(--c-text-muted)] hover:text-[var(--c-danger)]" type="button" (click)="resetStore()">
 					Скинути
 				</button>
 			</div>
@@ -93,7 +93,7 @@
 							[attr.aria-invalid]="showError(accountForm.controls.currentPassword)"
 						/>
 						@if (showError(accountForm.controls.currentPassword)) {
-							<p class="mt-1.5 text-sm text-[#a23b2a]">Введіть поточний пароль.</p>
+							<p class="mt-1.5 text-sm text-[var(--c-danger)]">Введіть поточний пароль.</p>
 						}
 					</div>
 					<div>
@@ -107,7 +107,7 @@
 							[attr.aria-invalid]="showError(accountForm.controls.newPassword)"
 						/>
 						@if (showError(accountForm.controls.newPassword)) {
-							<p class="mt-1.5 text-sm text-[#a23b2a]">Щонайменше 8 символів.</p>
+							<p class="mt-1.5 text-sm text-[var(--c-danger)]">Щонайменше 8 символів.</p>
 						}
 					</div>
 					<div>
@@ -121,13 +121,13 @@
 							[attr.aria-invalid]="accountForm.hasError('mismatch') && accountForm.controls.confirmPassword.touched"
 						/>
 						@if (accountForm.hasError('mismatch') && accountForm.controls.confirmPassword.touched) {
-							<p class="mt-1.5 text-sm text-[#a23b2a]">Паролі не збігаються.</p>
+							<p class="mt-1.5 text-sm text-[var(--c-danger)]">Паролі не збігаються.</p>
 						}
 					</div>
 				</div>
 
 				@if (accountNotice(); as notice) {
-					<p class="text-sm" [class]="notice.tone === 'ok' ? 'text-[var(--c-primary)]' : 'text-[#a23b2a]'" role="status">{{ notice.text }}</p>
+					<p class="text-sm" [class]="notice.tone === 'ok' ? 'text-[var(--c-link)]' : 'text-[var(--c-danger)]'" role="status">{{ notice.text }}</p>
 				}
 
 				<button

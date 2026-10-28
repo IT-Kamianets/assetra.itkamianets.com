@@ -40,7 +40,7 @@
 						[attr.aria-invalid]="showError(form.controls.name)"
 					/>
 					@if (showError(form.controls.name)) {
-						<p class="mt-1.5 text-sm text-[#a23b2a]">Вкажіть назву.</p>
+						<p class="mt-1.5 text-sm text-[var(--c-danger)]">Вкажіть назву.</p>
 					}
 				</div>
 				<div>
@@ -53,7 +53,7 @@
 						[attr.aria-invalid]="showError(form.controls.slug)"
 					/>
 					@if (showError(form.controls.slug)) {
-						<p class="mt-1.5 text-sm text-[#a23b2a]">Латиниця в нижньому регістрі, цифри й дефіси.</p>
+						<p class="mt-1.5 text-sm text-[var(--c-danger)]">Латиниця в нижньому регістрі, цифри й дефіси.</p>
 					} @else {
 						<p class="mt-1 text-xs text-[var(--c-text-muted)]">Адреса сторінки: /seller/{{ form.controls.slug.value || '…' }}</p>
 					}
@@ -80,7 +80,7 @@
 							[attr.aria-invalid]="showError(form.controls.since)"
 						/>
 						@if (showError(form.controls.since)) {
-							<p class="mt-1.5 text-sm text-[#a23b2a]">Рік від 1990 до {{ thisYear }}.</p>
+							<p class="mt-1.5 text-sm text-[var(--c-danger)]">Рік від 1990 до {{ thisYear }}.</p>
 						}
 					</div>
 					<div>
@@ -119,7 +119,7 @@
 			</div>
 
 			@if (notice(); as notice) {
-				<p class="text-sm" [class]="notice.tone === 'ok' ? 'text-[var(--c-primary)]' : 'text-[#a23b2a]'" role="status">{{ notice.text }}</p>
+				<p class="text-sm" [class]="notice.tone === 'ok' ? 'text-[var(--c-link)]' : 'text-[var(--c-danger)]'" role="status">{{ notice.text }}</p>
 			}
 
 			<div class="flex flex-wrap gap-3">

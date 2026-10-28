@@ -7,7 +7,7 @@
 		<app-seller-avatar [seller]="seller()" [size]="88" />
 
 		<div class="min-w-0 flex-1">
-			<p class="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--c-primary)]">Продавець</p>
+			<p class="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--c-link)]">Продавець</p>
 			<h1 class="mt-1 text-3xl font-semibold tracking-[-0.02em] text-[var(--c-text-strong)] sm:text-4xl">
 				{{ seller().name }}
 			</h1>
@@ -54,7 +54,7 @@
 		<div class="flex flex-wrap items-end justify-between gap-4">
 			<h2 class="text-2xl font-semibold text-[var(--c-text-strong)]">Моделі продавця</h2>
 			<a
-				class="theme-focus rounded font-semibold text-[var(--c-primary)] hover:underline"
+				class="theme-focus rounded font-semibold text-[var(--c-link)] hover:underline"
 				routerLink="/catalog"
 				[queryParams]="{ seller: seller().slug }"
 			>
