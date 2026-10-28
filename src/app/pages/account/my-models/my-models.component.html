@@ -32,7 +32,7 @@
 			[class]="
 				notice.tone === 'ok'
 					? 'bg-[var(--c-bg-tertiary)] text-[var(--c-text-strong)]'
-					: 'bg-[#a23b2a]/10 text-[#a23b2a]'
+					: 'bg-[var(--c-danger)]/10 text-[var(--c-danger)]'
 			"
 			role="alert"
 		>
@@ -63,7 +63,7 @@
 					[attr.aria-describedby]="showError('title') ? 'model-title-error' : null"
 				/>
 				@if (showError('title')) {
-					<p id="model-title-error" class="mt-1.5 text-sm text-[#a23b2a]">
+					<p id="model-title-error" class="mt-1.5 text-sm text-[var(--c-danger)]">
 						Вкажіть назву моделі.
 					</p>
 				}
@@ -149,7 +149,7 @@
 						class="mt-1.5 text-sm"
 						[class]="
 							fileTouched() && !modelFile()
-								? 'text-[#a23b2a]'
+								? 'text-[var(--c-danger)]'
 								: 'text-[var(--c-text-muted)]'
 						"
 					>
@@ -213,7 +213,7 @@
 		</p>
 	} @else if (userModels.loadFailed()) {
 		<p
-			class="mt-6 rounded-[var(--radius-btn)] bg-[#a23b2a]/10 px-3 py-2.5 text-sm text-[#a23b2a]"
+			class="mt-6 rounded-[var(--radius-btn)] bg-[var(--c-danger)]/10 px-3 py-2.5 text-sm text-[var(--c-danger)]"
 			role="alert"
 		>
 			Не вдалося отримати список ваших моделей. Оновіть сторінку трохи пізніше.
@@ -290,7 +290,7 @@
 								GLB
 							</a>
 							<button
-								class="theme-interactive theme-focus inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-btn)] text-[var(--c-text-muted)] hover:bg-[var(--c-bg-tertiary)] hover:text-[#a23b2a] disabled:opacity-60"
+								class="theme-interactive theme-focus inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-btn)] text-[var(--c-text-muted)] hover:bg-[var(--c-bg-tertiary)] hover:text-[var(--c-danger)] disabled:opacity-60"
 								type="button"
 								[disabled]="removing() === model.id"
 								[attr.aria-label]="'Видалити модель: ' + model.title"
