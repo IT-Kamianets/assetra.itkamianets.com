@@ -17,6 +17,11 @@ export const serverRoutes: ServerRoute[] = [
 		getPrerenderParams: async () => products.map(({ slug }) => ({ slug })),
 	},
 	{
+		// Old address of a model page: only redirects to /model/:slug in the browser, nothing to prerender.
+		path: 'product/:slug',
+		renderMode: RenderMode.Client,
+	},
+	{
 		path: 'info/:slug',
 		renderMode: RenderMode.Prerender,
 		getPrerenderParams: async () => info.map(({ slug }) => ({ slug })),
