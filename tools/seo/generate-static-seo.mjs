@@ -16,7 +16,7 @@ const staticRoutes = [
 	'/',
 	'/catalog',
 	...categories.map(({ slug }) => `/catalog/${slug}`),
-	...products.map(({ slug }) => `/product/${slug}`),
+	...products.map(({ slug }) => `/model/${slug}`),
 	'/order',
 	'/collections',
 	'/sellers',

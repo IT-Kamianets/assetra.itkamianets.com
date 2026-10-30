@@ -41,8 +41,10 @@ export const routes: Routes = [
 		loadComponent: () =>
 			import('./pages/catalog/catalog.component').then((m) => m.CatalogComponent),
 	},
+	// Old address of a model page, kept so existing links and search results still work.
+	{ path: 'product/:slug', redirectTo: 'model/:slug' },
 	{
-		path: 'product/:slug',
+		path: 'model/:slug',
 		resolve: { meta: productMetaResolver },
 		loadComponent: () =>
 			import('./pages/product/product.component').then((m) => m.ProductComponent),

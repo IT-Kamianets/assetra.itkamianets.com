@@ -12,7 +12,7 @@ export const serverRoutes: ServerRoute[] = [
 		getPrerenderParams: async () => categories.map(({ slug }) => ({ category: slug })),
 	},
 	{
-		path: 'product/:slug',
+		path: 'model/:slug',
 		renderMode: RenderMode.Prerender,
 		getPrerenderParams: async () => products.map(({ slug }) => ({ slug })),
 	},

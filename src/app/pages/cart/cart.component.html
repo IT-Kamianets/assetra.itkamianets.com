@@ -25,14 +25,14 @@
 			<ul class="divide-y divide-[var(--c-border)] rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)]">
 				@for (row of rows(); track row.product.slug) {
 					<li class="flex gap-4 p-4 sm:items-center sm:p-5">
-						<a class="theme-focus shrink-0 overflow-hidden rounded-[var(--radius-card)]" [routerLink]="['/product', row.product.slug]" tabindex="-1">
+						<a class="theme-focus shrink-0 overflow-hidden rounded-[var(--radius-card)]" [routerLink]="['/model', row.product.slug]" tabindex="-1">
 							<img class="h-24 w-24 object-cover sm:h-28 sm:w-28" [src]="row.thumb" [alt]="row.product.title" width="112" height="112" loading="lazy" />
 						</a>
 						<div class="min-w-0 flex-1">
 							<p class="text-xs font-medium uppercase tracking-[0.14em] text-[var(--c-text-muted)]">{{ row.category }}</p>
 							<a
 								class="theme-focus mt-1 block rounded font-semibold text-[var(--c-text-strong)] hover:text-[var(--c-link)]"
-								[routerLink]="['/product', row.product.slug]"
+								[routerLink]="['/model', row.product.slug]"
 							>
 								{{ row.product.title }}
 							</a>

@@ -181,7 +181,7 @@ export class OrderComponent {
 			lines.push(`Кошик: ${formatModelCount(this.cart.count())}, разом ${formatPrice(this.cart.total())}`);
 			this.cart.items().forEach((product, index) => {
 				const seller = getSeller(product.seller)?.name ?? '—';
-				lines.push(`${index + 1}. ${product.title} — ${formatPrice(product.price)} (${seller}) ${companyProfile.siteUrl}/product/${product.slug}`);
+				lines.push(`${index + 1}. ${product.title} — ${formatPrice(product.price)} (${seller}) ${companyProfile.siteUrl}/model/${product.slug}`);
 			});
 		}
 

@@ -11,7 +11,7 @@ import { Product } from '../catalog.interface';
 	template: `
 		<a
 			class="theme-focus group flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-[var(--c-primary-hover)] hover:shadow-[var(--shadow-md)] motion-reduce:transition-none motion-reduce:hover:translate-y-0"
-			[routerLink]="['/product', product().slug]"
+			[routerLink]="['/model', product().slug]"
 		>
 			<div class="relative aspect-square overflow-hidden bg-[var(--c-bg-tertiary)]">
 				<img

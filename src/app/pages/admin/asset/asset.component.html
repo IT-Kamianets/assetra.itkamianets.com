@@ -22,7 +22,7 @@
 					@if (isPublished()) {
 						<a
 							class="theme-focus mt-2 inline-flex items-center gap-1 rounded text-sm font-medium text-[var(--c-link)] hover:underline"
-							[routerLink]="['/product', originalSlug()]"
+							[routerLink]="['/model', originalSlug()]"
 							target="_blank"
 						>
 							Сторінка на сайті
@@ -90,7 +90,7 @@
 								} @else if (showError(form.controls.slug)) {
 									<p class="mt-1.5 text-sm text-[var(--c-danger)]">Латиниця в нижньому регістрі, цифри й дефіси.</p>
 								} @else {
-									<p class="mt-1 text-xs text-[var(--c-text-muted)]">Адреса сторінки: /product/{{ form.controls.slug.value || '…' }}</p>
+									<p class="mt-1 text-xs text-[var(--c-text-muted)]">Адреса сторінки: /model/{{ form.controls.slug.value || '…' }}</p>
 								}
 							</div>
 							<div>
