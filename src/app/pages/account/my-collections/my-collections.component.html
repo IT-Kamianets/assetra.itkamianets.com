@@ -75,6 +75,15 @@
 				}
 			</div>
 
+			<fieldset>
+				<legend class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]">Friendly apps</legend>
+				<label class="inline-flex cursor-pointer items-center gap-2 text-sm text-[var(--c-text-strong)]">
+					<input class="h-4 w-4 accent-[var(--c-primary)]" type="checkbox" formControlName="vroom" aria-describedby="collection-vroom-hint" />
+					VRoom
+				</label>
+				<p id="collection-vroom-hint" class="mt-1.5 text-sm text-[var(--c-text-muted)]">Колекція буде показана в застосунку VRoom.</p>
+			</fieldset>
+
 			<div class="flex flex-wrap gap-3">
 				<button
 					class="theme-interactive theme-focus inline-flex min-h-12 flex-1 items-center justify-center rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-6 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)] disabled:opacity-60 sm:flex-none"

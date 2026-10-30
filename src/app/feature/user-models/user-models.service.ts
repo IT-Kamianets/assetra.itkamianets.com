@@ -21,6 +21,9 @@ export interface UserModel {
 	modelUrl: string;
 	/** Cloudflare file id; deleting it only works while the API server still remembers the upload. */
 	modelFileId: string;
+	/** Optional lightweight (low-poly) GLB of the same model; '' or absent when not uploaded. */
+	lowModelUrl?: string;
+	lowModelFileId?: string;
 	imageUrl: string;
 	imageFileId: string;
 	fileName: string;
@@ -34,6 +37,8 @@ export interface UserModelDraft {
 	category: string;
 	collectionId: string;
 	model: File;
+	/** Optional low-poly version of the model, also a .glb. */
+	lowModel: File | null;
 	image: File | null;
 }
 
@@ -73,24 +78,28 @@ export class UserModelsService {
 			return 'signed-out';
 		}
 
-		if (!draft.model.name.toLowerCase().endsWith('.glb') || (draft.image && !draft.image.type.startsWith('image/'))) {
+		if (!draft.model.name.toLowerCase().endsWith('.glb') || (draft.lowModel && !draft.lowModel.name.toLowerCase().endsWith('.glb')) || (draft.image && !draft.image.type.startsWith('image/'))) {
 			return 'bad-file';
 		}
 
-		if (draft.model.size > MAX_MODEL_MB * 1024 * 1024 || (draft.image?.size ?? 0) > MAX_IMAGE_MB * 1024 * 1024) {
+		if (draft.model.size > MAX_MODEL_MB * 1024 * 1024 || (draft.lowModel?.size ?? 0) > MAX_MODEL_MB * 1024 * 1024 || (draft.image?.size ?? 0) > MAX_IMAGE_MB * 1024 * 1024) {
 			return 'too-large';
 		}
 
 		let model: Awaited<ReturnType<typeof uploadFile>> | null = null;
+		let lowModel: Awaited<ReturnType<typeof uploadFile>> | null = null;
 		let image: Awaited<ReturnType<typeof uploadFile>> | null = null;
 
 		try {
 			model = await uploadFile(draft.model, 'model/gltf-binary', 'model.glb');
+			lowModel = draft.lowModel ? await uploadFile(draft.lowModel, 'model/gltf-binary', 'model-low.glb') : null;
 			image = draft.image ? await uploadFile(draft.image, draft.image.type, draft.image.name) : null;
 		} catch (error) {
 			console.error(error);
-			if (model) {
-				void deleteFile(model.id);
+			for (const file of [model, lowModel]) {
+				if (file) {
+					void deleteFile(file.id);
+				}
 			}
 			return 'storage';
 		}
@@ -103,6 +112,8 @@ export class UserModelsService {
 			collectionId: draft.collectionId,
 			modelUrl: model.publicUrl,
 			modelFileId: model.id,
+			lowModelUrl: lowModel?.publicUrl ?? '',
+			lowModelFileId: lowModel?.id ?? '',
 			imageUrl: image?.publicUrl ?? '',
 			imageFileId: image?.id ?? '',
 			fileName: draft.model.name,
@@ -119,6 +130,9 @@ export class UserModelsService {
 		} catch (error) {
 			console.error(error);
 			void deleteFile(model.id);
+			if (lowModel) {
+				void deleteFile(lowModel.id);
+			}
 			if (image) {
 				void deleteFile(image.id);
 			}
@@ -158,6 +172,9 @@ export class UserModelsService {
 
 		this._models.update((models) => models.filter((item) => item.id !== model.id));
 		void deleteFile(model.modelFileId);
+		if (model.lowModelFileId) {
+			void deleteFile(model.lowModelFileId);
+		}
 		if (model.imageFileId) {
 			void deleteFile(model.imageFileId);
 		}

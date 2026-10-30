@@ -17,12 +17,15 @@ export interface ModelCollection {
 	description: string;
 	imageUrl: string;
 	imageFileId: string;
+	/** "Friendly apps → VRoom": the collection is also shown in the VRoom application. Absent on older collections. */
+	vroom?: boolean;
 	createdAt: number;
 }
 
 export interface CollectionDraft {
 	title: string;
 	description: string;
+	vroom: boolean;
 	image: File | null;
 }
 
@@ -80,6 +83,7 @@ export class CollectionsService {
 			description: draft.description.trim(),
 			imageUrl: image?.publicUrl ?? '',
 			imageFileId: image?.id ?? '',
+			vroom: draft.vroom,
 			createdAt: Date.now(),
 		};
 
@@ -101,7 +105,7 @@ export class CollectionsService {
 	/** Edits title, description and cover of one of the user's collections; `image` null keeps the cover. */
 	async update(
 		collection: ModelCollection,
-		draft: { title: string; description: string; image: File | 'remove' | null },
+		draft: { title: string; description: string; vroom: boolean; image: File | 'remove' | null },
 	): Promise<CollectionResult> {
 		const file = draft.image instanceof File ? draft.image : null;
 
@@ -126,6 +130,7 @@ export class CollectionsService {
 		const patch = {
 			title: draft.title.trim(),
 			description: draft.description.trim(),
+			vroom: draft.vroom,
 			imageUrl: keepsCover ? collection.imageUrl : (image?.publicUrl ?? ''),
 			imageFileId: keepsCover ? collection.imageFileId : (image?.id ?? ''),
 		};

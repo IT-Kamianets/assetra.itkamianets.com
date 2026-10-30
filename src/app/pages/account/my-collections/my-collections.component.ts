@@ -29,6 +29,7 @@ export class MyCollectionsComponent {
 	protected readonly form = this._fb.group({
 		title: this._fb.control('', [Validators.required, Validators.maxLength(80)]),
 		description: this._fb.control('', Validators.maxLength(1000)),
+		vroom: this._fb.control(false),
 	});
 	protected readonly imageFile = signal<File | null>(null);
 	/** The collection being edited, or null while the form creates a new one. */
@@ -57,7 +58,7 @@ export class MyCollectionsComponent {
 	protected startEdit(collection: ModelCollection) {
 		this.editing.set(collection);
 		this.removeImage.set(false);
-		this.form.reset({ title: collection.title, description: collection.description });
+		this.form.reset({ title: collection.title, description: collection.description, vroom: !!collection.vroom });
 		this.imageFile.set(null);
 		this.notice.set(null);
 		this.formOpen.set(true);

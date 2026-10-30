@@ -14,7 +14,7 @@ type Notice = { tone: 'ok' | 'error'; text: string } | null;
 
 const ERRORS: Record<Exclude<UploadResult, 'ok'>, string> = {
 	'too-large': `Файл завеликий: модель до ${MAX_MODEL_MB} МБ, прев'ю до ${MAX_IMAGE_MB} МБ.`,
-	'bad-file': "Оберіть модель у форматі .glb і прев'ю-зображення (JPG, PNG або WebP).",
+	'bad-file': "Оберіть модель (і low-poly версію) у форматі .glb та прев'ю-зображення (JPG, PNG або WebP).",
 	storage: 'Не вдалося завантажити файл у сховище. Спробуйте ще раз трохи пізніше.',
 	database: 'Файл завантажено, але не вдалося зберегти модель у профілі. Спробуйте ще раз.',
 	'signed-out': 'Увійдіть в акаунт, щоб додавати моделі.',
@@ -41,6 +41,7 @@ export class MyModelsComponent {
 		collectionId: this._fb.control(''),
 	});
 	protected readonly modelFile = signal<File | null>(null);
+	protected readonly lowModelFile = signal<File | null>(null);
 	protected readonly imageFile = signal<File | null>(null);
 	protected readonly fileTouched = signal(false);
 	protected readonly formOpen = signal(false);
@@ -55,10 +56,10 @@ export class MyModelsComponent {
 		return field.invalid && (field.touched || field.dirty);
 	}
 
-	protected pickFile(event: Event, kind: 'model' | 'image') {
+	protected pickFile(event: Event, kind: 'model' | 'lowModel' | 'image') {
 		const file = (event.target as HTMLInputElement).files?.[0] ?? null;
 
-		(kind === 'model' ? this.modelFile : this.imageFile).set(file);
+		(kind === 'model' ? this.modelFile : kind === 'lowModel' ? this.lowModelFile : this.imageFile).set(file);
 	}
 
 	protected categoryTitle(slug: string): string {
@@ -82,7 +83,7 @@ export class MyModelsComponent {
 		this.sending.set(true);
 		this.notice.set(null);
 
-		const result = await this.userModels.add({ ...this.form.getRawValue(), model, image: this.imageFile() });
+		const result = await this.userModels.add({ ...this.form.getRawValue(), model, lowModel: this.lowModelFile(), image: this.imageFile() });
 
 		this.sending.set(false);
 
@@ -94,6 +95,7 @@ export class MyModelsComponent {
 		this.notice.set({ tone: 'ok', text: 'Модель додано до вашого профілю.' });
 		this.form.reset();
 		this.modelFile.set(null);
+		this.lowModelFile.set(null);
 		this.imageFile.set(null);
 		this.fileTouched.set(false);
 		fileInputs.forEach((input) => (input.value = ''));

@@ -44,7 +44,7 @@
 		<form
 			class="mt-6 grid gap-5 rounded-[var(--radius-card)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] p-4 sm:p-5"
 			[formGroup]="form"
-			(ngSubmit)="submit([modelInput, imageInput])"
+			(ngSubmit)="submit([modelInput, lowModelInput, imageInput])"
 			novalidate
 		>
 			<div>
@@ -127,7 +127,7 @@
 				></textarea>
 			</div>
 
-			<div class="grid gap-5 sm:grid-cols-2">
+			<div class="grid gap-5 sm:grid-cols-3">
 				<div>
 					<label
 						class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]"
@@ -158,6 +158,28 @@
 								? 'Оберіть файл моделі.'
 								: 'До ' + maxModelMb + ' МБ.'
 						}}
+					</p>
+				</div>
+				<div>
+					<label
+						class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]"
+						for="model-low-file"
+						>Low-poly (.glb)
+						<span class="font-normal text-[var(--c-text-muted)]"
+							>(необов'язково)</span
+						></label
+					>
+					<input
+						#lowModelInput
+						id="model-low-file"
+						class="theme-focus block w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-2 text-sm text-[var(--c-text-strong)] file:mr-3 file:rounded-full file:border-0 file:bg-[var(--c-bg-tertiary)] file:px-3 file:py-1.5 file:font-semibold file:text-[var(--c-text-strong)]"
+						type="file"
+						accept=".glb,model/gltf-binary"
+						aria-describedby="model-low-file-hint"
+						(change)="pickFile($event, 'lowModel')"
+					/>
+					<p id="model-low-file-hint" class="mt-1.5 text-sm text-[var(--c-text-muted)]">
+						Легка версія для застосунків, до {{ maxModelMb }} МБ.
 					</p>
 				</div>
 				<div>

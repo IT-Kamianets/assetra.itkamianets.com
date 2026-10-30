@@ -1,7 +1,7 @@
 <div class="mx-auto max-w-[var(--container)] px-4 py-6 sm:px-6 lg:py-10">
-	<!-- Header: cover, photo, public details -->
-	<section class="overflow-hidden rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] shadow-[var(--shadow-sm)]" aria-label="Профіль">
-		<div class="relative h-36 bg-[var(--c-bg-tertiary)] sm:h-52 lg:h-60">
+	<!-- Header: same card layout as the seller page, with an optional cover on top -->
+	<section class="overflow-hidden rounded-[calc(var(--radius-card)*2)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)]" aria-label="Профіль">
+		<div class="relative h-28 bg-[var(--c-bg-tertiary)] sm:h-40">
 			@if (coverSrc(); as cover) {
 				<img class="h-full w-full object-cover" [src]="cover" alt="Обкладинка профілю" width="1600" height="500" />
 			} @else {
@@ -33,14 +33,13 @@
 			</div>
 		</div>
 
-		<div class="px-5 pb-6 sm:px-8 sm:pb-8">
-			<div class="-mt-12 flex items-end justify-between gap-4 sm:-mt-16">
-				<div class="relative">
-					<span class="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border-4 border-[var(--c-bg-secondary)] bg-[var(--c-primary)] text-[var(--c-on-primary)] sm:h-32 sm:w-32">
+		<div class="flex flex-col gap-6 p-6 sm:flex-row sm:items-start sm:p-8">
+			<div class="relative h-[88px] w-[88px] shrink-0">
+					<span class="flex h-[88px] w-[88px] items-center justify-center overflow-hidden rounded-full bg-[var(--c-primary)] text-[var(--c-on-primary)]">
 						@if (avatarSrc(); as avatar) {
 							<img class="h-full w-full object-cover" [src]="avatar" alt="Фото профілю" width="128" height="128" />
 						} @else {
-							<span class="material-symbols-outlined text-[48px] sm:text-[60px]" aria-hidden="true">person</span>
+							<span class="material-symbols-outlined text-[44px]" aria-hidden="true">person</span>
 						}
 					</span>
 					@if (uploading() === 'avatar') {
@@ -53,35 +52,15 @@
 						<span class="sr-only">Змінити фото профілю</span>
 						<input class="sr-only" type="file" [accept]="accept" [disabled]="uploading() !== ''" (change)="pick('avatar', $event)" />
 					</label>
-				</div>
-
-				<button
-					class="theme-interactive theme-focus inline-flex min-h-11 items-center justify-center gap-2 rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-5 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)]"
-					type="button"
-					(click)="edit()"
-				>
-					<span class="material-symbols-outlined text-[20px]" aria-hidden="true">edit</span>
-					Редагувати профіль
-				</button>
 			</div>
 
-			@if (pendingAvatar()) {
-				<div class="mt-3 flex flex-wrap items-center gap-2" role="group" aria-label="Нове фото профілю">
-					<span class="text-sm text-[var(--c-text-muted)]">Нове фото профілю:</span>
-					<button class="theme-interactive theme-focus inline-flex min-h-10 items-center gap-2 rounded-full bg-[var(--c-primary)] px-4 text-sm font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)] disabled:opacity-60" type="button" [disabled]="uploading() !== ''" (click)="savePending('avatar')">
-						<span class="material-symbols-outlined text-[18px]" aria-hidden="true">check</span>
-						{{ uploading() === 'avatar' ? 'Зберігаємо…' : 'Зберегти' }}
-					</button>
-					<button class="theme-interactive theme-focus inline-flex min-h-10 items-center rounded-full border border-[var(--c-border)] px-4 text-sm font-semibold text-[var(--c-text-strong)] hover:border-[var(--c-primary-hover)] disabled:opacity-60" type="button" [disabled]="uploading() !== ''" (click)="cancelPending('avatar')">Скасувати</button>
-				</div>
-			}
-
-			<div class="mt-4">
+			<div class="min-w-0 flex-1">
+				<p class="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--c-link)]">Мій профіль</p>
 				@if (profiles.loading()) {
 					<div class="h-8 w-56 animate-pulse rounded-full bg-[var(--c-bg-tertiary)]" role="status" aria-label="Завантаження профілю"></div>
 					<div class="mt-3 h-4 w-72 max-w-full animate-pulse rounded-full bg-[var(--c-bg-tertiary)]"></div>
 				} @else {
-					<h1 class="text-2xl font-bold tracking-[-0.02em] text-[var(--c-text-strong)] sm:text-3xl">{{ profiles.displayName() }}</h1>
+					<h1 class="mt-1 text-3xl font-semibold tracking-[-0.02em] text-[var(--c-text-strong)] sm:text-4xl">{{ profiles.displayName() }}</h1>
 					@if (profiles.profile()?.nickname) {
 						<p class="mt-0.5 text-[var(--c-text-muted)]">&#64;{{ profiles.profile()!.nickname }}</p>
 					} @else {
@@ -121,16 +100,37 @@
 						</ul>
 					}
 				}
+			@if (pendingAvatar()) {
+				<div class="mt-3 flex flex-wrap items-center gap-2" role="group" aria-label="Нове фото профілю">
+					<span class="text-sm text-[var(--c-text-muted)]">Нове фото профілю:</span>
+					<button class="theme-interactive theme-focus inline-flex min-h-10 items-center gap-2 rounded-full bg-[var(--c-primary)] px-4 text-sm font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)] disabled:opacity-60" type="button" [disabled]="uploading() !== ''" (click)="savePending('avatar')">
+						<span class="material-symbols-outlined text-[18px]" aria-hidden="true">check</span>
+						{{ uploading() === 'avatar' ? 'Зберігаємо…' : 'Зберегти' }}
+					</button>
+					<button class="theme-interactive theme-focus inline-flex min-h-10 items-center rounded-full border border-[var(--c-border)] px-4 text-sm font-semibold text-[var(--c-text-strong)] hover:border-[var(--c-primary-hover)] disabled:opacity-60" type="button" [disabled]="uploading() !== ''" (click)="cancelPending('avatar')">Скасувати</button>
+				</div>
+			}
+
 			</div>
 
-			<dl class="mt-6 grid grid-cols-3 gap-3 border-t border-[var(--c-border)] pt-5 sm:max-w-lg">
-				@for (stat of stats(); track stat.tab) {
-					<div>
-						<dt class="text-xs font-medium uppercase tracking-[0.12em] text-[var(--c-text-muted)]">{{ stat.label }}</dt>
-						<dd class="mt-1 text-2xl font-bold text-[var(--c-text-strong)]">{{ stat.value }}</dd>
-					</div>
-				}
-			</dl>
+			<div class="flex shrink-0 flex-col gap-4 sm:items-end">
+				<dl class="flex gap-8 sm:text-right">
+					@for (stat of stats(); track stat.tab) {
+						<div>
+							<dt class="text-sm text-[var(--c-text-muted)]">{{ stat.label }}</dt>
+							<dd class="text-2xl font-semibold text-[var(--c-text-strong)]">{{ stat.value }}</dd>
+						</div>
+					}
+				</dl>
+				<button
+					class="theme-interactive theme-focus inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-5 font-semibold text-[var(--c-text-strong)] hover:border-[var(--c-primary)]"
+					type="button"
+					(click)="edit()"
+				>
+					<span class="material-symbols-outlined text-[20px]" aria-hidden="true">edit</span>
+					Редагувати профіль
+				</button>
+			</div>
 		</div>
 	</section>
 

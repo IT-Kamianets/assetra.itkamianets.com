@@ -173,12 +173,11 @@ export class AccountProfileComponent {
 			return;
 		}
 
+		// A public profile needs a nickname first: continue in the edit form with this picture attached.
 		if (!this.profiles.hasProfile()) {
-			this.notice.set({
-				tone: 'error',
-				text: 'Спершу оберіть нікнейм у розділі «Редагувати профіль»: після цього фото можна буде зберегти.',
-			});
-			this.edit();
+			this.cancelPending(kind);
+			this.notice.set({ tone: 'ok', text: 'Оберіть нікнейм і натисніть «Зберегти»: фото збережеться разом з профілем.' });
+			this._editor().open({ [kind]: pending.file });
 			return;
 		}
 

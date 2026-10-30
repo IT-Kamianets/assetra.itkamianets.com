@@ -85,7 +85,8 @@ export class ProfileEditComponent {
 			.subscribe((status) => this.nickState.set(status));
 	}
 
-	open() {
+	/** `initial` carries a picture the visitor already picked on the header, so it is saved together with the nickname. */
+	open(initial: Partial<Record<ImageKind, File>> = {}) {
 		const profile = this.profiles.profile();
 
 		this.form.reset({
@@ -108,6 +109,15 @@ export class ProfileEditComponent {
 		this.imageError.set('');
 		this.notice.set(null);
 		this.saved.set(false);
+
+		for (const kind of ['avatar', 'cover'] as const) {
+			const file = initial[kind];
+
+			if (file) {
+				(kind === 'avatar' ? this.avatarChange : this.coverChange).set(file);
+				(kind === 'avatar' ? this.avatarPreview : this.coverPreview).set(URL.createObjectURL(file));
+			}
+		}
 
 		if (!this._dialog().nativeElement.open) {
 			this._dialog().nativeElement.showModal();
