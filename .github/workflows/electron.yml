@@ -1,0 +1,63 @@
+name: Desktop installers
+
+on:
+    workflow_dispatch:
+    push:
+        tags:
+            - 'v*'
+
+jobs:
+    installers:
+        strategy:
+            fail-fast: false
+            matrix:
+                os: [windows-latest, ubuntu-latest, macos-latest]
+        runs-on: ${{ matrix.os }}
+        permissions:
+            contents: write
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: '24'
+
+            - run: npm ci
+            - run: npm rebuild lightningcss
+            - run: npm run build
+            - run: npx cap sync @capawesome/capacitor-electron
+
+            - run: npm ci
+              working-directory: electron
+
+            # The git tag (v1.2.3) is the version, same as Math Runner.
+            - name: Set version from tag
+              if: startsWith(github.ref, 'refs/tags/v')
+              shell: bash
+              run: npm version "${GITHUB_REF_NAME#v}" --no-git-tag-version
+              working-directory: electron
+
+            # Tag push: publish installers + latest*.yml to the GitHub release.
+            # Manual run: build only, installers are attached as workflow artifacts.
+            - name: Build and publish
+              shell: bash
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+                    npm run pack -- --publish always
+                  else
+                    npm run pack -- --publish never
+                  fi
+              working-directory: electron
+
+            - uses: actions/upload-artifact@v4
+              if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
+              with:
+                  name: installer-${{ matrix.os }}
+                  path: |
+                      electron/dist/*.exe
+                      electron/dist/*.AppImage
+                      electron/dist/*.deb
+                      electron/dist/*.dmg
+                      electron/dist/*.zip
