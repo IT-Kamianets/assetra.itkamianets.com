@@ -29,7 +29,7 @@ export const environment: {
 		measurementId: 'G-RP486LZW2B',
 	},
 	// Firebase accounts allowed into /admin; anyone else is signed out after login.
-	adminEmails: ['alina.siruk26@gmail.com', 'ceo@webart.work', 'kristinaolefirenko5@gmail.com'],
+	adminEmails: ['alina.siruk26@gmail.com', 'ceo@webart.work', 'kristinaolefirenko5@gmail.com', 'crackeraki@gmail.com'],
 	// Cloudflare container on apiUrl (/api/cloudflare) where users' uploaded models are stored.
 	uploadContainer: 'assetka',
 	// Public OAuth client id (not a secret). With it Google sign-in works on phones, where the Firebase popup fails.

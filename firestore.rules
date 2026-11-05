@@ -61,7 +61,7 @@ service cloud.firestore {
 
     // Same list as environment.adminEmails; keep both in sync.
     function isAdmin() {
-      return signedIn() && request.auth.token.email in ['alina.siruk26@gmail.com', 'ceo@webart.work', 'kristinaolefirenko5@gmail.com'];
+      return signedIn() && request.auth.token.email in ['alina.siruk26@gmail.com', 'ceo@webart.work', 'kristinaolefirenko5@gmail.com', 'crackeraki@gmail.com'];
     }
 
     // Catalog assets published from /admin; the document id is the slug. Each admin edits only their own.
