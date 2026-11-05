@@ -39,6 +39,8 @@ module.exports = {
       { target: 'zip', arch: ['x64', 'arm64'] }, // required by the auto-updater
     ],
     category: 'public.app-category.business',
+    // Notarize only when the fastlane Mac runner provides the App Store Connect API key.
+    notarize: Boolean(process.env.APPLE_API_KEY),
     artifactName: '${productName}-${arch}.${ext}',
   },
   // Auto-update source: latest.yml files are uploaded to the GitHub release.
