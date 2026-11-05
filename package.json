@@ -6,6 +6,7 @@
 		"build": "ng build --configuration=production && node tools/seo/generate-static-seo.mjs",
 		"electron:sync": "cap sync @capawesome/capacitor-electron",
 		"electron:run": "cap run @capawesome/capacitor-electron",
+		"electron:release": "node tools/release-electron.mjs",
 		"electron:pack": "npm run build && npm run electron:sync && npm --prefix electron run pack"
 	},
 	"dependencies": {
