@@ -97,6 +97,21 @@ service cloud.firestore {
       allow delete: if ownsExisting();
     }
 
+    // Game projects and their placeholders (the models a game declares in its assetra.json).
+    // Written only through /api/assetra/project of it.webart.work (Admin SDK, which bypasses these
+    // rules): Unity syncs the placeholder list, Assetra fills a placeholder with a model. The site
+    // may read its own projects.
+    match /projects/{slug} {
+      allow read: if signedIn() && resource.data.uid == request.auth.uid;
+      allow write: if false;
+
+      match /placeholders/{placeholderId} {
+        allow read: if signedIn()
+          && get(/databases/$(database)/documents/projects/$(slug)).data.uid == request.auth.uid;
+        allow write: if false;
+      }
+    }
+
     // Public profile of a signed-in user (/account). The document id is the user's uid and it holds
     // no email. Anyone may read it; only its owner writes it.
     match /profiles/{uid} {
