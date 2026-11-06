@@ -3,6 +3,7 @@
 	"version": "22.0.1",
 	"scripts": {
 		"start": "ng serve",
+		"rules": "firebase deploy --only firestore:rules",
 		"build": "ng build --configuration=production && node tools/seo/generate-static-seo.mjs",
 		"electron:sync": "cap sync @capawesome/capacitor-electron",
 		"electron:run": "cap run @capawesome/capacitor-electron",
