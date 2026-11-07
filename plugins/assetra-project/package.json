@@ -1,0 +1,10 @@
+{
+	"name": "assetra-project",
+	"version": "1.0.0",
+	"private": true,
+	"type": "module",
+	"description": "Desktop only: pick a Unity project folder, check it and create its assetra.json.",
+	"capacitor": {
+		"electron": { "src": "electron" }
+	}
+}

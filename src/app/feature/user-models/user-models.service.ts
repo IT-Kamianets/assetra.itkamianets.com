@@ -72,6 +72,13 @@ export class UserModelsService {
 	}
 
 	async add(draft: UserModelDraft): Promise<UploadResult> {
+		const result = await this.addAndGet(draft);
+
+		return typeof result === 'string' ? result : 'ok';
+	}
+
+	/** Same as add, but answers with the saved model (to attach it somewhere) or the reason it failed. */
+	async addAndGet(draft: UserModelDraft): Promise<UserModel | UploadResult> {
 		const uid = this._auth.uid();
 
 		if (!uid) {
@@ -125,8 +132,10 @@ export class UserModelsService {
 			const [db, { addDoc, collection }] = await Promise.all([getDb(), import('firebase/firestore')]);
 			const ref = await addDoc(collection(db, COLLECTION), record);
 
-			this._models.update((models) => [{ id: ref.id, ...record }, ...models]);
-			return 'ok';
+			const saved = { id: ref.id, ...record };
+
+			this._models.update((models) => [saved, ...models]);
+			return saved;
 		} catch (error) {
 			console.error(error);
 			void deleteFile(model.id);

@@ -8,6 +8,7 @@ import {
 import { companyProfile } from './feature/company/company.data';
 import { infoMetaResolver } from './pages/info/info.resolver';
 import { adminGuard, adminLoginGuard } from './feature/admin/admin.guard';
+import { electronGuard } from './feature/electron/electron';
 
 const ADMIN_ROBOTS = 'noindex, nofollow';
 
@@ -104,6 +105,26 @@ export const routes: Routes = [
 		data: { meta: { title: 'Обране', robots: 'noindex, follow' } },
 		loadComponent: () =>
 			import('./pages/favorites/favorites.component').then((m) => m.FavoritesComponent),
+	},
+	// Opened in the system browser by the desktop app to finish its Google sign-in.
+	{
+		path: 'desktop-login',
+		data: { meta: { title: 'Вхід у програму', robots: 'noindex, nofollow' } },
+		loadComponent: () =>
+			import('./pages/desktop-login/desktop-login.component').then((m) => m.DesktopLoginComponent),
+	},
+	// Desktop app only (see electronGuard): the games' model lists and the library to fill them from.
+	{
+		path: 'projects',
+		canActivate: [electronGuard],
+		data: { meta: { title: 'Проєкти', robots: 'noindex, nofollow' } },
+		loadComponent: () => import('./pages/projects/projects.component').then((m) => m.ProjectsComponent),
+	},
+	{
+		path: 'project/:id',
+		canActivate: [electronGuard],
+		data: { meta: { title: 'Проєкт', robots: 'noindex, nofollow' } },
+		loadComponent: () => import('./pages/project/project.component').then((m) => m.ProjectComponent),
 	},
 	{
 		path: 'account',

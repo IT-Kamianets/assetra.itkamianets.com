@@ -43,6 +43,19 @@ export const serverRoutes: ServerRoute[] = [
 		getPrerenderParams: async () => [{ slug: 'new' }, ...collections.map(({ slug }) => ({ slug }))],
 	},
 	{
+		path: 'desktop-login',
+		renderMode: RenderMode.Client,
+	},
+	{
+		// Desktop app only: rendered in the app, never prerendered.
+		path: 'projects',
+		renderMode: RenderMode.Client,
+	},
+	{
+		path: 'project/:id',
+		renderMode: RenderMode.Client,
+	},
+	{
 		path: '**',
 		renderMode: RenderMode.Prerender,
 	},

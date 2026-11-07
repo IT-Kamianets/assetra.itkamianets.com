@@ -2,6 +2,8 @@ import type { FirebaseOptions } from 'firebase/app';
 
 export const environment: {
 	apiUrl: string;
+	/** Address of the site itself; the desktop app opens its /desktop-login page in the system browser. */
+	siteUrl: string;
 	appVersion: string;
 	production: boolean;
 	companyId: string;
@@ -14,6 +16,7 @@ export const environment: {
 	googleClientId: string;
 } = {
 	apiUrl: 'https://it.webart.work',
+	siteUrl: 'https://assetra.itkamianets.com',
 	appVersion: '1.0.0',
 	production: true,
 	companyId: 'demo',

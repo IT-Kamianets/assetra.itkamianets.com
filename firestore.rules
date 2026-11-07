@@ -112,6 +112,12 @@ service cloud.firestore {
       }
     }
 
+    // One-time codes of the desktop app sign-in (server/assetra of it.webart.work). Written and read
+    // only by the API through the Admin SDK; the site never touches them.
+    match /desktopCodes/{codeHash} {
+      allow read, write: if false;
+    }
+
     // Public profile of a signed-in user (/account). The document id is the user's uid and it holds
     // no email. Anyone may read it; only its owner writes it.
     match /profiles/{uid} {

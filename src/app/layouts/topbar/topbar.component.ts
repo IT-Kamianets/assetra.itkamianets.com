@@ -1,5 +1,5 @@
 import { NgOptimizedImage } from '@angular/common';
-import { Component, computed, ElementRef, inject, signal } from '@angular/core';
+import { afterNextRender, Component, computed, ElementRef, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter, map } from 'rxjs';
@@ -9,6 +9,7 @@ import type { Language } from '@wawjs/ngx-translate';
 import type { AppLanguage } from '../../../environments/environment.prod';
 import { AuthService } from '../../feature/auth/auth.service';
 import { CartService } from '../../feature/cart/cart.service';
+import { isElectron } from '../../feature/electron/electron';
 import { FavoritesService } from '../../feature/favorites/favorites.service';
 import { CompanyService } from '../../feature/company/company.service';
 import { ScrollService } from '../../services/scroll.service';
@@ -40,11 +41,14 @@ export class TopbarComponent {
 	protected readonly favorites = inject(FavoritesService);
 	private readonly _host = inject<ElementRef<HTMLElement>>(ElementRef);
 
-	protected readonly navLinks = [
+	/** Projects exist in the desktop app only; set after the first render so prerendered markup matches. */
+	private readonly _desktop = signal(false);
+	protected readonly navLinks = computed(() => [
 		{ label: 'Каталог', path: '/catalog', query: null, secondary: false },
 		{ label: 'Колекції', path: '/collections', query: null, secondary: false },
 		{ label: 'Продавці', path: '/sellers', query: null, secondary: false },
-	];
+		...(this._desktop() ? [{ label: 'Проєкти', path: '/projects', query: null, secondary: false }] : []),
+	]);
 	protected readonly mode = computed(() => this._themeService.mode() ?? 'light');
 	protected readonly languageMenuOpen = signal(false);
 	private readonly _isHome = toSignal(
@@ -90,6 +94,7 @@ export class TopbarComponent {
 
 	constructor() {
 		this._themeService.init();
+		afterNextRender(() => this._desktop.set(isElectron()));
 	}
 
 	protected toggleMode() {

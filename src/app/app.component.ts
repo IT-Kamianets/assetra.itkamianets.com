@@ -15,6 +15,13 @@ import { TopbarComponent } from './layouts/topbar/topbar.component';
 	template: `
 		@if (isAdmin()) {
 			<router-outlet />
+		} @else if (isWorkspace()) {
+			<div class="flex h-dvh flex-col overflow-hidden">
+				<app-topbar />
+				<main class="min-h-0 flex-1 pt-[var(--topbar-space)]">
+					<router-outlet />
+				</main>
+			</div>
 		} @else {
 			<div class="flex min-h-screen flex-col">
 				<app-topbar />
@@ -36,6 +43,8 @@ export class App {
 
 	/** Admin pages bring their own layout instead of the public topbar and footer. */
 	protected readonly isAdmin = signal(false);
+	/** The desktop project page fills the window (columns scroll on their own): no footer, no page scroll. */
+	protected readonly isWorkspace = signal(false);
 
 	constructor() {
 		this._canonicalService.initialize();
@@ -67,6 +76,7 @@ export class App {
 
 				this._document.documentElement.classList.toggle('route-home', path === '/');
 				this.isAdmin.set(path === '/admin' || path.startsWith('/admin/'));
+				this.isWorkspace.set(path.startsWith('/project/'));
 			}
 		});
 

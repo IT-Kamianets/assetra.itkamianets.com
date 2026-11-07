@@ -78,10 +78,12 @@ export class AuthService {
 
 	/**
 	 * Loads Google Identity Services ahead of the click: the sign-in window must be opened inside the
-	 * click itself, or phone browsers block it. Does nothing without `environment.googleClientId`.
+	 * click itself, or phone browsers block it. Does nothing without `environment.googleClientId`, nor on
+	 * localhost: the Google client does not list local origins (error 400 origin_mismatch), so local
+	 * development uses Firebase's own sign-in popup, which allows localhost.
 	 */
 	prepareGoogle(): Promise<void> {
-		if (!this._isBrowser || !environment.googleClientId) {
+		if (!this._isBrowser || !environment.googleClientId || ['localhost', '127.0.0.1'].includes(location.hostname)) {
 			return Promise.resolve();
 		}
 
@@ -204,6 +206,66 @@ export class AuthService {
 		}
 	}
 
+	/**
+	 * Desktop app (Electron): Google's sign-in window cannot open there, so the sign-in happens in the
+	 * system browser on /desktop-login. That page gets a one-time code from the Assetra API and opens
+	 * `assetra://login?code=...`; the app trades the code (plus the secret verifier only it knows) for a
+	 * Firebase custom token and signs in with it.
+	 */
+	async loginWithBrowser(): Promise<AuthResult> {
+		const verifier = _randomBase64Url(32);
+		const challenge = await _sha256Base64Url(verifier);
+		const [{ App }, auth, { signInWithCustomToken }] = await Promise.all([
+			import('@capacitor/app'),
+			this._getAuth(),
+			import('firebase/auth'),
+		]);
+
+		return new Promise<AuthResult>((resolve) => {
+			const listener = App.addListener('appUrlOpen', async ({ url }) => {
+				const link = new URL(url);
+
+				if (link.protocol !== 'assetra:' || link.hostname !== 'login') {
+					return;
+				}
+
+				const code = link.searchParams.get('code');
+
+				if (!code) {
+					return finish('error');
+				}
+
+				try {
+					const response = await fetch(`${environment.apiUrl}/api/assetra/desktop/token`, {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ code, verifier }),
+					});
+					const { token } = await response.json();
+
+					finish(response.ok && token ? await this._signIn(() => signInWithCustomToken(auth, token)) : 'error');
+				} catch {
+					finish('error');
+				}
+			});
+			const timer = setTimeout(() => finish('cancelled'), 5 * 60 * 1000);
+			const finish = (result: AuthResult) => {
+				clearTimeout(timer);
+				void listener.then((handle) => handle.remove());
+				resolve(result);
+			};
+
+			window.open(`${environment.siteUrl}/desktop-login?challenge=${challenge}`, '_blank');
+		});
+	}
+
+	/** Fresh Firebase ID token for the Assetra API (`Authorization: Bearer`), or '' when signed out. */
+	async idToken(): Promise<string> {
+		const auth = await this._getAuth();
+
+		return (await auth.currentUser?.getIdToken()) ?? '';
+	}
+
 	async logout() {
 		const [auth, { signOut }] = await Promise.all([this._getAuth(), import('firebase/auth')]);
 
@@ -245,6 +307,18 @@ export class AuthService {
 
 		return this._auth;
 	}
+}
+
+function _randomBase64Url(bytes: number): string {
+	return _base64Url(crypto.getRandomValues(new Uint8Array(bytes)));
+}
+
+async function _sha256Base64Url(text: string): Promise<string> {
+	return _base64Url(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text))));
+}
+
+function _base64Url(bytes: Uint8Array): string {
+	return btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
 function _toAuthUser(user: User): AuthUser {

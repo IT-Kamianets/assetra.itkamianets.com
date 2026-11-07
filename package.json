@@ -7,6 +7,7 @@
 		"build": "ng build --configuration=production && node tools/seo/generate-static-seo.mjs",
 		"electron:sync": "cap sync @capawesome/capacitor-electron",
 		"electron:run": "cap run @capawesome/capacitor-electron",
+		"electron:dev": "cap sync @capawesome/capacitor-electron && cap run @capawesome/capacitor-electron",
 		"electron:release": "node tools/release-electron.mjs",
 		"electron:pack": "npm run build && npm run electron:sync && npm --prefix electron run pack"
 	},
@@ -19,7 +20,9 @@
 		"@angular/platform-server": "22.2.1",
 		"@angular/router": "22.2.1",
 		"@angular/ssr": "22.2.2",
+		"assetra-project": "file:plugins/assetra-project",
 		"@capacitor/android": "^8.6.0",
+		"@capacitor/app": "^8.1.2",
 		"@capacitor/core": "^8.6.0",
 		"@capacitor/ios": "^8.6.0",
 		"@capawesome/capacitor-electron": "^0.2.2",

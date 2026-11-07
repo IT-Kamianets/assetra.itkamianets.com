@@ -3,6 +3,7 @@ import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthResult, AuthService } from '../../feature/auth/auth.service';
 import { trimmedEmail } from '../../feature/auth/email-validator';
+import { isElectron } from '../../feature/electron/electron';
 import { AccountProfileComponent } from './account-profile/account-profile.component';
 
 type Mode = 'login' | 'register';
@@ -31,6 +32,8 @@ export class AccountComponent {
 	private readonly _router = inject(Router);
 	private readonly _fb = inject(NonNullableFormBuilder);
 
+	/** The desktop app cannot open Google's sign-in window, so it offers email and password only. */
+	protected readonly desktop = signal(isElectron());
 	protected readonly minPassword = MIN_PASSWORD;
 	protected readonly mode = signal<Mode>(this._route.snapshot.queryParamMap.get('mode') === 'register' ? 'register' : 'login');
 	protected readonly form = this._fb.group({
@@ -46,7 +49,9 @@ export class AccountComponent {
 
 	constructor() {
 		void this.auth.ready.then(() => this.ready.set(true));
-		void this.auth.prepareGoogle();
+		if (!this.desktop()) {
+			void this.auth.prepareGoogle();
+		}
 	}
 
 	protected setMode(mode: Mode) {
@@ -78,7 +83,7 @@ export class AccountComponent {
 	}
 
 	protected async loginWithGoogle() {
-		await this._run(() => this.auth.loginWithGoogle());
+		await this._run(() => (this.desktop() ? this.auth.loginWithBrowser() : this.auth.loginWithGoogle()));
 	}
 
 	protected async resetPassword() {

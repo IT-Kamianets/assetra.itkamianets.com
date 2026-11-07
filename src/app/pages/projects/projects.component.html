@@ -1,0 +1,121 @@
+<section class="mx-auto w-full max-w-[var(--container)] px-3 py-8 sm:px-6 sm:py-10" aria-labelledby="projects-title">
+	<div class="flex flex-wrap items-center justify-between gap-4">
+		<h1 id="projects-title" class="text-3xl font-semibold tracking-[-0.02em] text-[var(--c-text-strong)]">Проєкти</h1>
+
+		@if (auth.isLoggedIn()) {
+			<button
+				class="theme-interactive theme-focus inline-flex min-h-12 items-center justify-center gap-2 rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-5 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)]"
+				type="button"
+				[disabled]="picking()"
+				(click)="pickFolder()"
+			>
+				<span class="material-symbols-outlined text-[20px]" aria-hidden="true">folder_open</span>
+				Додати Unity-проєкт
+			</button>
+		}
+	</div>
+
+	@if (addError(); as message) {
+		<p class="mt-5 rounded-[var(--radius-btn)] bg-[var(--c-danger)]/10 px-3 py-2.5 text-sm text-[var(--c-danger)]" role="alert">
+			{{ message }}
+		</p>
+	}
+
+	@if (picked(); as file) {
+		<div
+			class="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-[var(--radius-card)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-4 sm:p-5"
+		>
+			<div class="min-w-0">
+				<p class="truncate text-lg font-semibold text-[var(--c-text-strong)]">{{ file.title }}</p>
+				<p class="mt-0.5 break-all text-sm text-[var(--c-text-muted)]">
+					{{ file.folder }}
+					@if (file.unityVersion) {
+						· Unity {{ file.unityVersion }}
+					}
+				</p>
+				<p class="mt-1 text-sm text-[var(--c-text-strong)]">
+					@if (file.create) {
+						У папці немає assetra.json. Його буде створено з моделей .glb, які знайдено в Assets: {{ file.modelCount }}.
+					} @else {
+						Знайдено assetra.json, моделей у ньому: {{ file.modelCount }}.
+						@if (!isNew()) {
+							Проєкт уже є: список оновиться, призначені моделі збережуться.
+						}
+					}
+				</p>
+			</div>
+			<div class="flex gap-2">
+				<button
+					class="theme-interactive theme-focus inline-flex min-h-11 items-center rounded-[var(--radius-btn)] border border-[var(--c-border)] px-4 font-medium text-[var(--c-text-strong)] hover:bg-[var(--c-bg-tertiary)]"
+					type="button"
+					(click)="cancelAdd()"
+				>
+					Скасувати
+				</button>
+				<button
+					class="theme-interactive theme-focus inline-flex min-h-11 items-center rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-5 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)] disabled:opacity-60"
+					type="button"
+					[disabled]="adding()"
+					(click)="confirmAdd()"
+				>
+					{{ adding() ? 'Додаємо…' : file.create ? 'Створити assetra.json і додати' : isNew() ? 'Додати проєкт' : 'Оновити проєкт' }}
+				</button>
+			</div>
+		</div>
+	}
+
+	@if (loading()) {
+		<p class="mt-8 text-[var(--c-text-muted)]" aria-live="polite">Завантаження…</p>
+	} @else if (!auth.isLoggedIn()) {
+		<div class="mt-8 rounded-[var(--radius-card)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-6">
+			<p class="text-[var(--c-text-strong)]">Щоб бачити свої проєкти, увійдіть в акаунт Assetra.</p>
+			<a
+				class="theme-interactive theme-focus mt-4 inline-flex min-h-11 items-center rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-5 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)]"
+				routerLink="/account"
+			>
+				Увійти
+			</a>
+		</div>
+	} @else if (error()) {
+		<p class="mt-8 rounded-[var(--radius-btn)] bg-[var(--c-danger)]/10 px-3 py-2.5 text-sm text-[var(--c-danger)]" role="alert">
+			{{ error() }}
+		</p>
+	} @else if (!projectsService.projects().length) {
+		<div class="mt-8 rounded-[var(--radius-card)] border border-dashed border-[var(--c-border)] p-8 text-center">
+			<p class="text-[var(--c-text-strong)]">Проєктів ще немає.</p>
+			<p class="mt-1 text-sm text-[var(--c-text-muted)]">
+				Натисніть «Додати з компʼютера» і оберіть assetra.json з кореня Unity-проєкту.
+			</p>
+		</div>
+	} @else {
+		<ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+			@for (project of projectsService.projects(); track project.slug) {
+				<li>
+					<a
+						class="theme-interactive theme-focus flex h-full flex-col gap-3 rounded-[var(--radius-card)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-5 hover:border-[var(--c-primary)]"
+						[routerLink]="['/project', project.slug]"
+					>
+						<span class="text-lg font-semibold text-[var(--c-text-strong)]">{{ project.title }}</span>
+						<span class="text-sm text-[var(--c-text-muted)]">{{ project.slug }}</span>
+						<span class="mt-auto">
+							<span class="flex items-baseline justify-between text-sm text-[var(--c-text-strong)]">
+								<span>Заповнено {{ filled(project) }} з {{ total(project) }}</span>
+								<span class="text-[var(--c-text-muted)]">{{ percent(project) }}%</span>
+							</span>
+							<span
+								class="mt-2 block h-2 overflow-hidden rounded-full bg-[var(--c-bg-tertiary)]"
+								role="progressbar"
+								aria-label="Заповнено моделями"
+								[attr.aria-valuenow]="percent(project)"
+								aria-valuemin="0"
+								aria-valuemax="100"
+							>
+								<span class="block h-full rounded-full bg-[var(--c-primary)]" [style.width.%]="percent(project)"></span>
+							</span>
+						</span>
+					</a>
+				</li>
+			}
+		</ul>
+	}
+</section>

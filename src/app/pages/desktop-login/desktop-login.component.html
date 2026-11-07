@@ -1,0 +1,41 @@
+<section class="mx-auto w-full max-w-lg px-3 py-12 sm:px-6" aria-labelledby="desktop-login-title">
+	<div class="rounded-[calc(var(--radius-card)*2)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-6 sm:p-8">
+		<h1 id="desktop-login-title" class="text-2xl font-semibold tracking-[-0.02em] text-[var(--c-text-strong)]">
+			Вхід у програму Assetra
+		</h1>
+
+		<div aria-live="polite">
+			@switch (step()) {
+				@case ('loading') {
+					<p class="mt-4 text-[var(--c-text-muted)]">Завантаження…</p>
+				}
+				@case ('ready') {
+					<p class="mt-4 text-[var(--c-text-muted)]">
+						Увійти в програму Assetra на цьому компʼютері як {{ auth.email() }}?
+					</p>
+					<button
+						class="theme-interactive theme-focus mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-6 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)]"
+						type="button"
+						(click)="confirm()"
+					>
+						Увійти в програму
+					</button>
+				}
+				@case ('sending') {
+					<p class="mt-4 text-[var(--c-text-muted)]">Зачекайте…</p>
+				}
+				@case ('done') {
+					<p class="mt-4 text-[var(--c-text-strong)]">
+						Готово. Якщо браузер просить дозвіл, дозвольте відкрити Assetra. Потім поверніться до програми, цю вкладку можна
+						закрити.
+					</p>
+				}
+				@case ('error') {
+					<p class="mt-4 rounded-[var(--radius-btn)] bg-[var(--c-danger)]/10 px-3 py-2.5 text-sm text-[var(--c-danger)]" role="alert">
+						Не вдалося завершити вхід. Закрийте вкладку й почніть вхід у програмі ще раз.
+					</p>
+				}
+			}
+		</div>
+	</div>
+</section>

@@ -4,3 +4,5 @@ dist
 app
 generated
 vendor
+dist-new
+dist-local

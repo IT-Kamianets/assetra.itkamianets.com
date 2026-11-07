@@ -26,7 +26,7 @@
 
 		<nav class="mr-auto ml-6 hidden md:block lg:ml-10" aria-label="Основна навігація">
 			<ul class="flex items-center gap-1">
-				@for (link of navLinks; track link.label) {
+				@for (link of navLinks(); track link.label) {
 					<li>
 						<a
 							class="topbar-link theme-focus inline-flex min-h-10 items-center rounded-full px-3 text-sm font-medium"
@@ -169,7 +169,7 @@
 			aria-label="Мобільна навігація"
 		>
 			<ul>
-				@for (link of navLinks; track link.label) {
+				@for (link of navLinks(); track link.label) {
 					<li>
 						<a
 							class="topbar-link theme-focus flex min-h-12 items-center rounded-xl px-4 text-base font-medium"
