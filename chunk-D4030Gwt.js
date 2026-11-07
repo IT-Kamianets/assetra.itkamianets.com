@@ -1,0 +1,1 @@
+import{ct as D}from"./main-EMIH7WGP.js";var o=D(`App`,{web:()=>import(`./chunk-B4NsA2zH.js`).then(e=>new e.AppWeb)});export{o as App};
