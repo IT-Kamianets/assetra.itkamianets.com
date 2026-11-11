@@ -150,6 +150,31 @@ export class AuthService {
 		return result;
 	}
 
+	/**
+	 * Sign in with Apple in a popup, with the same full-page fallback as Google. Needs the Apple provider
+	 * turned on in Firebase Auth (with its Services ID and return URL).
+	 */
+	async loginWithApple(): Promise<AuthResult> {
+		const [auth, { OAuthProvider, signInWithPopup, signInWithRedirect }] = await Promise.all([this._getAuth(), import('firebase/auth')]);
+		const provider = new OAuthProvider('apple.com');
+
+		provider.addScope('email');
+		provider.addScope('name');
+
+		const result = await this._signIn(() => signInWithPopup(auth, provider));
+
+		if (result === 'popup-blocked') {
+			try {
+				await signInWithRedirect(auth, provider);
+				return 'cancelled';
+			} catch (error) {
+				return _result(error);
+			}
+		}
+
+		return result;
+	}
+
 	/** Firebase does not reveal whether the account exists, so a valid email always reports 'ok'. */
 	async resetPassword(email: string): Promise<AuthResult> {
 		const [auth, { sendPasswordResetEmail }] = await Promise.all([this._getAuth(), import('firebase/auth')]);

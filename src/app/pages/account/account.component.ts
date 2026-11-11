@@ -15,7 +15,7 @@ const ERRORS: Partial<Record<AuthResult, string>> = {
 	invalid: 'Невірний email або пароль.',
 	'email-in-use': 'Акаунт з цим email уже існує. Увійдіть або відновіть пароль.',
 	weak: `Пароль надто простий: потрібно щонайменше ${MIN_PASSWORD} символів.`,
-	'popup-blocked': 'Браузер заблокував вікно входу Google. Дозвольте спливні вікна для цього сайту й спробуйте ще раз.',
+	'popup-blocked': 'Браузер заблокував вікно входу. Дозвольте спливні вікна для цього сайту й спробуйте ще раз.',
 	'unauthorized-domain': 'Вхід з цього домену поки не налаштовано. Спробуйте пізніше.',
 	'too-many': 'Забагато спроб. Спробуйте трохи пізніше.',
 	error: 'Не вдалося увійти. Перевірте інтернет і спробуйте ще раз.',
@@ -84,6 +84,10 @@ export class AccountComponent {
 
 	protected async loginWithGoogle() {
 		await this._run(() => (this.desktop() ? this.auth.loginWithBrowser() : this.auth.loginWithGoogle()));
+	}
+
+	protected async loginWithApple() {
+		await this._run(() => this.auth.loginWithApple());
 	}
 
 	protected async resetPassword() {
