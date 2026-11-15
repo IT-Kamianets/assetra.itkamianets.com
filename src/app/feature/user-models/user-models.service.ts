@@ -164,6 +164,42 @@ export class UserModelsService {
 		return true;
 	}
 
+	/** Sets (or replaces) the preview picture of one of the user's models. */
+	async setImage(model: UserModel, file: File): Promise<UploadResult> {
+		if (!file.type.startsWith('image/')) {
+			return 'bad-file';
+		}
+
+		if (file.size > MAX_IMAGE_MB * 1024 * 1024) {
+			return 'too-large';
+		}
+
+		let image: Awaited<ReturnType<typeof uploadFile>>;
+
+		try {
+			image = await uploadFile(file, file.type, file.name);
+		} catch (error) {
+			console.error(error);
+			return 'storage';
+		}
+
+		try {
+			const [db, { doc, updateDoc }] = await Promise.all([getDb(), import('firebase/firestore')]);
+
+			await updateDoc(doc(db, COLLECTION, model.id), { imageUrl: image.publicUrl, imageFileId: image.id });
+		} catch (error) {
+			console.error(error);
+			void deleteFile(image.id);
+			return 'database';
+		}
+
+		this._models.update((models) => models.map((item) => (item.id === model.id ? { ...item, imageUrl: image.publicUrl, imageFileId: image.id } : item)));
+		if (model.imageFileId) {
+			void deleteFile(model.imageFileId);
+		}
+		return 'ok';
+	}
+
 	/** Called when the user deletes a collection, so its models do not point to it any more. */
 	clearCollection(collection: string) {
 		return Promise.all(this._models().filter((model) => model.collectionId === collection).map((model) => this.setCollection(model, '')));

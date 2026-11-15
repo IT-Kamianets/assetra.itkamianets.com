@@ -314,6 +314,21 @@
 								>
 								GLB
 							</a>
+							<label
+								class="theme-interactive theme-focus relative inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-[var(--radius-btn)] text-[var(--c-text-muted)] hover:bg-[var(--c-bg-tertiary)] hover:text-[var(--c-text-strong)]"
+								[class.opacity-60]="imaging() === model.id"
+								[attr.title]="'Змінити прев\'ю'"
+							>
+								<span class="material-symbols-outlined text-[20px]" aria-hidden="true">add_photo_alternate</span>
+								<input
+									class="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+									type="file"
+									accept="image/jpeg,image/png,image/webp"
+									[disabled]="imaging() === model.id"
+									[attr.aria-label]="'Змінити прев\'ю: ' + model.title"
+									(change)="changeImage(model, $event)"
+								/>
+							</label>
 							<button
 								class="theme-interactive theme-focus inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-btn)] text-[var(--c-text-muted)] hover:bg-[var(--c-bg-tertiary)] hover:text-[var(--c-danger)] disabled:opacity-60"
 								type="button"

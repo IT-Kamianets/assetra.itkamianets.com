@@ -51,6 +51,7 @@ export class MyModelsComponent {
 	protected readonly sending = signal(false);
 	protected readonly removing = signal('');
 	protected readonly moving = signal('');
+	protected readonly imaging = signal('');
 	protected readonly notice = signal<Notice>(null);
 
 	protected showError(control: 'title'): boolean {
@@ -112,6 +113,24 @@ export class MyModelsComponent {
 
 		if (!moved) {
 			this.notice.set({ tone: 'error', text: 'Не вдалося змінити колекцію моделі. Спробуйте ще раз.' });
+		}
+	}
+
+	protected async changeImage(model: UserModel, event: Event) {
+		const input = event.target as HTMLInputElement;
+		const file = input.files?.[0];
+
+		if (!file) {
+			return;
+		}
+
+		this.imaging.set(model.id);
+		const result = await this.userModels.setImage(model, file);
+		this.imaging.set('');
+		input.value = '';
+
+		if (result !== 'ok') {
+			this.notice.set({ tone: 'error', text: ERRORS[result] });
 		}
 	}
 
