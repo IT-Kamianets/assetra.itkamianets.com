@@ -3,6 +3,7 @@ import { FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } fr
 import { Router } from '@angular/router';
 import { LanguageService, TranslateService } from '@wawjs/ngx-translate';
 import { ThemeService } from '@wawjs/ngx-ui';
+import { AccountDeletionService } from '../../../feature/auth/account-deletion.service';
 import { AuthResult, AuthService } from '../../../feature/auth/auth.service';
 import { trimmedEmail } from '../../../feature/auth/email-validator';
 
@@ -18,6 +19,15 @@ const ERRORS: Partial<Record<AuthResult, string>> = {
 	error: 'Не вдалося виконати дію. Перевірте інтернет і спробуйте ще раз.',
 };
 
+const DELETE_ERRORS: Record<string, string> = {
+	invalid: 'Невірний пароль. Введіть поточний пароль від акаунта.',
+	cancelled: 'Підтвердження скасовано. Акаунт не видалено.',
+	'popup-blocked': 'Браузер заблокував вікно підтвердження. Дозвольте спливаючі вікна й спробуйте ще раз.',
+	'too-many': 'Забагато спроб. Спробуйте трохи пізніше.',
+	data: 'Не вдалося видалити частину даних. Акаунт ще не видалено, спробуйте ще раз.',
+	error: 'Не вдалося видалити акаунт. Перевірте інтернет і спробуйте ще раз.',
+};
+
 /** Private account settings: email, password, language, theme and sign-out. The email is never public. */
 @Component({
 	selector: 'app-account-settings',
@@ -31,6 +41,7 @@ export class AccountSettingsComponent {
 	private readonly _translate = inject(TranslateService);
 	private readonly _languages = inject(LanguageService);
 	private readonly _theme = inject(ThemeService);
+	private readonly _deletion = inject(AccountDeletionService);
 
 	readonly loggedOut = output<void>();
 
@@ -51,6 +62,10 @@ export class AccountSettingsComponent {
 	protected readonly passwordNotice = signal<Notice>(null);
 	protected readonly emailSending = signal(false);
 	protected readonly passwordSending = signal(false);
+	protected readonly deleteOpen = signal(false);
+	protected readonly deleting = signal(false);
+	protected readonly deletePassword = signal('');
+	protected readonly deleteNotice = signal<Notice>(null);
 
 	protected invalid(form: FormGroup, control: string): boolean {
 		const field = form.get(control);
@@ -117,5 +132,32 @@ export class AccountSettingsComponent {
 	protected async logout() {
 		await this.auth.logout();
 		this.loggedOut.emit();
+	}
+
+	protected openDelete() {
+		this.deleteNotice.set(null);
+		this.deletePassword.set('');
+		this.deleteOpen.set(true);
+	}
+
+	protected cancelDelete() {
+		this.deleteOpen.set(false);
+		this.deleteNotice.set(null);
+	}
+
+	protected async deleteAccount() {
+		this.deleting.set(true);
+		this.deleteNotice.set(null);
+
+		const result = await this._deletion.delete(this.deletePassword());
+
+		this.deleting.set(false);
+
+		if (result === 'ok') {
+			this.loggedOut.emit();
+			return;
+		}
+
+		this.deleteNotice.set({ tone: 'error', text: DELETE_ERRORS[result] ?? DELETE_ERRORS['error'] });
 	}
 }

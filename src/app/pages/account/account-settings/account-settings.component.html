@@ -92,5 +92,37 @@
 				Вийти з акаунта
 			</button>
 		</section>
+
+		<section class="rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-danger)]/40 bg-[var(--c-bg-secondary)] p-6 sm:p-7" aria-labelledby="set-delete-title">
+			<h2 id="set-delete-title" class="text-xl font-semibold text-[var(--c-text-strong)]">Видалення акаунта</h2>
+			<p class="mt-1 text-sm leading-6 text-[var(--c-text-muted)]">Акаунт, профіль, нікнейм, ваші моделі та колекції буде видалено назавжди. Це неможливо скасувати.</p>
+
+			@if (!deleteOpen()) {
+				<button class="theme-interactive theme-focus mt-4 inline-flex min-h-12 items-center justify-center gap-2 rounded-[var(--radius-btn)] border border-[var(--c-danger)] px-6 font-semibold text-[var(--c-danger)] hover:bg-[var(--c-danger)]/10" type="button" (click)="openDelete()">
+					<span class="material-symbols-outlined text-[20px]" aria-hidden="true">delete_forever</span>
+					Видалити акаунт
+				</button>
+			} @else {
+				<div class="mt-4 grid gap-4">
+					@if (auth.hasPassword()) {
+						<div>
+							<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="set-delete-password">Введіть пароль, щоб підтвердити</label>
+							<input id="set-delete-password" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="password" autocomplete="current-password" [value]="deletePassword()" (input)="deletePassword.set($any($event.target).value)" />
+						</div>
+					} @else {
+						<p class="text-sm leading-6 text-[var(--c-text-strong)]">Для підтвердження відкриється вікно входу вашого облікового запису (Google або Apple).</p>
+					}
+					@if (deleteNotice(); as notice) {
+						<p class="rounded-[var(--radius-btn)] px-3 py-2.5 text-sm bg-[var(--c-danger)]/10 text-[var(--c-danger)]" role="alert">{{ notice.text }}</p>
+					}
+					<div class="flex flex-wrap gap-3">
+						<button class="theme-interactive theme-focus inline-flex min-h-12 items-center justify-center gap-2 rounded-[var(--radius-btn)] bg-[var(--c-danger)] px-6 font-semibold text-white hover:opacity-90 disabled:opacity-60" type="button" [disabled]="deleting() || (auth.hasPassword() && !deletePassword())" (click)="deleteAccount()">
+							{{ deleting() ? 'Видаляємо…' : 'Видалити назавжди' }}
+						</button>
+						<button class="theme-interactive theme-focus inline-flex min-h-12 items-center justify-center rounded-[var(--radius-btn)] border border-[var(--c-border)] px-6 font-semibold text-[var(--c-text-strong)] disabled:opacity-60" type="button" [disabled]="deleting()" (click)="cancelDelete()">Скасувати</button>
+					</div>
+				</div>
+			}
+		</section>
 	</div>
 </div>

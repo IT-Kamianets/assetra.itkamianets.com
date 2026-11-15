@@ -284,6 +284,75 @@ export class AuthService {
 		});
 	}
 
+	/**
+	 * Confirms the person again with the way they signed in (password, Apple or Google): Firebase deletes
+	 * an account only after a recent sign-in.
+	 */
+	async reauthenticate(password = ''): Promise<AuthResult> {
+		const [auth, firebase] = await Promise.all([this._getAuth(), import('firebase/auth')]);
+		const user = auth.currentUser;
+
+		if (!user) {
+			return 'error';
+		}
+
+		const providers = user.providerData.map((provider) => provider.providerId);
+
+		try {
+			if (providers.includes('password')) {
+				if (!user.email || !password) {
+					return 'invalid';
+				}
+
+				await firebase.reauthenticateWithCredential(user, firebase.EmailAuthProvider.credential(user.email, password));
+			} else if (providers.includes('apple.com')) {
+				const provider = new firebase.OAuthProvider('apple.com');
+
+				provider.addScope('email');
+				await firebase.reauthenticateWithPopup(user, provider);
+			} else if (this._googleClient) {
+				const outcome = new Promise<GoogleOutcome>((resolve) => (this._googleDone = resolve));
+
+				this._googleClient.requestAccessToken({ prompt: 'select_account' });
+
+				const result = await outcome;
+
+				if (!('token' in result)) {
+					return result.error === 'popup_closed' || result.error === 'access_denied'
+						? 'cancelled'
+						: result.error === 'popup_failed_to_open'
+							? 'popup-blocked'
+							: 'error';
+				}
+
+				await firebase.reauthenticateWithCredential(user, firebase.GoogleAuthProvider.credential(null, result.token));
+			} else {
+				await firebase.reauthenticateWithPopup(user, new firebase.GoogleAuthProvider());
+			}
+
+			return 'ok';
+		} catch (error) {
+			return _result(error);
+		}
+	}
+
+	/** Deletes the signed-in Firebase account itself. The caller removes the user's data first. */
+	async deleteCurrentUser(): Promise<AuthResult> {
+		const [auth, { deleteUser }] = await Promise.all([this._getAuth(), import('firebase/auth')]);
+
+		if (!auth.currentUser) {
+			return 'error';
+		}
+
+		try {
+			await deleteUser(auth.currentUser);
+			this._user.set(null);
+			return 'ok';
+		} catch (error) {
+			return _result(error);
+		}
+	}
+
 	/** Fresh Firebase ID token for the Assetra API (`Authorization: Bearer`), or '' when signed out. */
 	async idToken(): Promise<string> {
 		const auth = await this._getAuth();
