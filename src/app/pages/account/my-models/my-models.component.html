@@ -248,11 +248,14 @@
 				>
 					<div
 						class="flex aspect-[4/3] items-center justify-center bg-[var(--c-bg-tertiary)]"
+						appOnVisible
+						(appOnVisible)="!model.imageUrl && thumbs.request(model.modelUrl)"
 					>
-						@if (model.imageUrl) {
+						@if (model.imageUrl || thumbs.thumb(model.modelUrl); as image) {
 							<img
-								class="h-full w-full object-cover"
-								[src]="model.imageUrl"
+								class="h-full w-full"
+								[class]="model.imageUrl ? 'object-cover' : 'object-contain'"
+								[src]="image"
 								[alt]="model.title"
 								width="400"
 								height="300"

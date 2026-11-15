@@ -9,6 +9,8 @@ import {
 	UserModelsService,
 } from '../../../feature/user-models/user-models.service';
 import { CollectionsService } from '../../../feature/collections/collections.service';
+import { ModelThumbnailService } from '../../../feature/projects/model-thumbnail.service';
+import { OnVisibleDirective } from '../../../feature/projects/on-visible.directive';
 
 type Notice = { tone: 'ok' | 'error'; text: string } | null;
 
@@ -23,12 +25,13 @@ const ERRORS: Record<Exclude<UploadResult, 'ok'>, string> = {
 /** "My models" in the profile: upload form plus the list of the user's own models. */
 @Component({
 	selector: 'app-my-models',
-	imports: [ReactiveFormsModule],
+	imports: [ReactiveFormsModule, OnVisibleDirective],
 	templateUrl: './my-models.component.html',
 })
 export class MyModelsComponent {
 	protected readonly userModels = inject(UserModelsService);
 	protected readonly collections = inject(CollectionsService);
+	protected readonly thumbs = inject(ModelThumbnailService);
 	private readonly _fb = inject(NonNullableFormBuilder);
 
 	protected readonly categories = categories;
