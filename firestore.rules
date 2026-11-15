@@ -51,10 +51,20 @@ service cloud.firestore {
         && request.resource.data.modelUrl is string
         && request.resource.data.modelUrl.matches('https://cdn-it[.]webart[.]work/assetka/.*');
 
-      // Owners may only move a model between their collections.
+      // Owners may only move a model between their collections, or change its preview picture.
       allow update: if ownsExisting()
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['collectionId'])
-        && text('collectionId', 40) && ownCollection(request.resource.data.collectionId);
+        && (
+          (
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly(['collectionId'])
+            && text('collectionId', 40) && ownCollection(request.resource.data.collectionId)
+          )
+          || (
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly(['imageUrl', 'imageFileId'])
+            && request.resource.data.imageUrl is string
+            && request.resource.data.imageUrl.matches('https://cdn-it[.]webart[.]work/assetka/.*')
+            && text('imageFileId', 100)
+          )
+        );
 
       allow delete: if ownsExisting();
     }
