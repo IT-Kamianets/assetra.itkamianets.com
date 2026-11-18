@@ -1,0 +1,98 @@
+<dialog
+	#dialog
+	class="m-auto w-[min(32rem,calc(100vw-2rem))] max-w-none rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] p-0 text-[var(--c-text)] backdrop:bg-black/60"
+	aria-labelledby="contact-title"
+	(click)="onBackdrop($event)"
+	(cancel)="close()"
+>
+	<form class="grid gap-5 p-5 sm:p-7" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+		<header class="flex items-start justify-between gap-4">
+			<div>
+				<h2 id="contact-title" class="text-xl font-semibold text-[var(--c-text-strong)]">Написати нам</h2>
+				<p class="mt-1 text-sm text-[var(--c-text-muted)]">Напишіть, і ми відповімо на вашу пошту.</p>
+			</div>
+			<button
+				class="theme-interactive theme-focus inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[var(--c-text-muted)] hover:bg-[var(--c-bg-tertiary)] hover:text-[var(--c-text-strong)]"
+				type="button"
+				aria-label="Закрити"
+				(click)="close()"
+			>
+				<span class="material-symbols-outlined" aria-hidden="true">close</span>
+			</button>
+		</header>
+
+		@if (state() === 'sent') {
+			<p class="rounded-[var(--radius-btn)] bg-[var(--c-bg-tertiary)] px-4 py-3 text-sm text-[var(--c-text-strong)]" role="status">
+				Дякуємо! Повідомлення надіслано, ми відповімо на вашу пошту.
+			</p>
+			<button
+				class="theme-interactive theme-focus inline-flex min-h-12 items-center justify-center rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-6 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)]"
+				type="button"
+				(click)="close()"
+			>
+				Закрити
+			</button>
+		} @else {
+			<div>
+				<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="contact-name">Ім'я</label>
+				<input
+					id="contact-name"
+					class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]"
+					type="text"
+					autocomplete="name"
+					maxlength="80"
+					formControlName="name"
+					[attr.aria-invalid]="showError('name')"
+				/>
+				@if (showError('name')) {
+					<p class="mt-1.5 text-sm text-[var(--c-danger)]">Вкажіть ім'я.</p>
+				}
+			</div>
+
+			<div>
+				<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="contact-email">Ваша пошта</label>
+				<input
+					id="contact-email"
+					class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]"
+					type="email"
+					autocomplete="email"
+					inputmode="email"
+					formControlName="email"
+					[attr.aria-invalid]="showError('email')"
+				/>
+				@if (showError('email')) {
+					<p class="mt-1.5 text-sm text-[var(--c-danger)]">Вкажіть коректну адресу пошти.</p>
+				}
+			</div>
+
+			<div>
+				<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="contact-message">Повідомлення</label>
+				<textarea
+					id="contact-message"
+					class="theme-focus min-h-32 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 py-2.5 text-[var(--c-text-strong)]"
+					maxlength="3000"
+					formControlName="message"
+					[attr.aria-invalid]="showError('message')"
+				></textarea>
+				@if (showError('message')) {
+					<p class="mt-1.5 text-sm text-[var(--c-danger)]">Напишіть кілька слів (щонайменше 5 символів).</p>
+				}
+			</div>
+
+			@if (state() === 'error') {
+				<p class="rounded-[var(--radius-btn)] bg-[var(--c-danger)]/10 px-4 py-3 text-sm text-[var(--c-danger)]" role="alert">
+					Не вдалося надіслати повідомлення. Спробуйте ще раз трохи пізніше.
+				</p>
+			}
+
+			<button
+				class="theme-interactive theme-focus inline-flex min-h-12 items-center justify-center gap-2 rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-6 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)] disabled:opacity-60"
+				type="submit"
+				[disabled]="state() === 'sending'"
+			>
+				<span class="material-symbols-outlined text-[20px]" aria-hidden="true">send</span>
+				{{ state() === 'sending' ? 'Надсилаємо…' : 'Надіслати' }}
+			</button>
+		}
+	</form>
+</dialog>

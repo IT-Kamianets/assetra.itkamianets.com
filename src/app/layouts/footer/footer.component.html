@@ -44,15 +44,9 @@
 						</li>
 					}
 					<li>
-						@if (emailHref) {
-							<a class="footer-social theme-focus" [href]="emailHref" aria-label="Написати на пошту">
-								<ng-container *ngTemplateOutlet="mailIcon" />
-							</a>
-						} @else {
-							<a class="footer-social theme-focus" routerLink="/info/contacts" aria-label="Контакти">
-								<ng-container *ngTemplateOutlet="mailIcon" />
-							</a>
-						}
+						<button class="footer-social theme-focus" type="button" aria-label="Написати нам" title="Написати нам" (click)="contact.open()">
+							<ng-container *ngTemplateOutlet="mailIcon" />
+						</button>
 					</li>
 				</ul>
 			</div>
@@ -99,6 +93,8 @@
 		</div>
 	</div>
 </footer>
+
+<app-contact-dialog #contact />
 
 <ng-template #mailIcon>
 	<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true">

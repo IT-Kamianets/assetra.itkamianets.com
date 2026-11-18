@@ -2,7 +2,8 @@ import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { getCategory } from '../../feature/catalog/catalog.data';
-import { companyEmailHref, companyProfile } from '../../feature/company/company.data';
+import { companyProfile } from '../../feature/company/company.data';
+import { ContactDialogComponent } from '../../feature/contact/contact-dialog.component';
 import { CompanyService } from '../../feature/company/company.service';
 
 interface FooterLink {
@@ -16,7 +17,7 @@ const CATALOG_CATEGORIES = ['characters', 'vehicles', 'interior', 'architecture'
 
 @Component({
 	selector: 'app-footer',
-	imports: [RouterLink, NgTemplateOutlet],
+	imports: [RouterLink, NgTemplateOutlet, ContactDialogComponent],
 	templateUrl: './footer.component.html',
 })
 export class FooterComponent {
@@ -50,7 +51,7 @@ export class FooterComponent {
 	/** Social links come from `structuredData.sameAs` in company.json; the icon is hidden until one is set. */
 	protected readonly instagramUrl = _social('instagram.com');
 	protected readonly youtubeUrl = _social('youtube.com') || _social('youtu.be');
-	protected readonly emailHref = companyEmailHref;
+
 	protected readonly companyImage = computed(() => this.company().image || 'logo.png');
 	protected readonly companyImageAlt = computed(() => this.company().name || 'Assetra');
 }
