@@ -4,9 +4,9 @@ import {
 	categories,
 	countByCategory,
 	formatModelCount,
+	allProducts,
 	getProduct,
 	imageUrl,
-	products,
 	PURPOSE_LABELS,
 } from '../../feature/catalog/catalog.data';
 import { ProductPurpose } from '../../feature/catalog/catalog.interface';
@@ -37,23 +37,34 @@ export class LandingComponent {
 	protected readonly heroModel = getProduct('concept-car')!.model!;
 	protected readonly heroModelLoaded = signal(false);
 
-	protected readonly productCount = products.length;
+	// Everything below reads the live catalog, so models uploaded later show up without a rebuild.
+	protected readonly productCount = computed(() => allProducts().length);
 	protected readonly categoryCount = categories.length;
-	protected readonly freeCount = products.filter((product) => product.price === 0).length;
+	protected readonly freeCount = computed(() => allProducts().filter((product) => product.price === 0).length);
 
-	protected readonly categories = categories.map((category) => ({
-		...category,
-		cover: imageUrl(category.image, 500),
-		count: countByCategory(category.slug),
-	}));
-	protected readonly purposes = (Object.keys(PURPOSE_LABELS) as ProductPurpose[]).map((purpose) => ({
-		value: purpose,
-		label: PURPOSE_LABELS[purpose],
-		icon: PURPOSE_ICONS[purpose],
-		count: formatModelCount(products.filter((product) => product.purpose.includes(purpose)).length),
-	}));
-	protected readonly popular = products.filter((product) => product.isHit).slice(0, 4);
-	protected readonly fresh = products.filter((product) => product.isNew).slice(0, 4);
+	protected readonly categories = computed(() =>
+		categories.map((category) => ({
+			...category,
+			cover: imageUrl(category.image, 500),
+			count: countByCategory(category.slug),
+		})),
+	);
+	protected readonly purposes = computed(() =>
+		(Object.keys(PURPOSE_LABELS) as ProductPurpose[]).map((purpose) => ({
+			value: purpose,
+			label: PURPOSE_LABELS[purpose],
+			icon: PURPOSE_ICONS[purpose],
+			count: formatModelCount(allProducts().filter((product) => product.purpose.includes(purpose)).length),
+		})),
+	);
+	protected readonly popular = computed(() => allProducts().filter((product) => product.isHit).slice(0, 4));
+	/** The newest uploads first (admin assets and users' models); models marked "new" in the built-in catalog fill the rest. */
+	protected readonly fresh = computed(() =>
+		allProducts()
+			.filter((product) => product.isNew || product.addedAt)
+			.sort((a, b) => (b.addedAt ?? 0) - (a.addedAt ?? 0))
+			.slice(0, 4),
+	);
 
 	protected readonly glbFeatures = ['Геометрія + текстури', 'PBR-матеріали', 'Ріг і анімації', 'Один файл', 'AR-ready'];
 	protected readonly benefits = [

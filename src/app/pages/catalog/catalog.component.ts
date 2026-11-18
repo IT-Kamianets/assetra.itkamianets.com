@@ -248,8 +248,9 @@ function _sortProducts(list: Product[], sort: CatalogSort): Product[] {
 				return a.price - b.price;
 			case 'price-desc':
 				return b.price - a.price;
-			case 'popular':
 			case 'new':
+				return (b.addedAt ?? 0) - (a.addedAt ?? 0) || score(b) - score(a);
+			case 'popular':
 				return score(b) - score(a);
 		}
 	});

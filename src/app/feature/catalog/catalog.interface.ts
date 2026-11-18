@@ -67,6 +67,8 @@ export interface Product {
 	renderers: string[];
 	formats: string[];
 	archiveSize: string;
+	/** When the model was uploaded (ms); only for models added after the site was built, so "new" lists stay fresh. */
+	addedAt?: number;
 	/** Uid of the user who uploaded the model from /account; absent for catalog models published by Assetra. */
 	uploader?: string;
 	/** Optional texture choices shown on the model page; the original textures are always offered too. */

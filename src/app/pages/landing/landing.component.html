@@ -64,7 +64,7 @@
 			<dl class="mt-12 grid max-w-md grid-cols-3 gap-6 border-t border-[#f3f0e7]/25 pt-6">
 				<div>
 					<dt class="text-sm text-[#f3f0e7]/75">Моделей</dt>
-					<dd class="mt-1 text-2xl font-semibold">{{ productCount }}</dd>
+					<dd class="mt-1 text-2xl font-semibold">{{ productCount() }}</dd>
 				</div>
 				<div>
 					<dt class="text-sm text-[#f3f0e7]/75">Категорій</dt>
@@ -72,7 +72,7 @@
 				</div>
 				<div>
 					<dt class="text-sm text-[#f3f0e7]/75">Безкоштовних</dt>
-					<dd class="mt-1 text-2xl font-semibold">{{ freeCount }}</dd>
+					<dd class="mt-1 text-2xl font-semibold">{{ freeCount() }}</dd>
 				</div>
 			</dl>
 		</div>
@@ -97,7 +97,7 @@
 	</div>
 
 	<ul class="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-		@for (category of categories; track category.slug) {
+		@for (category of categories(); track category.slug) {
 			<li>
 				<a
 					class="theme-focus group block overflow-hidden rounded-[var(--radius-card)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)]"
@@ -132,7 +132,7 @@
 		<div>
 			<h2 class="text-2xl font-semibold text-[var(--c-text-strong)]">За призначенням</h2>
 			<ul class="mt-6 grid grid-cols-2 gap-3">
-				@for (purpose of purposes; track purpose.value) {
+				@for (purpose of purposes(); track purpose.value) {
 					<li>
 						<a
 							class="theme-interactive theme-focus flex h-full flex-col gap-3 rounded-[var(--radius-card)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] p-4 hover:border-[var(--c-primary)]"
@@ -185,7 +185,7 @@
 		</a>
 	</div>
 	<ul class="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
-		@for (product of popular; track product.slug) {
+		@for (product of popular(); track product.slug) {
 			<li><app-product-card [product]="product" /></li>
 		}
 	</ul>
@@ -204,7 +204,7 @@
 		</a>
 	</div>
 	<ul class="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
-		@for (product of fresh; track product.slug) {
+		@for (product of fresh(); track product.slug) {
 			<li><app-product-card [product]="product" /></li>
 		}
 	</ul>

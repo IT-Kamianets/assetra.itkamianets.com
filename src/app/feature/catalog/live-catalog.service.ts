@@ -1,7 +1,7 @@
 import { isPlatformBrowser } from '@angular/common';
 import { inject, PLATFORM_ID, Service } from '@angular/core';
 import { getDb } from '../cloud/cloud';
-import { categories, setLiveProducts, setUserCatalog } from './catalog.data';
+import { categories, products, setLiveProducts, setUserCatalog } from './catalog.data';
 import { CatalogCollection, Product, Seller } from './catalog.interface';
 import { cleanColorVariants } from './texture-variants';
 
@@ -71,6 +71,7 @@ function _toProduct(id: string, data: UserModelDoc, seller: string): Product {
 		...(cleanColorVariants(data.textureVariants).length ? { textureVariants: cleanColorVariants(data.textureVariants) } : {}),
 		...(data.collectionId ? { collection: data.collectionId } : {}),
 		...(Date.now() - data.createdAt < NEW_FOR_MS ? { isNew: true } : {}),
+		addedAt: data.createdAt,
 		uploader: data.uid,
 	};
 }
@@ -114,7 +115,16 @@ export class LiveCatalogService {
 			const [db, { collection, getDocs }] = await Promise.all([getDb(), import('firebase/firestore')]);
 			const snapshot = await getDocs(collection(db, ASSETS_COLLECTION));
 
-			setLiveProducts(snapshot.docs.map((item) => toProduct(item.data() as StoredAsset)));
+			const builtIn = new Set(products.map((product) => product.slug));
+
+			// Copies of the built-in catalog (made by the admin import) are not new, so they get no date.
+			setLiveProducts(
+				snapshot.docs.map((item) => {
+					const stored = item.data() as StoredAsset;
+
+					return builtIn.has(stored.slug) ? toProduct(stored) : { ...toProduct(stored), addedAt: stored.updatedAt };
+				}),
+			);
 		} catch (error) {
 			console.error(error);
 		}
