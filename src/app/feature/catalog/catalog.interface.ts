@@ -19,6 +19,10 @@ export interface CatalogCollection {
 	title: string;
 	description: string;
 	image: string;
+	/** An author's collection that lists every catalog model (not only those with this collection slug). */
+	all?: boolean;
+	/** Created by a site user in /account, not by the Assetra team. */
+	author?: boolean;
 }
 
 export interface Seller {
@@ -30,6 +34,15 @@ export interface Seller {
 	color: string;
 	bio: string;
 	specialties: string[];
+}
+
+/** One texture choice of a model: a base-colour image, a plain colour, or both (colour tints the image). */
+export interface TextureVariant {
+	name: string;
+	/** URL of a base-colour texture image. */
+	texture?: string;
+	/** CSS colour such as #c0392b. */
+	color?: string;
 }
 
 export interface Product {
@@ -54,6 +67,10 @@ export interface Product {
 	renderers: string[];
 	formats: string[];
 	archiveSize: string;
+	/** Uid of the user who uploaded the model from /account; absent for catalog models published by Assetra. */
+	uploader?: string;
+	/** Optional texture choices shown on the model page; the original textures are always offered too. */
+	textureVariants?: TextureVariant[];
 	/** Slug of a catalog collection (src/data/collection/collections.json). */
 	collection?: string;
 	isNew?: boolean;

@@ -379,6 +379,11 @@
 								<input id="asset-tags" class="theme-focus h-12 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 text-[var(--c-text-strong)]" type="text" placeholder="персонаж, low-poly" formControlName="tags" />
 							</div>
 							<p class="text-xs text-[var(--c-text-muted)] sm:col-span-2">Програми, рендери й теги розділяйте комами.</p>
+							<div class="sm:col-span-2">
+								<label class="mb-1.5 block text-sm font-semibold text-[var(--c-text-strong)]" for="asset-texture-variants">Варіанти текстур <span class="font-normal text-[var(--c-text-muted)]">(необов'язково)</span></label>
+								<textarea id="asset-texture-variants" class="theme-focus min-h-24 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-primary)] px-3 py-2.5 text-[var(--c-text-strong)]" placeholder="Червоний | #c0392b&#10;Дерево | https://…/wood.jpg" formControlName="textureVariants"></textarea>
+								<p class="mt-1.5 text-xs text-[var(--c-text-muted)]">По одному варіанту на рядок: «Назва | посилання на зображення текстури» або «Назва | #колір». На сторінці моделі покупець зможе перемикати їх, оригінальні текстури лишаються завжди.</p>
+							</div>
 						</div>
 					</section>
 				</div>

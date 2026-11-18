@@ -16,7 +16,7 @@ import {
 	imageUrl,
 	PURPOSE_LABELS,
 } from '../../../feature/catalog/catalog.data';
-import { Breadcrumb, Product, ProductDetails, ProductPurpose } from '../../../feature/catalog/catalog.interface';
+import { Breadcrumb, Product, ProductDetails, ProductPurpose, TextureVariant } from '../../../feature/catalog/catalog.interface';
 import {
 	DetailFlag,
 	FILE_FORMATS,
@@ -162,6 +162,7 @@ export class AssetComponent {
 		short: this._fb.control('', Validators.required),
 		description: this._fb.control(''),
 		images: this._fb.control(''),
+		textureVariants: this._fb.control(''),
 		model: this._fb.control('', Validators.pattern(GLB_PATTERN)),
 		modelLow: this._fb.control('', Validators.pattern(GLB_PATTERN)),
 		purpose: this._fb.control<ProductPurpose[]>([]),
@@ -445,6 +446,7 @@ export class AssetComponent {
 		this.form.reset({
 			...asset,
 			images: asset.images.join('\n'),
+			textureVariants: (asset.textureVariants ?? []).map((variant) => `${variant.name} | ${variant.color || variant.texture || ''}`).join('\n'),
 			model: asset.model ?? '',
 			modelLow: asset.modelLow ?? '',
 			collection: asset.collection ?? '',
@@ -473,6 +475,7 @@ export class AssetComponent {
 			short: value.short.trim(),
 			description: value.description.trim(),
 			images: _lines(value.images),
+			...(_variants(value.textureVariants).length ? { textureVariants: _variants(value.textureVariants) } : {}),
 			...(value.model.trim() ? { model: value.model.trim() } : {}),
 			...(value.modelLow.trim() ? { modelLow: value.modelLow.trim() } : {}),
 			purpose: PURPOSES.map(({ value: purpose }) => purpose).filter((purpose) => value.purpose.includes(purpose)),
@@ -495,6 +498,20 @@ export class AssetComponent {
 	private _uniqueSlug(control: AbstractControl): ValidationErrors | null {
 		return this._assets.isSlugTaken(control.value, this.originalSlug()) ? { taken: true } : null;
 	}
+}
+
+/** "Name | https://…/texture.jpg" or "Name | #c0392b" per line. */
+function _variants(value: string): TextureVariant[] {
+	return value
+		.split('\n')
+		.map((line) => {
+			const [name = '', ...rest] = line.split('|');
+			const target = rest.join('|').trim();
+
+			return { name: name.trim(), target };
+		})
+		.filter((item) => item.name && item.target)
+		.map(({ name, target }) => (/^#[0-9a-f]{3,8}$/i.test(target) ? { name, color: target } : { name, texture: target }));
 }
 
 function _lines(value: string): string[] {

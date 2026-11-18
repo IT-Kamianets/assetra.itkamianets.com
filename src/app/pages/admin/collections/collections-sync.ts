@@ -65,6 +65,7 @@ export function parseCollections(text: string): ParsedCollections {
 			title: item.title.trim(),
 			description: ((item.description as string | undefined) ?? '').trim(),
 			image: (item.image as string | undefined) ?? '',
+			...(item.all === true ? { all: true } : {}),
 		});
 	}
 

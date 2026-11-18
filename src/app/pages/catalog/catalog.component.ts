@@ -9,8 +9,8 @@ import {
 	POLYGON_TIER_LABELS,
 	polygonTier,
 	allProducts,
+	allSellers,
 	PURPOSE_LABELS,
-	sellers,
 } from '../../feature/catalog/catalog.data';
 import { Breadcrumb, CatalogSort, Product } from '../../feature/catalog/catalog.interface';
 import { ProductCardComponent } from '../../feature/catalog/product-card/product-card.component';
@@ -50,12 +50,7 @@ const PRICE_BOUNDS = {
 	max: Math.max(...allProducts().map((product) => product.price)),
 };
 
-const FILTER_GROUPS: FilterGroup[] = [
-	{
-		key: 'seller',
-		title: 'Продавець',
-		options: sellers.map(({ slug, name }) => ({ value: slug, label: name })),
-	},
+const STATIC_FILTER_GROUPS: FilterGroup[] = [
 	{
 		key: 'purpose',
 		title: 'Призначення',
@@ -100,7 +95,11 @@ export class CatalogComponent {
 	});
 
 	protected readonly categories = categories;
-	protected readonly filterGroups = FILTER_GROUPS;
+	/** The seller list grows when users upload models, so the filter reads it live. */
+	protected readonly filterGroups = computed<FilterGroup[]>(() => [
+		{ key: 'seller', title: 'Продавець', options: allSellers().map(({ slug, name }) => ({ value: slug, label: name })) },
+		...STATIC_FILTER_GROUPS,
+	]);
 	protected readonly sortOptions = SORT_OPTIONS;
 	protected readonly priceOptions = PRICE_OPTIONS;
 	protected readonly priceBounds = PRICE_BOUNDS;

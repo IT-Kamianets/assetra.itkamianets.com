@@ -36,6 +36,23 @@
 	</p>
 }
 
+@if (assets.importable().length) {
+	<div class="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] px-4 py-3">
+		<p class="text-sm text-[var(--c-text-strong)]">
+			У каталозі на сайті є моделі, яких ще немає на цій сторінці: {{ assets.importable().length }}. Додайте їх сюди, щоб редагувати. Після цього каталог показує все, що є на цій сторінці.
+		</p>
+		<button
+			class="theme-interactive theme-focus inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-btn)] bg-[var(--c-primary)] px-4 font-semibold text-[var(--c-on-primary)] hover:bg-[var(--c-primary-hover)] disabled:opacity-60"
+			type="button"
+			[disabled]="importing()"
+			(click)="importCatalog()"
+		>
+			<span class="material-symbols-outlined text-[20px]" aria-hidden="true">download</span>
+			{{ importing() ? 'Додаємо…' : 'Додати моделі з каталогу' }}
+		</button>
+	</div>
+}
+
 <app-json-sync-dialog
 	#syncDialog
 	description="Тут усі ваші ассети одним JSON. Змініть їх або вставте JSON, який написав чат зі штучним інтелектом. Ваші ассети, яких немає в JSON, буде видалено."

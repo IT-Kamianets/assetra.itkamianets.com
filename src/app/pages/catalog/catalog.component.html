@@ -110,7 +110,7 @@
 				</div>
 			</fieldset>
 
-			@for (group of filterGroups; track group.key) {
+			@for (group of filterGroups(); track group.key) {
 				<fieldset class="mt-8">
 					<legend class="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--c-text-muted)]">
 						{{ group.title }}

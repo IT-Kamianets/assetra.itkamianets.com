@@ -68,7 +68,7 @@
 						class="relative aspect-square overflow-hidden rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)]"
 						[class]="darkStage() ? 'bg-[#20221d]' : 'bg-[var(--c-bg-secondary)]'"
 					>
-						<app-model-viewer [src]="viewerModel()" [alt]="'3D-модель: ' + product().title" />
+						<app-model-viewer [src]="viewerModel()" [alt]="'3D-модель: ' + product().title" [variant]="variant()" />
 
 						<button
 							class="theme-focus absolute right-3 top-3 inline-flex h-10 items-center gap-2 rounded-full border border-[var(--c-border)] bg-[var(--c-bg-secondary)] px-4 text-sm font-medium text-[var(--c-text-strong)]"
@@ -84,6 +84,44 @@
 					</p>
 				}
 				@default never;
+			}
+
+			@if (viewerModel() && textureVariants().length) {
+				<div class="mt-4" role="group" aria-label="Текстури моделі">
+					<p class="mb-2 text-sm font-semibold text-[var(--c-text-strong)]">Текстури</p>
+					<ul class="flex flex-wrap gap-2">
+						<li>
+							<button
+								class="theme-interactive theme-focus inline-flex min-h-10 items-center rounded-full border px-4 text-sm font-medium"
+								[class]="variantIndex() === -1 ? 'border-[var(--c-primary)] bg-[var(--c-primary)] text-[var(--c-on-primary)]' : 'border-[var(--c-border)] text-[var(--c-text-strong)] hover:border-[var(--c-primary)]'"
+								type="button"
+								[attr.aria-pressed]="variantIndex() === -1"
+								(click)="pickVariant(-1)"
+							>
+								Оригінал
+							</button>
+						</li>
+						@for (item of textureVariants(); track item.name; let index = $index) {
+							<li>
+								<button
+									class="theme-interactive theme-focus inline-flex min-h-10 items-center gap-2 rounded-full border py-1 pr-4 pl-1.5 text-sm font-medium"
+									[class]="variantIndex() === index ? 'border-[var(--c-primary)] bg-[var(--c-primary)] text-[var(--c-on-primary)]' : 'border-[var(--c-border)] text-[var(--c-text-strong)] hover:border-[var(--c-primary)]'"
+									type="button"
+									[attr.aria-pressed]="variantIndex() === index"
+									(click)="pickVariant(index)"
+								>
+									<span
+										class="h-7 w-7 shrink-0 rounded-full border border-[var(--c-border)] bg-cover bg-center"
+										[style.background-color]="item.color || null"
+										[style.background-image]="item.texture ? 'url(' + item.texture + ')' : null"
+										aria-hidden="true"
+									></span>
+									{{ item.name }}
+								</button>
+							</li>
+						}
+					</ul>
+				</div>
 			}
 		</section>
 

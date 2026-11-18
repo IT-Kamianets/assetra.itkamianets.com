@@ -70,6 +70,24 @@ export class AssetsComponent {
 	};
 
 	protected readonly notice = signal('');
+	protected readonly importing = signal(false);
+
+	protected async importCatalog() {
+		this.importing.set(true);
+
+		const result = await this.assets.importCatalog();
+
+		this.importing.set(false);
+		this.notice.set(
+			result === 'ok'
+				? ''
+				: result === 'taken'
+					? 'Не вдалося додати: частина моделей уже належить іншому адміну.'
+					: result === 'denied'
+						? 'База не дозволяє зберегти: не опубліковані правила Firestore для ассетів або ваша пошта не в списку адмінів.'
+						: 'Не вдалося додати моделі. Перевірте інтернет і спробуйте ще раз.',
+		);
+	}
 
 	protected async sync(text: string) {
 		const parsed = parseAssets(text);

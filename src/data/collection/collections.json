@@ -1,5 +1,12 @@
 [
 	{
+		"slug": "alina-siruk",
+		"title": "Alina Siruk",
+		"description": "Усі моделі каталогу від автора Alina Siruk в одній колекції.",
+		"image": "models/brainstem-robot-1.jpg",
+		"all": true
+	},
+	{
 		"slug": "mecha",
 		"title": "Mecha",
 		"description": "Роботи, мехи й екіпірування пілотів у спільній sci-fi стилістиці: персонажі з ригом і пропси для ігор та кінематиків.",

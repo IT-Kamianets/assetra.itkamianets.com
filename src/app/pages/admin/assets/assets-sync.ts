@@ -134,6 +134,20 @@ function _problem(item: Record<string, unknown>): string {
 		}
 	}
 
+	if (
+		item['textureVariants'] !== undefined &&
+		(!Array.isArray(item['textureVariants']) ||
+			(item['textureVariants'] as Record<string, unknown>[]).some(
+				(variant) =>
+					typeof variant?.['name'] !== 'string' ||
+					(variant['texture'] === undefined && variant['color'] === undefined) ||
+					(variant['texture'] !== undefined && typeof variant['texture'] !== 'string') ||
+					(variant['color'] !== undefined && typeof variant['color'] !== 'string'),
+			))
+	) {
+		return '"textureVariants" — масив об’єктів з полем "name" і "texture" (посилання) та/або "color" (#колір).';
+	}
+
 	if (item['details'] !== undefined && (typeof item['details'] !== 'object' || item['details'] === null || Array.isArray(item['details']))) {
 		return '"details" має бути об’єктом.';
 	}

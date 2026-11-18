@@ -9,7 +9,7 @@
 	</header>
 
 	<ul class="mt-10 grid gap-6 md:grid-cols-2">
-		@for (item of sellers; track item.seller.slug) {
+		@for (item of sellers(); track item.seller.slug) {
 			<li>
 				<a
 					class="theme-focus group flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] transition-shadow duration-200 hover:shadow-[var(--shadow-md)]"

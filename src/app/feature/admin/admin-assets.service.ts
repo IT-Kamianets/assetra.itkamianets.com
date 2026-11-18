@@ -1,15 +1,13 @@
 import { isPlatformBrowser } from '@angular/common';
 import { computed, effect, inject, PLATFORM_ID, Service, signal, untracked } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
-import { products } from '../catalog/catalog.data';
+import { liveSlugs, products } from '../catalog/catalog.data';
 import { Product } from '../catalog/catalog.interface';
 import { ASSETS_COLLECTION, LiveCatalogService, StoredAsset, toProduct } from '../catalog/live-catalog.service';
 import { getDb } from '../cloud/cloud';
 
 /** `denied`: Firestore refused the write itself (rules not published, or the email is not an admin). */
 export type AssetSaveResult = 'ok' | 'taken' | 'denied' | 'error';
-
-const STATIC_SLUGS = new Set(products.map((product) => product.slug));
 
 /**
  * The signed-in admin's own assets, stored in Firestore `assets/{slug}` with their `uid`. Each admin
@@ -49,9 +47,45 @@ export class AdminAssetsService {
 		return this._assets().find((asset) => asset.slug === slug);
 	}
 
-	/** Slugs of products.json and of this admin's assets; other admins' slugs are rejected on save. */
+	/** Models of the built-in catalog (products.json) that are not published in Firestore yet. */
+	readonly importable = computed(() => products.filter((product) => !liveSlugs().has(product.slug)));
+
+	/** This admin's own slugs; a slug owned by another admin is rejected by Firestore on save. */
 	isSlugTaken(slug: string, exceptSlug?: string): boolean {
-		return slug !== exceptSlug && (STATIC_SLUGS.has(slug) || this._assets().some((asset) => asset.slug === slug));
+		return slug !== exceptSlug && this._assets().some((asset) => asset.slug === slug);
+	}
+
+	/** Copies the built-in catalog models into this admin's assets (one batch), so they can be edited here. */
+	async importCatalog(): Promise<AssetSaveResult> {
+		const uid = this._auth.uid();
+		const list = this.importable();
+
+		if (!uid) {
+			return 'error';
+		}
+
+		if (!list.length) {
+			return 'ok';
+		}
+
+		try {
+			const [db, { doc, writeBatch }] = await Promise.all([getDb(), import('firebase/firestore')]);
+			const batch = writeBatch(db);
+			const now = Date.now();
+
+			for (const asset of list) {
+				batch.set(doc(db, ASSETS_COLLECTION, asset.slug), { ...asset, uid, updatedAt: now } satisfies StoredAsset);
+			}
+
+			await batch.commit();
+		} catch (error) {
+			console.error(error);
+			return this._explain(error, list.map((asset) => asset.slug));
+		}
+
+		this._assets.update((current) => [...list, ...current.filter((item) => !list.some((added) => added.slug === item.slug))]);
+		await this._live.refresh();
+		return 'ok';
 	}
 
 	/** Creates the asset, or replaces the one stored under `originalSlug` (the slug itself may change). */

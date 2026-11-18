@@ -64,6 +64,13 @@ export class ProductComponent {
 		this.product();
 		return 0;
 	});
+	/** Index of the chosen texture variant; -1 keeps the textures of the file. */
+	protected readonly variantIndex = linkedSignal(() => {
+		this.product();
+		return -1;
+	});
+	protected readonly textureVariants = computed(() => this.product().textureVariants ?? []);
+	protected readonly variant = computed(() => this.textureVariants()[this.variantIndex()] ?? null);
 	protected readonly darkStage = signal(false);
 	protected readonly downloading = signal(false);
 
@@ -111,6 +118,12 @@ export class ProductComponent {
 	}
 
 	protected show3d() {
+		this.tab.set('3d');
+	}
+
+	/** Picking a texture shows it on the model, so it opens the 3D view. */
+	protected pickVariant(index: number) {
+		this.variantIndex.set(index);
 		this.tab.set('3d');
 	}
 

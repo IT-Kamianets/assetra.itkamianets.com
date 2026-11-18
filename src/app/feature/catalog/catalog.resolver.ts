@@ -23,13 +23,12 @@ export const productMetaResolver: ResolveFn<MetaPage | RedirectCommand> = async 
 	const slug = route.paramMap.get('slug');
 	const router = inject(Router);
 	const live = isPlatformBrowser(inject(PLATFORM_ID)) ? inject(LiveCatalogService) : null;
-	let product = getProduct(slug);
-
-	// Assets published from the admin live in Firestore and are not prerendered.
-	if (!product && live) {
+	// The catalog is what admins published in Firestore (not prerendered), so wait for it in the browser.
+	if (live) {
 		await live.ready;
-		product = getProduct(slug);
 	}
+
+	const product = getProduct(slug);
 
 	if (!product) {
 		return new RedirectCommand(router.parseUrl('/catalog'));
@@ -42,11 +41,19 @@ export const productMetaResolver: ResolveFn<MetaPage | RedirectCommand> = async 
 	};
 };
 
-export const sellerMetaResolver: ResolveFn<MetaPage | RedirectCommand> = (route) => {
+export const sellerMetaResolver: ResolveFn<MetaPage | RedirectCommand> = async (route) => {
+	const live = isPlatformBrowser(inject(PLATFORM_ID)) ? inject(LiveCatalogService) : null;
+	const router = inject(Router);
+
+	// Authors who uploaded models from /account are loaded in the browser.
+	if (live && !getSeller(route.paramMap.get('slug'))) {
+		await live.ready;
+	}
+
 	const seller = getSeller(route.paramMap.get('slug'));
 
 	if (!seller) {
-		return new RedirectCommand(inject(Router).parseUrl('/sellers'));
+		return new RedirectCommand(router.parseUrl('/sellers'));
 	}
 
 	const first = productsBySeller(seller.slug)[0];
