@@ -85,9 +85,42 @@
 				}
 				@default never;
 			}
+		</section>
+
+		<!-- Summary -->
+		<section class="lg:sticky lg:top-6 lg:self-start" aria-label="Про модель">
+			@if (category(); as current) {
+				<a
+					class="theme-focus rounded text-sm font-semibold uppercase tracking-[0.14em] text-[var(--c-link)] hover:underline"
+					[routerLink]="['/catalog', current.slug]"
+				>
+					{{ current.title }}
+				</a>
+			}
+			<h1 class="mt-2 text-3xl font-semibold tracking-[-0.02em] text-[var(--c-text-strong)] sm:text-4xl">
+				{{ product().title }}
+			</h1>
+			@if (collection(); as current) {
+				<p class="mt-2 text-[var(--c-text-muted)]">
+					Колекція
+					<a class="theme-focus rounded font-medium text-[var(--c-link)] hover:underline" routerLink="/collections" [queryParams]="{ collection: current.slug }">{{ current.title }}</a>
+				</p>
+			}
+
+			<p class="mt-6 text-3xl font-semibold text-[var(--c-text-strong)]">{{ price() }}</p>
+
+			<ul class="mt-5 flex flex-wrap gap-2">
+				@for (tag of product().software.concat(product().renderers); track tag) {
+					<li class="rounded-[var(--radius)] bg-[var(--c-bg-tertiary)] px-3 py-1.5 text-sm font-semibold text-[var(--c-text-strong)]">
+						{{ tag }}
+					</li>
+				}
+			</ul>
+
+			<p class="mt-6 text-lg leading-8">{{ product().short }}</p>
 
 			@if (viewerModel() && textureVariants().length) {
-				<div class="mt-4" role="group" aria-label="Текстури моделі">
+				<div class="mt-6" role="group" aria-label="Текстури моделі">
 					<p class="mb-2 text-sm font-semibold text-[var(--c-text-strong)]">Текстури</p>
 					<ul class="flex flex-wrap gap-2">
 						<li>
@@ -123,39 +156,6 @@
 					</ul>
 				</div>
 			}
-		</section>
-
-		<!-- Summary -->
-		<section class="lg:sticky lg:top-6 lg:self-start" aria-label="Про модель">
-			@if (category(); as current) {
-				<a
-					class="theme-focus rounded text-sm font-semibold uppercase tracking-[0.14em] text-[var(--c-link)] hover:underline"
-					[routerLink]="['/catalog', current.slug]"
-				>
-					{{ current.title }}
-				</a>
-			}
-			<h1 class="mt-2 text-3xl font-semibold tracking-[-0.02em] text-[var(--c-text-strong)] sm:text-4xl">
-				{{ product().title }}
-			</h1>
-			@if (collection(); as current) {
-				<p class="mt-2 text-[var(--c-text-muted)]">
-					Колекція
-					<a class="theme-focus rounded font-medium text-[var(--c-link)] hover:underline" routerLink="/collections" [queryParams]="{ collection: current.slug }">{{ current.title }}</a>
-				</p>
-			}
-
-			<p class="mt-6 text-3xl font-semibold text-[var(--c-text-strong)]">{{ price() }}</p>
-
-			<ul class="mt-5 flex flex-wrap gap-2">
-				@for (tag of product().software.concat(product().renderers); track tag) {
-					<li class="rounded-[var(--radius)] bg-[var(--c-bg-tertiary)] px-3 py-1.5 text-sm font-semibold text-[var(--c-text-strong)]">
-						{{ tag }}
-					</li>
-				}
-			</ul>
-
-			<p class="mt-6 text-lg leading-8">{{ product().short }}</p>
 
 			<div class="mt-8 flex flex-wrap gap-3">
 				<button

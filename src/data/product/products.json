@@ -83,7 +83,25 @@
 		],
 		"archiveSize": "38 MB",
 		"collection": "mecha",
-		"isHit": true
+		"isHit": true,
+		"textureVariants": [
+			{
+				"name": "Червоний",
+				"color": "#c0392b"
+			},
+			{
+				"name": "Синій",
+				"color": "#2980b9"
+			},
+			{
+				"name": "Зелений",
+				"color": "#27ae60"
+			},
+			{
+				"name": "Золотий",
+				"color": "#d4a017"
+			}
+		]
 	},
 	{
 		"slug": "lowpoly-fox",

@@ -49,9 +49,11 @@ service cloud.firestore {
         && text('description', 2000)
         && text('collectionId', 40) && ownCollection(request.resource.data.collectionId)
         && request.resource.data.modelUrl is string
-        && request.resource.data.modelUrl.matches('https://cdn-it[.]webart[.]work/assetka/.*');
+        && request.resource.data.modelUrl.matches('https://cdn-it[.]webart[.]work/assetka/.*')
+        && (!('textureVariants' in request.resource.data)
+          || (request.resource.data.textureVariants is list && request.resource.data.textureVariants.size() <= 12));
 
-      // Owners may only move a model between their collections, or change its preview picture.
+      // Owners may only move a model between their collections, change its preview picture or its colour choices.
       allow update: if ownsExisting()
         && (
           (
@@ -63,6 +65,11 @@ service cloud.firestore {
             && request.resource.data.imageUrl is string
             && request.resource.data.imageUrl.matches('https://cdn-it[.]webart[.]work/assetka/.*')
             && text('imageFileId', 100)
+          )
+          || (
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly(['textureVariants'])
+            && request.resource.data.textureVariants is list
+            && request.resource.data.textureVariants.size() <= 12
           )
         );
 

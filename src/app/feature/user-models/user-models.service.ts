@@ -1,6 +1,8 @@
 import { isPlatformBrowser } from '@angular/common';
 import { computed, effect, inject, PLATFORM_ID, Service, signal, untracked } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
+import { TextureVariant } from '../catalog/catalog.interface';
+import { cleanColorVariants } from '../catalog/texture-variants';
 import { deleteFile, getDb, uploadFile } from '../cloud/cloud';
 
 /** Cloudflare accepts request bodies up to ~10 MB, and base64 grows the file by a third. */
@@ -26,6 +28,8 @@ export interface UserModel {
 	lowModelFileId?: string;
 	imageUrl: string;
 	imageFileId: string;
+	/** Optional colour choices the author offers buyers on the model page. */
+	textureVariants?: TextureVariant[];
 	fileName: string;
 	size: number;
 	createdAt: number;
@@ -40,6 +44,8 @@ export interface UserModelDraft {
 	/** Optional low-poly version of the model, also a .glb. */
 	lowModel: File | null;
 	image: File | null;
+	/** Optional colour choices. */
+	textureVariants?: TextureVariant[];
 }
 
 export type UploadResult = 'ok' | 'too-large' | 'bad-file' | 'storage' | 'database' | 'signed-out';
@@ -123,6 +129,7 @@ export class UserModelsService {
 			lowModelFileId: lowModel?.id ?? '',
 			imageUrl: image?.publicUrl ?? '',
 			imageFileId: image?.id ?? '',
+			...(cleanColorVariants(draft.textureVariants).length ? { textureVariants: cleanColorVariants(draft.textureVariants) } : {}),
 			fileName: draft.model.name,
 			size: draft.model.size,
 			createdAt: Date.now(),
@@ -161,6 +168,23 @@ export class UserModelsService {
 		}
 
 		this._models.update((models) => models.map((item) => (item.id === model.id ? { ...item, collectionId: collection } : item)));
+		return true;
+	}
+
+	/** Replaces the colour choices of one of the user's models (an empty list removes them). */
+	async setTextureVariants(model: UserModel, variants: TextureVariant[]): Promise<boolean> {
+		const clean = cleanColorVariants(variants);
+
+		try {
+			const [db, { doc, updateDoc }] = await Promise.all([getDb(), import('firebase/firestore')]);
+
+			await updateDoc(doc(db, COLLECTION, model.id), { textureVariants: clean });
+		} catch (error) {
+			console.error(error);
+			return false;
+		}
+
+		this._models.update((models) => models.map((item) => (item.id === model.id ? { ...item, textureVariants: clean } : item)));
 		return true;
 	}
 

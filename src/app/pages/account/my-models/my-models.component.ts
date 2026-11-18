@@ -1,6 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { categories } from '../../../feature/catalog/catalog.data';
+import { TextureVariant } from '../../../feature/catalog/catalog.interface';
+import { ColorVariantsComponent } from '../../../feature/catalog/color-variants/color-variants.component';
 import {
 	MAX_IMAGE_MB,
 	MAX_MODEL_MB,
@@ -26,7 +28,7 @@ const ERRORS: Record<Exclude<UploadResult, 'ok'>, string> = {
 /** "My models" in the profile: upload form plus the list of the user's own models. */
 @Component({
 	selector: 'app-my-models',
-	imports: [ReactiveFormsModule, OnVisibleDirective],
+	imports: [ReactiveFormsModule, OnVisibleDirective, ColorVariantsComponent],
 	templateUrl: './my-models.component.html',
 })
 export class MyModelsComponent {
@@ -49,6 +51,12 @@ export class MyModelsComponent {
 	protected readonly lowModelFile = signal<File | null>(null);
 	protected readonly imageFile = signal<File | null>(null);
 	protected readonly fileTouched = signal(false);
+	/** Colour choices of the model being uploaded. */
+	protected readonly newVariants = signal<TextureVariant[]>([]);
+	/** Card whose colours are being edited, with the edited list. */
+	protected readonly colorEditId = signal('');
+	protected readonly editVariants = signal<TextureVariant[]>([]);
+	protected readonly savingColors = signal(false);
 	protected readonly formOpen = signal(false);
 	protected readonly sending = signal(false);
 	protected readonly removing = signal('');
@@ -89,7 +97,7 @@ export class MyModelsComponent {
 		this.sending.set(true);
 		this.notice.set(null);
 
-		const result = await this.userModels.add({ ...this.form.getRawValue(), model, lowModel: this.lowModelFile(), image: this.imageFile() });
+		const result = await this.userModels.add({ ...this.form.getRawValue(), model, lowModel: this.lowModelFile(), image: this.imageFile(), textureVariants: this.newVariants() });
 
 		this.sending.set(false);
 
@@ -103,6 +111,7 @@ export class MyModelsComponent {
 		this.modelFile.set(null);
 		this.lowModelFile.set(null);
 		this.imageFile.set(null);
+		this.newVariants.set([]);
 		this.fileTouched.set(false);
 		fileInputs.forEach((input) => (input.value = ''));
 		this.formOpen.set(false);
@@ -115,6 +124,23 @@ export class MyModelsComponent {
 
 		if (!moved) {
 			this.notice.set({ tone: 'error', text: 'Не вдалося змінити колекцію моделі. Спробуйте ще раз.' });
+		}
+	}
+
+	protected editColors(model: UserModel) {
+		this.editVariants.set(structuredClone(model.textureVariants ?? []));
+		this.colorEditId.set(model.id);
+	}
+
+	protected async saveColors(model: UserModel) {
+		this.savingColors.set(true);
+		const saved = await this.userModels.setTextureVariants(model, this.editVariants());
+		this.savingColors.set(false);
+
+		if (saved) {
+			this.colorEditId.set('');
+		} else {
+			this.notice.set({ tone: 'error', text: 'Не вдалося зберегти кольори. Спробуйте ще раз; якщо помилка повторюється, правила бази даних ще не оновлені.' });
 		}
 	}
 

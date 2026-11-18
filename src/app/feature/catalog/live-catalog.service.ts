@@ -3,6 +3,7 @@ import { inject, PLATFORM_ID, Service } from '@angular/core';
 import { getDb } from '../cloud/cloud';
 import { categories, setLiveProducts, setUserCatalog } from './catalog.data';
 import { CatalogCollection, Product, Seller } from './catalog.interface';
+import { cleanColorVariants } from './texture-variants';
 
 /** Firestore collection with the assets admins publish from /admin (one document per slug). */
 export const ASSETS_COLLECTION = 'assets';
@@ -29,6 +30,7 @@ interface UserModelDoc {
 	modelUrl: string;
 	lowModelUrl?: string;
 	imageUrl?: string;
+	textureVariants?: unknown;
 	size?: number;
 	createdAt: number;
 }
@@ -66,6 +68,7 @@ function _toProduct(id: string, data: UserModelDoc, seller: string): Product {
 		renderers: [],
 		formats: ['GLB'],
 		archiveSize: data.size ? `${(data.size / 1024 / 1024).toFixed(1)} МБ` : '',
+		...(cleanColorVariants(data.textureVariants).length ? { textureVariants: cleanColorVariants(data.textureVariants) } : {}),
 		...(data.collectionId ? { collection: data.collectionId } : {}),
 		...(Date.now() - data.createdAt < NEW_FOR_MS ? { isNew: true } : {}),
 		uploader: data.uid,
