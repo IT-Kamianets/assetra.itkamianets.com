@@ -9,6 +9,7 @@ import {
 	UserModelsService,
 } from '../../../feature/user-models/user-models.service';
 import { CollectionsService } from '../../../feature/collections/collections.service';
+import { DomTranslatorService } from '../../../feature/i18n/dom-translator.service';
 import { ModelThumbnailService } from '../../../feature/projects/model-thumbnail.service';
 import { OnVisibleDirective } from '../../../feature/projects/on-visible.directive';
 
@@ -33,6 +34,7 @@ export class MyModelsComponent {
 	protected readonly collections = inject(CollectionsService);
 	protected readonly thumbs = inject(ModelThumbnailService);
 	private readonly _fb = inject(NonNullableFormBuilder);
+	private readonly _translator = inject(DomTranslatorService);
 
 	protected readonly categories = categories;
 	protected readonly maxModelMb = MAX_MODEL_MB;
@@ -135,7 +137,7 @@ export class MyModelsComponent {
 	}
 
 	protected async remove(model: UserModel) {
-		if (!confirm(`Видалити модель «${model.title}»?`)) {
+		if (!confirm(this._translator.translate(`Видалити модель «${model.title}»?`))) {
 			return;
 		}
 

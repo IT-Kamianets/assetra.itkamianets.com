@@ -3,6 +3,7 @@ import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { RouterLink } from '@angular/router';
 import { MAX_IMAGE_MB, UserModelsService } from '../../../feature/user-models/user-models.service';
 import { ModelCollection, CollectionResult, CollectionsService } from '../../../feature/collections/collections.service';
+import { DomTranslatorService } from '../../../feature/i18n/dom-translator.service';
 
 type Notice = { tone: 'ok' | 'error'; text: string } | null;
 
@@ -24,6 +25,7 @@ export class MyCollectionsComponent {
 	protected readonly collections = inject(CollectionsService);
 	private readonly _userModels = inject(UserModelsService);
 	private readonly _fb = inject(NonNullableFormBuilder);
+	private readonly _translator = inject(DomTranslatorService);
 
 	protected readonly maxImageMb = MAX_IMAGE_MB;
 	protected readonly form = this._fb.group({
@@ -112,7 +114,7 @@ export class MyCollectionsComponent {
 	}
 
 	protected async remove(collection: ModelCollection) {
-		if (!confirm(`Видалити колекцію «${collection.title}»? Моделі залишаться у вашому профілі, але вже без колекції.`)) {
+		if (!confirm(this._translator.translate(`Видалити колекцію «${collection.title}»? Моделі залишаться у вашому профілі, але вже без колекції.`))) {
 			return;
 		}
 

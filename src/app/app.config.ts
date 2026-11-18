@@ -22,6 +22,17 @@ import { routes } from './app.routes';
 import { BootstrapService } from './feature/bootstrap/bootstrap.service';
 import { companyProfile } from './feature/company/company.data';
 
+/** Language the visitor picked last time (saved by ngx-translate); the site opens in Ukrainian until then. */
+function _savedLanguage(): string {
+	try {
+		const code = localStorage.getItem('waStoretranslate.language');
+
+		return environment.languages.some((language) => language.code === code) ? (code as string) : 'ua';
+	} catch {
+		return 'ua';
+	}
+}
+
 const initializeBootstrapData = (bootstrapService: BootstrapService) => () =>
 	bootstrapService.initialize();
 
@@ -95,7 +106,7 @@ export const appConfig: ApplicationConfig = {
 		provideTranslate({
 			// `defaultLanguage` is the source-text language of the i18n arrays; the site opens in Ukrainian.
 			defaultLanguage: environment.defaultLanguage,
-			language: 'ua',
+			language: _savedLanguage(),
 			languages: environment.languages,
 			folder: '/i18n/',
 		}),
