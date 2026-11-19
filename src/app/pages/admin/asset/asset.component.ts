@@ -446,7 +446,7 @@ export class AssetComponent {
 		this.form.reset({
 			...asset,
 			images: asset.images.join('\n'),
-			textureVariants: (asset.textureVariants ?? []).map((variant) => `${variant.name} | ${variant.color || variant.texture || ''}`).join('\n'),
+			textureVariants: (asset.textureVariants ?? []).map((variant) => `${variant.name} | ${variant.color || variant.texture || ''}${variant.model ? ` | ${variant.model}` : ''}`).join('\n'),
 			model: asset.model ?? '',
 			modelLow: asset.modelLow ?? '',
 			collection: asset.collection ?? '',
@@ -505,13 +505,16 @@ function _variants(value: string): TextureVariant[] {
 	return value
 		.split('\n')
 		.map((line) => {
-			const [name = '', ...rest] = line.split('|');
-			const target = rest.join('|').trim();
+			const [name = '', target = '', model = ''] = line.split('|').map((part) => part.trim());
 
-			return { name: name.trim(), target };
+			return { name, target, model };
 		})
 		.filter((item) => item.name && item.target)
-		.map(({ name, target }) => (/^#[0-9a-f]{3,8}$/i.test(target) ? { name, color: target } : { name, texture: target }));
+		.map(({ name, target, model }) => ({
+			name,
+			...(/^#[0-9a-f]{3,8}$/i.test(target) ? { color: target } : { texture: target }),
+			...(model ? { model } : {}),
+		}));
 }
 
 function _lines(value: string): string[] {

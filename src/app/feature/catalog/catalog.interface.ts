@@ -43,6 +43,10 @@ export interface TextureVariant {
 	texture?: string;
 	/** CSS colour such as #c0392b. */
 	color?: string;
+	/** A separate GLB of the same model in this colour; the viewer loads it instead of the main file. */
+	model?: string;
+	/** Storage id of `model`, used to delete the file when the colour is removed. */
+	modelFileId?: string;
 }
 
 export interface Product {

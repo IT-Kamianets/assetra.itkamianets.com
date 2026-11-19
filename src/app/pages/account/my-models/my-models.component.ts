@@ -1,8 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { categories } from '../../../feature/catalog/catalog.data';
-import { TextureVariant } from '../../../feature/catalog/catalog.interface';
 import { ColorVariantsComponent } from '../../../feature/catalog/color-variants/color-variants.component';
+import { ColorVariantRow } from '../../../feature/catalog/texture-variants';
 import {
 	MAX_IMAGE_MB,
 	MAX_MODEL_MB,
@@ -52,10 +52,10 @@ export class MyModelsComponent {
 	protected readonly imageFile = signal<File | null>(null);
 	protected readonly fileTouched = signal(false);
 	/** Colour choices of the model being uploaded. */
-	protected readonly newVariants = signal<TextureVariant[]>([]);
+	protected readonly newVariants = signal<ColorVariantRow[]>([]);
 	/** Card whose colours are being edited, with the edited list. */
 	protected readonly colorEditId = signal('');
-	protected readonly editVariants = signal<TextureVariant[]>([]);
+	protected readonly editVariants = signal<ColorVariantRow[]>([]);
 	protected readonly savingColors = signal(false);
 	protected readonly formOpen = signal(false);
 	protected readonly sending = signal(false);
@@ -139,13 +139,19 @@ export class MyModelsComponent {
 
 	protected async saveColors(model: UserModel) {
 		this.savingColors.set(true);
-		const saved = await this.userModels.setTextureVariants(model, this.editVariants());
+		const result = await this.userModels.setTextureVariants(model, this.editVariants());
 		this.savingColors.set(false);
 
-		if (saved) {
+		if (result === 'ok') {
 			this.colorEditId.set('');
 		} else {
-			this.notice.set({ tone: 'error', text: 'Не вдалося зберегти кольори. Спробуйте ще раз; якщо помилка повторюється, правила бази даних ще не оновлені.' });
+			this.notice.set({
+				tone: 'error',
+				text:
+					result === 'database'
+						? 'Не вдалося зберегти кольори. Спробуйте ще раз; якщо помилка повторюється, правила бази даних ще не оновлені.'
+						: ERRORS[result],
+			});
 		}
 	}
 

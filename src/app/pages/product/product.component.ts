@@ -44,7 +44,7 @@ export class ProductComponent {
 	protected readonly category = computed(() => getCategory(this.product().category));
 	protected readonly collection = computed(() => getCollection(this.product().collection));
 	/** The 3D preview prefers the light low-poly file; downloads always get the full `model`. */
-	protected readonly viewerModel = computed(() => this.product().modelLow || this.product().model || '');
+	protected readonly viewerModel = computed(() => this.variant()?.model || this.product().modelLow || this.product().model || '');
 	protected readonly seller = computed(() => getSeller(this.product().seller));
 	protected readonly inCart = computed(() => this.cart.has(this.product().slug));
 	protected readonly isFavorite = computed(() => this.favorites.has(this.product().slug));
@@ -129,7 +129,8 @@ export class ProductComponent {
 
 	/** Signed-in users get the GLB file; guests are sent to sign in and brought back here afterwards. */
 	protected async download() {
-		const { model, slug } = this.product();
+		const { slug } = this.product();
+		const model = this.variant()?.model || this.product().model;
 
 		if (!model || this.downloading()) {
 			return;

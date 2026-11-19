@@ -68,7 +68,7 @@
 						class="relative aspect-square overflow-hidden rounded-[calc(var(--radius-card)*1.6)] border border-[var(--c-border)]"
 						[class]="darkStage() ? 'bg-[#20221d]' : 'bg-[var(--c-bg-secondary)]'"
 					>
-						<app-model-viewer [src]="viewerModel()" [alt]="'3D-модель: ' + product().title" [variant]="variant()" />
+						<app-model-viewer [src]="viewerModel()" [alt]="'3D-модель: ' + product().title" [variant]="variant()?.model ? null : variant()" />
 
 						<button
 							class="theme-focus absolute right-3 top-3 inline-flex h-10 items-center gap-2 rounded-full border border-[var(--c-border)] bg-[var(--c-bg-secondary)] px-4 text-sm font-medium text-[var(--c-text-strong)]"

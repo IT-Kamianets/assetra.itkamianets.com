@@ -2,7 +2,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { computed, effect, inject, PLATFORM_ID, Service, signal, untracked } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
 import { TextureVariant } from '../catalog/catalog.interface';
-import { cleanColorVariants } from '../catalog/texture-variants';
+import { cleanColorVariants, ColorVariantRow } from '../catalog/texture-variants';
 import { deleteFile, getDb, uploadFile } from '../cloud/cloud';
 
 /** Cloudflare accepts request bodies up to ~10 MB, and base64 grows the file by a third. */
@@ -44,8 +44,8 @@ export interface UserModelDraft {
 	/** Optional low-poly version of the model, also a .glb. */
 	lowModel: File | null;
 	image: File | null;
-	/** Optional colour choices. */
-	textureVariants?: TextureVariant[];
+	/** Optional colour choices; a colour may carry its own GLB file to upload. */
+	textureVariants?: ColorVariantRow[];
 }
 
 export type UploadResult = 'ok' | 'too-large' | 'bad-file' | 'storage' | 'database' | 'signed-out';
@@ -99,6 +99,12 @@ export class UserModelsService {
 			return 'too-large';
 		}
 
+		const colours = await this._uploadColourFiles(draft.textureVariants ?? []);
+
+		if (typeof colours === 'string') {
+			return colours;
+		}
+
 		let model: Awaited<ReturnType<typeof uploadFile>> | null = null;
 		let lowModel: Awaited<ReturnType<typeof uploadFile>> | null = null;
 		let image: Awaited<ReturnType<typeof uploadFile>> | null = null;
@@ -114,6 +120,7 @@ export class UserModelsService {
 					void deleteFile(file.id);
 				}
 			}
+			colours.uploadedIds.forEach((id) => void deleteFile(id));
 			return 'storage';
 		}
 
@@ -129,7 +136,7 @@ export class UserModelsService {
 			lowModelFileId: lowModel?.id ?? '',
 			imageUrl: image?.publicUrl ?? '',
 			imageFileId: image?.id ?? '',
-			...(cleanColorVariants(draft.textureVariants).length ? { textureVariants: cleanColorVariants(draft.textureVariants) } : {}),
+			...(colours.variants.length ? { textureVariants: colours.variants } : {}),
 			fileName: draft.model.name,
 			size: draft.model.size,
 			createdAt: Date.now(),
@@ -152,8 +159,44 @@ export class UserModelsService {
 			if (image) {
 				void deleteFile(image.id);
 			}
+			colours.uploadedIds.forEach((id) => void deleteFile(id));
 			return 'database';
 		}
+	}
+
+	/** Uploads the GLB files picked for colours; answers with the clean list to store, or the reason it failed. */
+	private async _uploadColourFiles(rows: ColorVariantRow[]): Promise<{ variants: TextureVariant[]; uploadedIds: string[] } | UploadResult> {
+		const files = rows.map((row) => row.file).filter((file): file is File => !!file);
+
+		if (files.some((file) => !file.name.toLowerCase().endsWith('.glb'))) {
+			return 'bad-file';
+		}
+
+		if (files.some((file) => file.size > MAX_MODEL_MB * 1024 * 1024)) {
+			return 'too-large';
+		}
+
+		const uploadedIds: string[] = [];
+		const variants: TextureVariant[] = [];
+
+		try {
+			for (const { file, ...row } of rows) {
+				if (file) {
+					const uploaded = await uploadFile(file, 'model/gltf-binary', 'model-color.glb');
+
+					uploadedIds.push(uploaded.id);
+					variants.push({ ...row, model: uploaded.publicUrl, modelFileId: uploaded.id });
+				} else {
+					variants.push(row);
+				}
+			}
+		} catch (error) {
+			console.error(error);
+			uploadedIds.forEach((id) => void deleteFile(id));
+			return 'storage';
+		}
+
+		return { variants: cleanColorVariants(variants), uploadedIds };
 	}
 
 	/** Moves one of the user's models into a collection, or out of any collection with ''. */
@@ -172,20 +215,35 @@ export class UserModelsService {
 	}
 
 	/** Replaces the colour choices of one of the user's models (an empty list removes them). */
-	async setTextureVariants(model: UserModel, variants: TextureVariant[]): Promise<boolean> {
-		const clean = cleanColorVariants(variants);
+	async setTextureVariants(model: UserModel, rows: ColorVariantRow[]): Promise<UploadResult> {
+		const colours = await this._uploadColourFiles(rows);
+
+		if (typeof colours === 'string') {
+			return colours;
+		}
 
 		try {
 			const [db, { doc, updateDoc }] = await Promise.all([getDb(), import('firebase/firestore')]);
 
-			await updateDoc(doc(db, COLLECTION, model.id), { textureVariants: clean });
+			await updateDoc(doc(db, COLLECTION, model.id), { textureVariants: colours.variants });
 		} catch (error) {
 			console.error(error);
-			return false;
+			colours.uploadedIds.forEach((id) => void deleteFile(id));
+			return 'database';
 		}
 
-		this._models.update((models) => models.map((item) => (item.id === model.id ? { ...item, textureVariants: clean } : item)));
-		return true;
+		this._models.update((models) => models.map((item) => (item.id === model.id ? { ...item, textureVariants: colours.variants } : item)));
+
+		// Files of colours that were removed or replaced are no longer used.
+		const kept = new Set(colours.variants.map((variant) => variant.modelFileId));
+
+		for (const old of model.textureVariants ?? []) {
+			if (old.modelFileId && !kept.has(old.modelFileId)) {
+				void deleteFile(old.modelFileId);
+			}
+		}
+
+		return 'ok';
 	}
 
 	/** Sets (or replaces) the preview picture of one of the user's models. */
@@ -241,6 +299,7 @@ export class UserModelsService {
 
 		this._models.update((models) => models.filter((item) => item.id !== model.id));
 		void deleteFile(model.modelFileId);
+		model.textureVariants?.forEach((variant) => variant.modelFileId && void deleteFile(variant.modelFileId));
 		if (model.lowModelFileId) {
 			void deleteFile(model.lowModelFileId);
 		}
