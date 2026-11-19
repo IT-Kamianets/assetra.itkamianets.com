@@ -1,0 +1,1 @@
+import{W as D}from"./main-PYSPCV36.js";var r=D(`AssetraProject`);export{r as t};

@@ -1,0 +1,1 @@
+import{W as D}from"./main-PYSPCV36.js";var o=D(`App`,{web:()=>import(`./chunk-BrzflPwS.js`).then(e=>new e.AppWeb)});export{o as App};
