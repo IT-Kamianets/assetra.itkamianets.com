@@ -291,13 +291,13 @@
 								Колекція
 								<select
 									class="theme-focus mt-1 h-10 w-full rounded-[var(--radius-btn)] border border-[var(--c-border)] bg-[var(--c-bg-secondary)] px-2 text-sm font-normal text-[var(--c-text-strong)] disabled:opacity-60"
-									[value]="model.collectionId"
 									[disabled]="moving() === model.id"
-									(change)="moveToCollection(model, $any($event.target).value)"
+									(change)="moveToCollection(model, $event)"
 								>
-									<option value="">Без колекції</option>
+									<!-- "selected" per option: a [value] on the select is applied before the options exist and is lost after a reload. -->
+									<option value="" [selected]="!model.collectionId">Без колекції</option>
 									@for (collection of collections.mine(); track collection.id) {
-										<option [value]="collection.id">{{ collection.title }}</option>
+										<option [value]="collection.id" [selected]="collection.id === model.collectionId">{{ collection.title }}</option>
 									}
 								</select>
 							</label>

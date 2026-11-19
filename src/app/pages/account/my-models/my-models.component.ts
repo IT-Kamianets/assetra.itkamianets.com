@@ -117,13 +117,18 @@ export class MyModelsComponent {
 		this.formOpen.set(false);
 	}
 
-	protected async moveToCollection(model: UserModel, collection: string) {
+	protected async moveToCollection(model: UserModel, event: Event) {
+		const select = event.target as HTMLSelectElement;
+
 		this.moving.set(model.id);
-		const moved = await this.userModels.setCollection(model, collection);
+		const moved = await this.userModels.setCollection(model, select.value);
 		this.moving.set('');
 
 		if (!moved) {
+			// The list still holds the saved collection: show it again instead of the unsaved choice.
+			select.value = model.collectionId;
 			this.notice.set({ tone: 'error', text: 'Не вдалося змінити колекцію моделі. Спробуйте ще раз.' });
+			select.scrollIntoView({ block: 'center' });
 		}
 	}
 
